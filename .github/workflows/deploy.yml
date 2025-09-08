@@ -87,9 +87,14 @@ jobs:
             export TAG=${TAG}
 
             # Pull & restart containers
-            docker-compose pull
-            docker-compose down
-            docker-compose up -d
+            docker compose pull
+            docker compose down
+            docker compose up -d
 
             # Remove docker-compose.yml after use
             rm -f docker-compose.yml
+
+# New v2 commands (works with latest plugin)
+# docker compose pull
+# docker compose down
+# docker compose up -d
