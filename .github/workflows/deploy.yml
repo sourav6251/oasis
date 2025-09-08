@@ -10,29 +10,35 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    env:
-      TAG: latest
 
     steps:
-      - name: Checkout code
+      # Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v3
 
+      # Set Docker image tag to commit SHA
+      - name: Set Docker Image Tag
+        id: vars
+        run: echo "TAG=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      # Login to Docker Hub
+      - name: Docker Login
+        run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
       # Build & push client image
-      - name: Build and Push Client Image
+      - name: Build & Push Client Image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/oasis-client:${TAG} ./client
-          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-          docker push ${{ secrets.DOCKER_USERNAME }}/oasis-client:${TAG}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/oasis-client:${{ env.TAG }} ./client
+          docker push ${{ secrets.DOCKER_USERNAME }}/oasis-client:${{ env.TAG }}
 
       # Build & push server image
-      - name: Build and Push Server Image
+      - name: Build & Push Server Image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/oasis-server:${TAG} ./server
-          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-          docker push ${{ secrets.DOCKER_USERNAME }}/oasis-server:${TAG}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/oasis-server:${{ env.TAG }} ./server
+          docker push ${{ secrets.DOCKER_USERNAME }}/oasis-server:${{ env.TAG }}
 
       # Copy files to remote VM
-      - name: Copy files to VM
+      - name: Copy Files to VM
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VM_HOST }}
@@ -53,22 +59,22 @@ jobs:
           script: |
             cd ~/oasis-temp
 
-            # Export secrets
+            # Export environment variables
             export DB_USERNAME=${{ secrets.DB_USERNAME }}
             export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             export DB_URL=${{ secrets.DB_URL }}
             export FRONTEND_URL=${{ secrets.FRONTEND_URL }}
-            export TAG=${TAG}
+            export TAG=${{ env.TAG }}
             export DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
             export DOCKER_PASSWORD=${{ secrets.DOCKER_PASSWORD }}
 
             # Docker login
             echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
 
-            # Pull & restart containers using latest Docker Compose
+            # Pull & restart containers
             docker compose pull
             docker compose down
-            docker compose up -d
+            docker compose up -d --remove-orphans
 
             # Cleanup
             rm -f docker-compose.yml
