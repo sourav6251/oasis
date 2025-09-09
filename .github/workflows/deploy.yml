@@ -21,7 +21,7 @@ jobs:
         id: vars
         run: echo "TAG=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
-      # Login to Docker Hub
+      # Docker Hub login
       - name: Docker Login
         run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
 
@@ -37,18 +37,18 @@ jobs:
           docker build -t ${{ secrets.DOCKER_USERNAME }}/oasis-server:${{ env.TAG }} ./server
           docker push ${{ secrets.DOCKER_USERNAME }}/oasis-server:${{ env.TAG }}
 
-      # Copy files to remote VM
-      - name: Copy Files to VM
+      # Copy only docker-compose.yml to VM
+      - name: Copy docker-compose.yml to VM
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
           port: 22
-          source: "."
+          source: "docker-compose.yml"
           target: "~/oasis-temp"
 
-      # SSH into VM and deploy
+      # Deploy on VM
       - name: Deploy on VM
         uses: appleboy/ssh-action@v0.1.9
         with:
@@ -71,10 +71,8 @@ jobs:
             # Docker login
             echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
 
-            # Pull & restart containers
-            docker compose pull
-            docker compose down
-            docker compose up -d --remove-orphans
+            # Pull only client & server images
+            docker compose pull client server
 
-            # Cleanup
-            rm -f docker-compose.yml
+            # Restart only client & server (MySQL untouched)
+            docker compose up -d --remove-orphans client server

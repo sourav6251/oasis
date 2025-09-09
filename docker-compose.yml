@@ -2,43 +2,23 @@
 
 services:
   client:
-    build: ./client
+    image: ${DOCKER_USERNAME}/oasis-client:${TAG}
     container_name: oasis-client
     ports:
       - "8080:80"       # Host port 8080 → container port 80
     depends_on:
       - server
     environment:
-      # URL your frontend uses to call backend API
       VITE_BASE_URL: ${FRONTEND_URL}
     restart: always
 
   server:
-    build: ./server
+    image: ${DOCKER_USERNAME}/oasis-server:${TAG}
     container_name: oasis-server
     ports:
       - "5000:5000"     # Host port 5000 → container port 5000
-    depends_on:
-      - mysql
     environment:
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_URL: ${DB_URL}
     restart: always
-
-  mysql:
-    image: mysql:8.0
-    container_name: mysql-container
-    ports:
-      - "3306:3306"     # Expose MySQL to host
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USERNAME}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-    volumes:
-      - mysql_data:/var/lib/mysql
-    restart: always
-
-volumes:
-  mysql_data:
