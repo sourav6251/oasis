@@ -27,10 +27,17 @@ jobs:
         run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
 
       # Build & push client image
+      # - name: Build & Push Client Image
+      #   run: |
+      #     docker build -t ${{ secrets.DOCKER_USERNAME }}/oasis-client:${{ env.TAG }} ./client
+      #     docker push ${{ secrets.DOCKER_USERNAME }}/oasis-client:${{ env.TAG }}
       - name: Build & Push Client Image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/oasis-client:${{ env.TAG }} ./client
+          docker build \
+            --build-arg VITE_BASE_URL=${{ secrets.BACKEND_URL }} \
+            -t ${{ secrets.DOCKER_USERNAME }}/oasis-client:${{ env.TAG }} ./client
           docker push ${{ secrets.DOCKER_USERNAME }}/oasis-client:${{ env.TAG }}
+
 
       # Build & push server image
       - name: Build & Push Server Image
