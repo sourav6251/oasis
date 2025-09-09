@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  client:
+    image: ${DOCKER_USERNAME}/oasis-client:${TAG}
+    container_name: oasis-client
+    ports:
+      - "8080:80"
+    depends_on:
+      - server
+    environment:
+      VITE_BASE_URL: ${FRONTEND_URL}
+    restart: always
+
+  server:
+    image: ${DOCKER_USERNAME}/oasis-server:${TAG}
+    container_name: oasis-server
+    ports:
+      - "5000:5000"
+    environment:
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_URL: ${DB_URL}
+    restart: always

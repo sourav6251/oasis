@@ -1,0 +1,90 @@
+
+name: Deploy to VM
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout code
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Set Docker image tag to commit SHA
+      - name: Set Docker Image Tag
+        id: vars
+        run: echo "TAG=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      # Docker Hub login
+      - name: Docker Login
+        run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+      # Build & push client image
+      - name: Build & Push Client Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/oasis-client:${{ env.TAG }} ./client
+          docker push ${{ secrets.DOCKER_USERNAME }}/oasis-client:${{ env.TAG }}
+
+      # Build & push server image
+      - name: Build & Push Server Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/oasis-server:${{ env.TAG }} ./server
+          docker push ${{ secrets.DOCKER_USERNAME }}/oasis-server:${{ env.TAG }}
+
+      # Copy only docker-compose.yml to VM
+      - name: Copy docker-compose.yml to VM
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          port: 22
+          source: "docker-compose.yml"
+          target: "~/oasis-temp"
+
+      # Deploy on VM
+      - name: Deploy on VM
+        uses: appleboy/ssh-action@v0.1.9
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          port: 22
+          script: |
+            cd ~/oasis-temp
+
+            # Export environment variables
+            export DB_USERNAME=${{ secrets.DB_USERNAME }}
+            export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            export DB_URL=${{ secrets.DB_URL }}
+            export FRONTEND_URL=${{ secrets.FRONTEND_URL }}
+            export TAG=${{ env.TAG }}
+            export DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
+            export DOCKER_PASSWORD=${{ secrets.DOCKER_PASSWORD }}
+
+            # ✅ Debug: Print environment variables (hide passwords)
+            echo "=== ENVIRONMENT VARIABLES ON VM ==="
+            echo "DB_USERNAME=$DB_USERNAME"
+            echo "DB_PASSWORD=$DB_PASSWORD (hidden)"
+            echo "DB_URL=$DB_URL"
+            echo "FRONTEND_URL=$FRONTEND_URL"
+            echo "TAG=$TAG"
+            echo "DOCKER_USERNAME=$DOCKER_USERNAME"
+            echo "DOCKER_PASSWORD=$DB_PASSWORD (hidden)"
+            echo "==================================="
+
+            # Docker login
+            echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+
+            # Pull only client & server images
+            docker compose pull client server
+
+            # Restart only client & server (MySQL untouched)
+            docker compose up -d --remove-orphans client server
