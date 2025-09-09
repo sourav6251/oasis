@@ -1,3 +1,4 @@
+
 name: Deploy to VM
 
 on:
@@ -67,6 +68,17 @@ jobs:
             export TAG=${{ env.TAG }}
             export DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
             export DOCKER_PASSWORD=${{ secrets.DOCKER_PASSWORD }}
+
+            # ✅ Debug: Print environment variables (hide passwords)
+            echo "=== ENVIRONMENT VARIABLES ON VM ==="
+            echo "DB_USERNAME=$DB_USERNAME"
+            echo "DB_PASSWORD=**** (hidden)"
+            echo "DB_URL=$DB_URL"
+            echo "FRONTEND_URL=$FRONTEND_URL"
+            echo "TAG=$TAG"
+            echo "DOCKER_USERNAME=$DOCKER_USERNAME"
+            echo "DOCKER_PASSWORD=**** (hidden)"
+            echo "==================================="
 
             # Docker login
             echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin

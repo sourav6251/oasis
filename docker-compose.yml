@@ -1,11 +1,11 @@
-# version: "3.8"
+version: "3.8"
 
 services:
   client:
     image: ${DOCKER_USERNAME}/oasis-client:${TAG}
     container_name: oasis-client
     ports:
-      - "8080:80"       # Host port 8080 → container port 80
+      - "8080:80"
     depends_on:
       - server
     environment:
@@ -16,7 +16,7 @@ services:
     image: ${DOCKER_USERNAME}/oasis-server:${TAG}
     container_name: oasis-server
     ports:
-      - "5000:5000"     # Host port 5000 → container port 5000
+      - "5000:5000"
     environment:
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
