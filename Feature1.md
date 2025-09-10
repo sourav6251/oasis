@@ -85,3 +85,19 @@
 - Notifications for bookings and promotions
 
 ---
+## Sukanta
+1. Home Page 
+2. Services / Treatments
+3. Pricing / Packages
+4. Promotions / Offers
+
+## Biswajit
+5. About Us
+6. Gallery / Portfolio
+7. Terms & Policies
+8. FAQ
+## Sourav
+9. Online Booking / Appointment
+10. Blog / Beauty Tips
+11. Contact Page
+12. Testimonials / Reviews
