@@ -31,6 +31,18 @@ jobs:
       #   run: |
       #     docker build -t ${{ secrets.DOCKER_USERNAME }}/oasis-client:${{ env.TAG }} ./client
       #     docker push ${{ secrets.DOCKER_USERNAME }}/oasis-client:${{ env.TAG }}
+      # Step 1: Verify server with Maven
+      - name: Verify Server with Maven
+        working-directory: ./server
+        env:
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_URL: ${{ secrets.DB_URL }}
+          FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+        run: |
+          echo "Running mvn verify..."
+          mvn verify
+
       - name: Build & Push Client Image
         run: |
           docker build \
@@ -95,3 +107,21 @@ jobs:
 
             # Restart only client & server (MySQL untouched)
             docker compose up -d --remove-orphans client server
+
+        # Send email notification if workflow fails
+      # - name: Send email on failure
+      #   if: failure()   # only runs if previous steps failed
+      #   uses: dawidd6/action-send-mail@v3
+      #   with:
+      #     server_address: smtp.example.com
+      #     server_port: 587
+      #     username: ${{ secrets.EMAIL_USERNAME }}
+      #     password: ${{ secrets.EMAIL_PASSWORD }}
+      #     subject: "🚨 GitHub Actions Workflow Failed: ${{ github.workflow }}"
+      #     to: "you@example.com"
+      #     body: |
+      #       Workflow: ${{ github.workflow }}
+      #       Branch: ${{ github.ref_name }}
+      #       Commit: ${{ github.sha }}
+      #       Status: Failed
+      #       URL: ${{ github.server_url }}/{{ github.repository }}/actions/runs/${{ github.run_id }}
