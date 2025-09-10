@@ -1,0 +1,1 @@
+<template>Policies view</template>

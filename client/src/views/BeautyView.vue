@@ -1,0 +1,1 @@
+<template>Beauty Tips</template>

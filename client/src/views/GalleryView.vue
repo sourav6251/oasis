@@ -1,0 +1,1 @@
+<template>Gallery View</template>

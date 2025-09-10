@@ -1,0 +1,1 @@
+<template>Admin View</template>
