@@ -3,11 +3,14 @@ import { RouterLink, RouterView } from 'vue-router'
 </script>
 
 <template>
-  <header>
-   
-  </header>
-
-  <RouterView />
+  <div  class="flex flex-col h-screen w-screen">
+    <!-- <header>
+    
+    </header> -->
+    <!-- <div class="h-full w-screen"> -->
+    <RouterView />
+    <!-- </div> -->
+  </div>
 </template>
 
 <!-- <style scoped>
