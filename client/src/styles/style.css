@@ -129,8 +129,15 @@ html, body {
   --color-accent: #E6C8A4;
   --color-neutral: #F0F5F3;
   --color-dark: #2A363B;
-  --color-scroll: #84c9c5af;
 }
+
+/* Example usage */
+.bg-primary { background-color: var(--color-primary); }
+.bg-secondary { background-color: var(--color-secondary); }
+.text-dark { color: var(--color-dark); }
+.border-secondary { border-color: var(--color-secondary); }
+.btn-accent { background: var(--color-accent); color: #fff; }
+
 
 /* Force scrollbar always visible */
 
