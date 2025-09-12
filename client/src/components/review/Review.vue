@@ -5,8 +5,19 @@
     <!-- Hero Section -->
     <section class="hero">
       <div class="container">
-        <h1>Client Reviews</h1>
-        <p>See what our clients are saying about their experiences at our salon</p>
+        <h1
+          v-motion
+          :initial="{ opacity: 0, y: -50 }"
+          :enter="{ opacity: 1, y: 0 }"
+          :duration="1000"
+        >Client Reviews</h1>
+        <p
+          v-motion
+          :initial="{ opacity: 0, y: 30 }"
+          :enter="{ opacity: 1, y: 0 }"
+          :delay="500"
+          :duration="800"
+        >See what our clients are saying about their experiences at our salon</p>
       </div>
     </section>
 
@@ -15,9 +26,26 @@
       <div class="container">
         <h2 class="section-title">What Our Clients Say</h2>
         <div class="reviews-container">
-          <div v-for="(review, index) in reviewData" :key="index" class="review-card">
+          <div 
+            v-for="(review, index) in reviewData" 
+            :key="index" 
+            class="review-card"
+            v-motion
+            :initial="{ opacity: 0, y: 100 }"
+            :enter="{ opacity: 1, y: 0 }"
+            :delay="index * 200"
+            :duration="800"
+          >
             <div class="review-header">
-              <img :src="review.image" alt="Client" class="client-image" />
+              <img 
+                :src="review.image" 
+                alt="Client" 
+                class="client-image"
+                v-motion
+                :initial="{ scale: 0 }"
+                :enter="{ scale: 1 }"
+                :delay="(index * 200) + 400"
+              />
               <div class="client-info">
                 <h3>{{ review.name }}</h3>
                 <p>{{ review.service }}</p>
@@ -46,9 +74,23 @@
         </div>
 
         <!-- Add Review Form -->
-        <v-card class="add-review mx-auto" max-width="800" elevation="3">
+        <v-card 
+          class="add-review mx-auto" 
+          max-width="800" 
+          elevation="3"
+          v-motion
+          :initial="{ opacity: 0, y: 100, scale: 0.9 }"
+          :enter="{ opacity: 1, y: 0, scale: 1 }"
+          :duration="1000"
+        >
           <v-card-title class="text-center pt-6">
-            <h3 class="text-h4 font-weight-bold">Share Your Experience</h3>
+            <h3 
+              class="text-h4 font-weight-bold"
+              v-motion
+              :initial="{ opacity: 0, y: 20 }"
+              :enter="{ opacity: 1, y: 0 }"
+              :delay="500"
+            >Share Your Experience</h3>
           </v-card-title>
           
           <v-card-text>
@@ -120,6 +162,10 @@
                     color="var(--color-primary)"
                     class="px-8"
                     rounded="pill"
+                    v-motion
+                    @click="animateButton"
+                    :initial="{ scale: 1, rotate: 0 }"
+                    :enter="buttonAnimation"
                   >
                     Submit Review
                     <v-icon end icon="mdi-send"></v-icon>
@@ -137,19 +183,43 @@
     <section class="stats-section">
       <div class="container">
         <div class="stats-container">
-          <div class="stat-item">
+          <div 
+            class="stat-item"
+            v-motion
+            :initial="{ opacity: 0, scale: 0.5 }"
+            :enter="{ opacity: 1, scale: 1 }"
+            :delay="200"
+          >
             <h2>4.9</h2>
             <p>Average Rating</p>
           </div>
-          <div class="stat-item">
+          <div 
+            class="stat-item"
+            v-motion
+            :initial="{ opacity: 0, scale: 0.5 }"
+            :enter="{ opacity: 1, scale: 1 }"
+            :delay="400"
+          >
             <h2>500+</h2>
             <p>Happy Clients</p>
           </div>
-          <div class="stat-item">
+          <div 
+            class="stat-item"
+            v-motion
+            :initial="{ opacity: 0, scale: 0.5 }"
+            :enter="{ opacity: 1, scale: 1 }"
+            :delay="600"
+          >
             <h2>98%</h2>
             <p>Would Recommend</p>
           </div>
-          <div class="stat-item">
+          <div 
+            class="stat-item"
+            v-motion
+            :initial="{ opacity: 0, scale: 0.5 }"
+            :enter="{ opacity: 1, scale: 1 }"
+            :delay="800"
+          >
             <h2>250+</h2>
             <p>5-Star Reviews</p>
           </div>
@@ -157,50 +227,6 @@
       </div>
     </section>
 
-    <!-- Footer -->
-    <footer>
-      <div class="container">
-        <div class="footer-content">
-          <div class="footer-column">
-            <h3>Glamour Salon</h3>
-            <p>Providing premium beauty services with a focus on quality and customer satisfaction since 2010.</p>
-            <div class="social-links">
-              <a href="#"><i class="fab fa-facebook-f"></i></a>
-              <a href="#"><i class="fab fa-instagram"></i></a>
-              <a href="#"><i class="fab fa-twitter"></i></a>
-              <a href="#"><i class="fab fa-pinterest"></i></a>
-            </div>
-          </div>
-          <div class="footer-column">
-            <h3>Contact Info</h3>
-            <p><i class="fas fa-map-marker-alt"></i> 123 Beauty Street, City, State</p>
-            <p><i class="fas fa-phone"></i> (555) 123-4567</p>
-            <p><i class="fas fa-envelope"></i> info@glamoursalon.com</p>
-            <p><i class="fas fa-clock"></i> Open: Tue-Sun 9AM-7PM</p>
-          </div>
-          <div class="footer-column">
-            <h3>Quick Links</h3>
-            <a href="#">Home</a>
-            <a href="#">Services</a>
-            <a href="#">Pricing</a>
-            <a href="#">Gallery</a>
-            <a href="#">About Us</a>
-            <a href="#">Contact</a>
-          </div>
-          <div class="footer-column">
-            <h3>Newsletter</h3>
-            <p>Subscribe to our newsletter for special offers and updates.</p>
-            <form @submit.prevent>
-              <input type="email" class="form-control" placeholder="Your Email Address" style="margin-bottom: 10px;" />
-              <button type="submit" class="btn-submit">Subscribe</button>
-            </form>
-          </div>
-        </div>
-        <div class="copyright">
-          <p>&copy; 2023 Glamour Salon. All rights reserved.</p>
-        </div>
-      </div>
-    </footer>
   </div>
 </template>
 
@@ -230,6 +256,19 @@ export default defineComponent({
       'Spa Treatments'
     ];
 
+    const buttonAnimation = ref({ scale: 1, rotate: 0 });
+    
+    const animateButton = () => {
+      // Shake and scale animation
+      buttonAnimation.value = { scale: 1.1, rotate: -5 };
+      setTimeout(() => {
+        buttonAnimation.value = { scale: 1.1, rotate: 5 };
+        setTimeout(() => {
+          buttonAnimation.value = { scale: 1, rotate: 0 };
+        }, 100);
+      }, 100);
+    };
+
     const submitReview = () => {
       // Add your submission logic here
       console.log('Form submitted:', form.value);
@@ -241,13 +280,17 @@ export default defineComponent({
         service: '',
         review: ''
       };
+      // Trigger button animation on submit
+      animateButton();
     };
 
     return {
       reviewData,
       form,
       services,
-      submitReview
+      submitReview,
+      buttonAnimation,
+      animateButton
     };
   }
 });
