@@ -23,6 +23,8 @@ export const useUserStore = defineStore('user',  {
     getUserEmail: (state) => state.userEmail,
     getIsLogin: (state) => state.isLogin,
     getRole: (state) => state.role || 'NormalUser',
+    getName: (state) => state.userName,
+    getImage: (state) => state.userImage,
   },
 
   actions: {
