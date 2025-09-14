@@ -141,16 +141,22 @@
                   
                   <div class="calendar-grid">
                     <div v-for="day in ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']" 
-                         :key="day" class="calendar-day">
+                        :key="day" class="calendar-day">
                       {{ day }}
-                    </div>
-                    
-                    <div v-for="date in calendarDates" :key="date.date" v-motion :initial="{ opacity: 0, scale: 0.8 }" :enter="{ opacity: 1, scale: 1 }" :delay="Math.min(50 * date.day, 1000)" :duration="300"
-                         :class="['calendar-date', { 'selected': isDateSelected(date.date), 'disabled': !date.available }]"
-                         @click="selectDate(date)">
-                      {{ date.day }}
-                    </div>
                   </div>
+  
+  <div v-for="(date, index) in calendarDates" 
+       :key="date.date ?? `placeholder-${index}`" 
+       v-motion 
+       :initial="{ opacity: 0, scale: 0.8 }" 
+       :enter="{ opacity: 1, scale: 1 }" 
+       :delay="Math.min(50 * (typeof date.day === 'number' ? date.day : 0), 1000)" 
+       :duration="300"
+       :class="['calendar-date', { 'selected': isDateSelected(date.date), 'disabled': !date.available }]"
+       @click="selectDate(date)">
+    {{ date.day }}
+  </div>
+</div>
                 </div>
               </div>
               
@@ -223,24 +229,59 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { useUserStore } from '@/stores/userStore';
 import { storeToRefs } from 'pinia';
-import { ref, computed, reactive } from 'vue';
+import { ref, computed, reactive, defineComponent } from 'vue';
 
-export default {
+// Define interfaces for type safety
+interface Service {
+  id: number;
+  name: string;
+  category: string;
+  price: number;
+  duration: number;
+}
+
+interface BookingInfo {
+  address: string;
+  apartment: string;
+  instructions: string;
+}
+
+interface PaymentInfo {
+  name: string;
+  number: string;
+  expiry: string;
+  cvv: string;
+}
+
+interface PaymentMethod {
+  id: string;
+  name: string;
+  icon: string;
+}
+
+interface CalendarDate {
+  day: number | string;
+  date: string | null;
+  available: boolean;
+}
+
+export default defineComponent({
   name: 'App',
   setup() {
     // Current step in the booking process
-    const currentStep = ref(1);
+    const currentStep = ref<number>(1);
     const userStore = useUserStore();
     
-    const { getIsLogin,getName,getUserEmail } = storeToRefs(userStore);
+    const { getIsLogin, getName, getUserEmail } = storeToRefs(userStore);
+
     // Service selection
-    const categories = ref(['All', 'Hair', 'Skincare', 'Nails', 'Makeup', 'Spa']);
-    const selectedCategory = ref('All');
+    const categories = ref<string[]>(['All', 'Hair', 'Skincare', 'Nails', 'Makeup', 'Spa']);
+    const selectedCategory = ref<string>('All');
     
-    const services = ref([
+    const services = ref<Service[]>([
       { id: 1, name: 'Haircut & Styling', category: 'Hair', price: 45, duration: 60 },
       { id: 2, name: 'Hair Coloring', category: 'Hair', price: 85, duration: 120 },
       { id: 3, name: 'Facial Treatment', category: 'Skincare', price: 75, duration: 60 },
@@ -251,14 +292,14 @@ export default {
       { id: 8, name: 'Waxing', category: 'Skincare', price: 40, duration: 30 }
     ]);
     
-    const selectedServices = ref([]);
+    const selectedServices = ref<Service[]>([]);
     
-    const filteredServices = computed(() => {
+    const filteredServices = computed<Service[]>(() => {
       if (selectedCategory.value === 'All') return services.value;
       return services.value.filter(service => service.category === selectedCategory.value);
     });
     
-    const toggleService = (service) => {
+    const toggleService = (service: Service): void => {
       const index = selectedServices.value.findIndex(s => s.id === service.id);
       if (index === -1) {
         selectedServices.value.push(service);
@@ -267,13 +308,13 @@ export default {
       }
     };
     
-    const isServiceSelected = (serviceId) => {
+    const isServiceSelected = (serviceId: number): boolean => {
       return selectedServices.value.some(service => service.id === serviceId);
     };
     
     // Location selection
-    const selectedLocation = ref('salon');
-    const bookingInfo = reactive({
+    const selectedLocation = ref<string>('salon');
+    const bookingInfo = reactive<BookingInfo>({
       address: '',
       apartment: '',
       instructions: ''
@@ -281,24 +322,24 @@ export default {
     
     // Date and time selection
     const currentDate = new Date();
-    const currentMonth = ref(currentDate.toLocaleString('default', { month: 'long' }));
-    const currentYear = ref(currentDate.getFullYear());
+    const currentMonth = ref<string>(currentDate.toLocaleString('default', { month: 'long' }));
+    const currentYear = ref<number>(currentDate.getFullYear());
     
-    const selectedDate = ref(null);
-    const selectedTime = ref(null);
+    const selectedDate = ref<string | null>(null);
+    const selectedTime = ref<string | null>(null);
     
-    const timeSlots = ref([
+    const timeSlots = ref<string[]>([
       '9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', 
       '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM'
     ]);
     
-    const calendarDates = computed(() => {
+    const calendarDates = computed<CalendarDate[]>(() => {
       const year = currentYear.value;
       const month = new Date(Date.parse(currentMonth.value + " 1, " + year)).getMonth();
       const firstDay = new Date(year, month, 1);
       const lastDay = new Date(year, month + 1, 0);
       
-      const dates = [];
+      const dates: CalendarDate[] = [];
       const startingDayOfWeek = firstDay.getDay();
       
       // Add empty cells for days before the first day of the month
@@ -309,172 +350,110 @@ export default {
       // Add days of the month
       for (let i = 1; i <= lastDay.getDate(); i++) {
         const dateStr = `${year}-${month + 1}-${i}`;
-        // Randomly mark some days as unavailable for demo purposes
-        const available = 1;
+        const available = true;
         dates.push({ day: i, date: dateStr, available });
       }
       
       return dates;
     });
     
-    const prevMonth = () => {
+    const prevMonth = (): void => {
       const date = new Date(Date.parse(currentMonth.value + " 1, " + currentYear.value));
       date.setMonth(date.getMonth() - 1);
       currentMonth.value = date.toLocaleString('default', { month: 'long' });
       currentYear.value = date.getFullYear();
     };
     
-    const nextMonth = () => {
+    const nextMonth = (): void => {
       const date = new Date(Date.parse(currentMonth.value + " 1, " + currentYear.value));
       date.setMonth(date.getMonth() + 1);
       currentMonth.value = date.toLocaleString('default', { month: 'long' });
       currentYear.value = date.getFullYear();
     };
     
-    const selectDate = (date) => {
+    const selectDate = (date: CalendarDate): void => {
       if (date.available) {
         selectedDate.value = date.date;
       }
     };
     
-    const isDateSelected = (date) => {
+    const isDateSelected = (date: string | null): boolean => {
       return selectedDate.value === date;
     };
     
-    const formatSelectedDate = (dateString) => {
+    const formatSelectedDate = (dateString: string | null): string => {
       if (!dateString) return '';
       const [year, month, day] = dateString.split('-');
-      const date = new Date(year, month - 1, day);
+      const date = new Date(Number(year), Number(month) - 1, Number(day));
       return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
     };
     
-    const selectTime = (time) => {
+    const selectTime = (time: string): void => {
       selectedTime.value = time;
     };
     
-    const isTimeAvailable = (time) => {
-      // For demo purposes, randomly mark some time slots as unavailable
-      return 1;
-    };
-const makePayment = async () => {
-  try {
-    const options = {
-      key: import.meta.env.VITE_RAZORPAY_KEY, // test key
-      amount: totalPrice.value * 100, // paise
-      currency: "INR",
-      name: "Oasis",
-      description: `Booking Payment - ₹${totalPrice.value}`,
-      handler: function (response) {
-        console.log("Payment response:", response);
-        alert(`Payment success 🎉\nPayment ID: ${response.razorpay_payment_id}`);
-      },
-      prefill: {
-        name: getName.value || "Test User",
-        email: getUserEmail.value || "test@example.com",
-        contact: "9876543210",
-      },
-      theme: { color: "#3399cc" },
+    const isTimeAvailable = (time: string): boolean => {
+      return true;
     };
 
-    const rzp = new Razorpay(options);
-    rzp.open();
-  } catch (error) {
-    console.error("Payment failed:", error);
-  }
-};
+    const makePayment = async (): Promise<void> => {
+      try {
+        const options = {
+          key: import.meta.env.VITE_RAZORPAY_KEY,
+          amount: totalPrice.value * 100, // paise
+          currency: "INR",
+          name: "Oasis",
+          description: `Booking Payment - ₹${totalPrice.value}`,
+          handler: function (response: any): void {
+            console.log("Payment response:", response);
+            alert(`Payment success 🎉\nPayment ID: ${response.razorpay_payment_id}`);
+          },
+          prefill: {
+            name: getName.value || "Test User",
+            email: getUserEmail.value || "test@example.com",
+            contact: "9876543210",
+          },
+          theme: { color: "#3399cc" },
+        };
 
-        //     const makePayment = async () => {
-        //     // loading.value = true;
-        //     const paymentDetails = {
-        //         amount: totalPrice,
-        //         items: "state.data.shopName",
-        //     };
-        //     let response;
-        //     try {
-        //       console.log("Add amount");
-              
-        //         // response = await APIstore.makePayment(paymentDetails);
-        //         // amount.value = response.amount;
-        //         // order_id.value = response.id;
-        //     } catch (error) {
-        //         console.error("Payment failed:", error);
-        //     } finally {
-                
-        //     }
-        //     try {
-        //         const response = await APIstore.userDetails();
-        //         name.value = response.name;
-        //         email.value = response.email;
-        //         contact.value = response.phoneNo;
-        //     } catch (error) {}
-
-        //     const options = {
-        //         key: import.meta.env.VITE_RAZORPAY_KEY,
-        //         amount: totalPrice*1000, // Razorpay needs amount in paise
-        //         currency: "INR",
-        //         name: "Oasis",
-        //         description: `${totalPrice} `,
-        //         order_id: 1,
-        //         handler: async function (response) {
-        //             // ✅ Send payment verification data to your backend here
-        //             console.log("Payment success", response);
-        //             // await APIstore.verifyPayment({
-        //             //     payment_id: response.razorpay_payment_id,
-        //             //     order_id: response.razorpay_order_id,
-        //             //     signature: response.razorpay_signature,
-        //             // });
-        //         },
-        //         prefill: {
-        //             name: getName,
-        //             email: getUserEmail,
-        //             contact: '789456123',
-        //         },
-        //         notes: {
-        //             app_name: "Dustman App",
-        //             app_id: "DUST-APP-01",
-        //             shop_name: 'oasis', // Optional extra note
-        //         },
-        //         theme: {
-        //             color: "#3399cc",
-        //         },
-        //     };
-
-        //     const rzp = new Razorpay(options);
-        //     rzp.open();
-        // };
+        const rzp = new (window as any).Razorpay(options);
+        rzp.open();
+      } catch (error) {
+        console.error("Payment failed:", error);
+      }
+    };
 
     // Payment selection
-    const selectedPayment = ref('card');
-    const paymentMethods = ref([
+    const selectedPayment = ref<string>('card');
+    const paymentMethods = ref<PaymentMethod[]>([
       { id: 'card', name: 'Credit/Debit Card', icon: 'far fa-credit-card' },
       { id: 'paypal', name: 'PayPal', icon: 'fab fa-paypal' },
       { id: 'googlepay', name: 'Google Pay', icon: 'fab fa-google-pay' },
       { id: 'applepay', name: 'Apple Pay', icon: 'fab fa-apple-pay' }
     ]);
     
-    const paymentInfo = reactive({
+    const paymentInfo = reactive<PaymentInfo>({
       name: '',
       number: '',
       expiry: '',
       cvv: ''
     });
     
-    const newsletterEmail = ref('');
-    
+    const newsletterEmail = ref<string>('');
+
     // Computed properties
-    const totalPrice = computed(() => {
+    const totalPrice = computed<number>(() => {
       const servicesTotal = selectedServices.value.reduce((total, service) => total + service.price, 0);
       const homeServiceFee = selectedLocation.value === 'home' ? 15 : 0;
       return servicesTotal + homeServiceFee;
     });
     
     // Methods
-    const goToStep = (step) => {
+    const goToStep = (step: number): void => {
       currentStep.value = step;
     };
     
-    const confirmBooking = () => {
-      // In a real application, you would send the booking data to a server
+    const confirmBooking = (): void => {
       console.log('Booking confirmed:', {
         services: selectedServices.value,
         location: selectedLocation.value,
@@ -505,7 +484,7 @@ const makePayment = async () => {
       currentStep.value = 1;
     };
     
-    const subscribeNewsletter = () => {
+    const subscribeNewsletter = (): void => {
       alert(`Thank you for subscribing with ${newsletterEmail.value}!`);
       newsletterEmail.value = '';
     };
@@ -545,7 +524,7 @@ const makePayment = async () => {
       makePayment
     };
   }
-}
+});
 </script>
 
 <style scoped>
