@@ -21,7 +21,6 @@ export default defineComponent({
     components:{},
     setup(){
         const userStore = useUserStore();
-        
         const { getIsLogin } = storeToRefs(userStore);
         
         const login=()=>{

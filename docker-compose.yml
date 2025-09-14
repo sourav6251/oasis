@@ -10,6 +10,7 @@ services:
       - server
     environment:
       VITE_BASE_URL: ${FRONTEND_URL}
+      VITE_RAZORPAY_KEY: ${RAZORPAY_KEY} 
     restart: always
 
   # server:

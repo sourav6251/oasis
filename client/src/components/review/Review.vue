@@ -239,7 +239,6 @@ export default defineComponent({
   components: {},
   setup() {
     const reviewData = ref<Review[]>([...reviews]);
-    
     const form = ref({
       name: '',
       email: '',

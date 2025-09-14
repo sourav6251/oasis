@@ -40,11 +40,11 @@
           </div>
         </div>
         
-        <div class="booking-container">
+        <div class="booking-container ">
           <!-- Booking Form -->
-          <div class="booking-form">
+          <div class="booking-form "   >
             <!-- Step 1: Service Selection -->
-            <div v-if="currentStep === 1" v-motion :initial="{ opacity: 0, x: -50 }" :enter="{ opacity: 1, x: 0 }" :delay="200" :duration="500">
+            <div  v-if="currentStep === 1" v-motion :initial="{ opacity: 0, x: -50 }" :enter="{ opacity: 1, x: 0 }" :delay="200" :duration="500">
               <h3 class="form-title">Select Services</h3>
               
               <div class="service-categories">
@@ -555,7 +555,7 @@ const makePayment = async () => {
   --color-accent: #E6C8A4;
   --color-neutral: #F0F5F3;
   --color-dark: #2A363B;
-  --color-light: #FFFFFF;
+  --color-light: #cdeceb;
   --transition: all 0.3s ease;
 }
 
@@ -740,7 +740,8 @@ nav a:hover {
 
 /* Booking Form */
 .booking-form {
-  background: var(--color-light);
+  background: #d3e8ee6e;
+  /* var(--color-light); */
   border-radius: 15px;
   padding: 40px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
@@ -1068,7 +1069,7 @@ select.form-control {
 
 /* Booking Summary */
 .booking-summary {
-  background: var(--color-light);
+  background: #d3e8ee6e;
   border-radius: 15px;
   padding: 30px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);

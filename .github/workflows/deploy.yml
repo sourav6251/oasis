@@ -53,6 +53,7 @@ jobs:
         run: |
           docker build \
             --build-arg VITE_BASE_URL=${{ secrets.BACKEND_URL }} \
+            --build-arg VITE_RAZORPAY_KEY=${{ secrets.RAZORPAY_KEY }} \
             -t ${{ secrets.DOCKER_USERNAME }}/oasis-client:${{ env.TAG }} ./client
           docker push ${{ secrets.DOCKER_USERNAME }}/oasis-client:${{ env.TAG }}
 
