@@ -14,8 +14,18 @@
       </div>
     </section>
 
+
+    <div class="h-14 w-full  flex justify-end items-center pr-10">
+      <!-- <v-btn class="px-5">
+        <span @click="showBookingSection=!showBookingSection" class="cursor-pointer  Playfair Display ">Book Now</span>
+      </v-btn> -->
+      <v-btn color="primary px-5" depressed @click="showBookingSection=!showBookingSection">
+        <span class="mdi mdi-plus mr-2"></span>
+        New Booking
+      </v-btn>
+    </div>
     <!-- Booking Section -->
-    <section class="booking-section">
+    <section class="booking-section" v-if="showBookingSection">
       <div class="container">
         <h2 v-motion :initial="{ opacity: 0 }" :enter="{ opacity: 1 }" :delay="400" :duration="800" class="section-title">
           Schedule Your Visit
@@ -145,18 +155,18 @@
                       {{ day }}
                   </div>
   
-  <div v-for="(date, index) in calendarDates" 
-       :key="date.date ?? `placeholder-${index}`" 
-       v-motion 
-       :initial="{ opacity: 0, scale: 0.8 }" 
-       :enter="{ opacity: 1, scale: 1 }" 
-       :delay="Math.min(50 * (typeof date.day === 'number' ? date.day : 0), 1000)" 
-       :duration="300"
-       :class="['calendar-date', { 'selected': isDateSelected(date.date), 'disabled': !date.available }]"
-       @click="selectDate(date)">
-    {{ date.day }}
-  </div>
-</div>
+                  <div v-for="(date, index) in calendarDates" 
+                      :key="date.date ?? `placeholder-${index}`" 
+                      v-motion 
+                      :initial="{ opacity: 0, scale: 0.8 }" 
+                      :enter="{ opacity: 1, scale: 1 }" 
+                      :delay="Math.min(50 * (typeof date.day === 'number' ? date.day : 0), 1000)" 
+                      :duration="300"
+                      :class="['calendar-date', { 'selected': isDateSelected(date.date), 'disabled': !date.available }]"
+                      @click="selectDate(date)">
+                    {{ date.day }}
+                  </div>
+                </div>
                 </div>
               </div>
               
@@ -225,6 +235,7 @@
       </div>
     </section>
 
+    <BookingHistory/>
 
   </div>
 </template>
@@ -233,6 +244,8 @@
 import { useUserStore } from '@/stores/userStore';
 import { storeToRefs } from 'pinia';
 import { ref, computed, reactive, defineComponent } from 'vue';
+import BookingHistory from './BookingHistory.vue';
+
 
 // Define interfaces for type safety
 interface Service {
@@ -270,16 +283,19 @@ interface CalendarDate {
 
 export default defineComponent({
   name: 'App',
+  components:{BookingHistory},
   setup() {
     // Current step in the booking process
     const currentStep = ref<number>(1);
     const userStore = useUserStore();
+    const showBookingSection=ref(false);
     
     const { getIsLogin, getName, getUserEmail } = storeToRefs(userStore);
 
     // Service selection
     const categories = ref<string[]>(['All', 'Hair', 'Skincare', 'Nails', 'Makeup', 'Spa']);
     const selectedCategory = ref<string>('All');
+
     
     const services = ref<Service[]>([
       { id: 1, name: 'Haircut & Styling', category: 'Hair', price: 45, duration: 60 },
@@ -418,6 +434,9 @@ export default defineComponent({
 
         const rzp = new (window as any).Razorpay(options);
         rzp.open();
+        console.log("payment success");
+        
+        confirmBooking();
       } catch (error) {
         console.error("Payment failed:", error);
       }
@@ -521,7 +540,9 @@ export default defineComponent({
       goToStep,
       confirmBooking,
       subscribeNewsletter,
-      makePayment
+      makePayment,
+      showBookingSection,
+      BookingHistory,
     };
   }
 });
@@ -685,7 +706,8 @@ nav a:hover {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: var(--color-light);
+  /* background: var(--color-light); */
+  background: #F0F5F3;
   border: 2px solid #ddd;
   display: flex;
   align-items: center;
@@ -719,7 +741,7 @@ nav a:hover {
 
 /* Booking Form */
 .booking-form {
-  background: #d3e8ee6e;
+  background: #e3f4f86e;
   /* var(--color-light); */
   border-radius: 15px;
   padding: 40px;
