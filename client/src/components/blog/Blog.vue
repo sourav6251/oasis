@@ -7,7 +7,8 @@
         :initial="{ opacity: 0, z: 10 }"
         :enter="{ opacity: 1, z: 0 }"
         :duration="1200"
-        class="absolute inset-0 bg-[url('beauty.webp')] bg-cover bg-center bg-no-repeat blur-[2px] transition-transform duration-700 hover:scale-105"
+        
+        class="header-background absolute inset-0  bg-cover bg-center bg-no-repeat blur-[2px] transition-transform duration-700 hover:scale-105"
       ></div>
 
       <div
@@ -100,7 +101,7 @@
           <!-- 📨 Subscribe Section -->
           <div class="px-4 md:px-6" v-if="!isMobile">
             <div
-              class="py-10 rounded-2xl flex flex-col items-center justify-center text-center text-white p-8  bg-[url('suscribeback.webp')] bg-cover bg-center bg-no-repeat "
+              class="py-10 rounded-2xl flex flex-col items-center justify-center text-center text-white p-8  bg-[url('/suscribeback.webp')] bg-cover bg-center bg-no-repeat "
             >
               <!-- Heading -->
               <h2 class="poppins-bold text-2xl md:text-3xl mb-2">
@@ -188,7 +189,7 @@
                 <!-- 📨 Subscribe Section -->
           <div class="px-4 md:px-6" v-if="isMobile">
             <div
-              class=" bg-[url('suscribeback.webp')] bg-cover bg-center bg-no-repeat py-10 rounded-2xl flex flex-col items-center justify-center text-center text-white p-8 shadow-lg bg-[var(--color-accent)]"
+              class="suscribeback-background bg-cover bg-center bg-no-repeat py-10 rounded-2xl flex flex-col items-center justify-center text-center text-white p-8 shadow-lg bg-[var(--color-accent)]"
             >
               <!-- Heading -->
               <h2 class="poppins-bold text-2xl md:text-3xl mb-2">
@@ -277,5 +278,15 @@ export default defineComponent({
   border: none !important;
   box-shadow: none !important;
   outline: none !important;
+  bg-[url('/beauty.webp')]
+  bg-[url('suscribeback.webp')] 
 } */
+
+.header-background {
+  background-image: url('@/assets/beauty.webp'); /* ✅ Works with Vite bundler */
+}
+.suscribeback-background{
+background-image: url('@/assets/suscribeback.webp');
+}
+
 </style>

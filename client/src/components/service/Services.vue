@@ -9,7 +9,7 @@
         <p v-motion :initial="{ opacity: 0, y: 50 }" :enter="{ opacity: 1, y: 0 }" :duration="1000" :delay="200">
           Indulge in our wide range of beauty treatments designed to enhance your natural beauty and boost your confidence.
         </p>
-        <div v-motion :initial="{ opacity: 0, y: 50 }" :enter="{ opacity: 1, y: 0 }" :duration="1000" :delay="400">
+        <div class="hero-buttons" v-motion :initial="{ opacity: 0, y: 50 }" :enter="{ opacity: 1, y: 0 }" :duration="1000" :delay="400">
           <button class="hero-btn" @click="scrollToServices">View Services</button>
           <button class="hero-btn primary" @click="bookNow">Book Appointment</button>
         </div>
@@ -18,22 +18,31 @@
 
     <!-- Main Content -->
     <div class="container">
-      <!-- Category Tabs -->
-      <div class="category-tabs">
-        <button
-          v-for="(category, index) in categories"
-          :key="category"
-          class="tab-btn"
-          :class="{ active: activeCategory === category }"
-          @click="setActiveCategory(category)"
-          v-motion :initial="{ opacity: 0, x: -20 }" :enter="{ opacity: 1, x: 0 }" :delay="index * 100"
-        >
-          {{ category }}
-        </button>
+      <!-- Category Tabs with Sliding Indicator -->
+      <div class="category-tabs-container">
+        <div class="category-tabs">
+          <button
+            v-for="(category, index) in categories"
+            :key="category"
+            class="tab-btn"
+            :class="{ active: activeCategory === category }"
+            @click="setActiveCategory(category, index)"
+            v-motion :initial="{ opacity: 0, x: -20 }" :enter="{ opacity: 1, x: 0 }" :delay="index * 100"
+            :ref="el => setTabButtonRef(el, index)"
+          >
+            {{ category }}
+          </button>
+          <!-- Sliding Indicator -->
+          <div 
+            class="tab-slider" 
+            :style="tabSliderStyle"
+          ></div>
+        </div>
       </div>
 
       <!-- Loading State -->
       <div v-if="loading" class="loading-state">
+        <div class="spinner"></div>
         <p>Loading services...</p>
       </div>
 
@@ -43,10 +52,11 @@
           v-for="(service, index) in currentServices"
           :key="service.id"
           class="service-card"
-          v-motion :initial="{ opacity: 0, y: 50 }" :enter="{ opacity: 1, y: 0 }" :delay="index * 100"
+          v-motion-slide-visible-once-bottom
+          :delay="index * 20"
         >
           <div class="service-img">
-            <img :src="service.img" :alt="service.name" />
+            <img :src="service.img" :alt="service.name" loading="lazy" />
             <div class="service-badge">{{ service.category }}</div>
           </div>
           <div class="service-content">
@@ -68,19 +78,20 @@
 
       <!-- No Services Found -->
       <div v-else class="no-services">
+        <i class="fas fa-search"></i>
         <p>No services found for {{ activeCategory }}.</p>
+        <button class="hero-btn" @click="setActiveCategory('All', 0)">View All Services</button>
       </div>
     </div>
 
-    <!-- Rest of your template remains the same -->
     <!-- Packages Section -->
     <section class="packages-section">
       <div class="container packages-container">
         <div class="section-title">
-          <h2 v-motion :initial="{ opacity: 0, y: -30 }" :enter="{ opacity: 1, y: 0 }" :duration="800">
+          <h2 v-motion-slide-visible-once-bottom :delay="100">
             Special Packages
           </h2>
-          <p v-motion :initial="{ opacity: 0, y: 30 }" :enter="{ opacity: 1, y: 0 }" :duration="800" :delay="200">
+          <p v-motion-slide-visible-once-bottom :delay="200">
             Save more with our bundled services designed to give you the ultimate beauty experience.
           </p>
         </div>
@@ -91,16 +102,19 @@
             :key="packageItem.id"
             class="package-card"
             :class="{ popular: packageItem.popular }"
-            v-motion :initial="{ opacity: 0, scale: 0.8 }" :enter="{ opacity: 1, scale: 1 }" :delay="index * 150"
+            v-motion-pop-visible-once
+            :delay="300 + index * 100"
           >
             <div v-if="packageItem.popular" class="popular-tag">MOST POPULAR</div>
             <h3>{{ packageItem.name }}</h3>
             <div class="package-price">
               {{ packageItem.price }}
-              <span v-if="packageItem.originalPrice">{{ packageItem.originalPrice }}</span>
+              <span v-if="packageItem.originalPrice" class="original-price">{{ packageItem.originalPrice }}</span>
             </div>
             <ul class="package-features">
-              <li v-for="feature in packageItem.features" :key="feature">{{ feature }}</li>
+              <li v-for="feature in packageItem.features" :key="feature">
+                <i class="fas fa-check"></i> {{ feature }}
+              </li>
             </ul>
             <button class="package-btn" @click="bookPackage(packageItem)">Book Package</button>
           </div>
@@ -111,73 +125,27 @@
     <!-- CTA Section -->
     <section class="cta-section">
       <div class="container">
-        <h2 v-motion :initial="{ opacity: 0, y: -30 }" :enter="{ opacity: 1, y: 0 }" :duration="800">
+        <h2 v-motion-slide-visible-once-bottom :delay="100">
           Ready for a Transformation?
         </h2>
-        <p v-motion :initial="{ opacity: 0, y: 30 }" :enter="{ opacity: 1, y: 0 }" :duration="800" :delay="200">
+        <p v-motion-slide-visible-once-bottom :delay="200">
           Book your appointment today and experience the Glamour Salon difference. Our expert team is ready to help you look and feel your best.
         </p>
         <button 
-          class="cta-btn" 
+          class="cta-btn hover:backdrop-blur-2xl" 
           @click="bookNow"
-          v-motion :initial="{ opacity: 0, y: 30 }" :enter="{ opacity: 1, y: 0 }" :duration="800" :delay="400"
+          v-motion-slide-visible-once-bottom
+          :delay="300"
         >
           Book Your Appointment
         </button>
       </div>
     </section>
-
-    <!-- Footer -->
-    <footer>
-      <div class="container footer-content">
-        <div class="footer-column">
-          <h3>Glamour Salon</h3>
-          <p>
-            Your premier destination for beauty and wellness. We're dedicated to enhancing your natural beauty and providing an exceptional experience.
-          </p>
-          <div class="social-links">
-            <a href="#"><i class="fab fa-facebook-f"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-            <a href="#"><i class="fab fa-pinterest"></i></a>
-          </div>
-        </div>
-        <div class="footer-column">
-          <h3>Quick Links</h3>
-          <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="about.html">About Us</a></li>
-            <li><a href="services.html">Services</a></li>
-            <li><a href="pricing.html">Pricing</a></li>
-            <li><a href="gallery.html">Gallery</a></li>
-            <li><a href="contact.html">Contact</a></li>
-          </ul>
-        </div>
-        <div class="footer-column">
-          <h3>Services</h3>
-          <ul>
-            <li v-for="category in categories" :key="category">
-              <a href="#">{{ category }}</a>
-            </li>
-          </ul>
-        </div>
-        <div class="footer-column">
-          <h3>Contact Info</h3>
-          <p><i class="fas fa-map-marker-alt"></i> 123 Beauty Street, City, State 12345</p>
-          <p><i class="fas fa-phone"></i> (123) 456-7890</p>
-          <p><i class="fas fa-envelope"></i> info@glamoursalon.com</p>
-          <p><i class="fas fa-clock"></i> Mon-Sat: 9:00 AM - 8:00 PM</p>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>&copy; 2023 Glamour Salon. All Rights Reserved. | Designed with <i class="fas fa-heart"></i></p>
-      </div>
-    </footer>
   </div>
 </template>
 
 <script lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, nextTick } from 'vue';
 import type { Ref } from 'vue';
 
 // Define TypeScript interfaces
@@ -203,9 +171,12 @@ interface ServicePackage {
 
 export default {
   setup() {
-    const activeCategory: Ref<string> = ref('Hair');
+    const activeCategory: Ref<string> = ref('All');
     const loading: Ref<boolean> = ref(true);
-    const categories: Ref<string[]> = ref(['Hair', 'Skincare', 'Nails', 'Makeup', 'Spa']);
+    const categories: Ref<string[]> = ref(['All', 'Hair', 'Skincare', 'Nails', 'Makeup', 'Spa']);
+    const tabButtons = ref<(HTMLElement | null)[]>([]);
+    const tabSliderPosition = ref<number>(0);
+    const tabSliderWidth = ref<number>(0);
 
     // Initialize services as an empty array first
     const services: Ref<Service[]> = ref([]);
@@ -214,7 +185,18 @@ export default {
 
     // Computed property to get current category services
     const currentServices = computed(() => {
+      if (activeCategory.value === 'All') {
+        return services.value;
+      }
       return services.value.filter(service => service.category === activeCategory.value);
+    });
+
+    // Computed property for tab slider style
+    const tabSliderStyle = computed(() => {
+      return {
+        transform: `translateX(${tabSliderPosition.value}px)`,
+        width: `${tabSliderWidth.value}px`
+      };
     });
 
     // Load services data
@@ -385,8 +367,39 @@ export default {
       ];
     };
 
-    const setActiveCategory = (category: string): void => {
+    // Set tab button ref with proper typing
+    const setTabButtonRef = (el: any, index: number) => {
+      if (el instanceof HTMLElement) {
+        tabButtons.value[index] = el;
+      } else if (el && typeof el === 'object' && '$el' in el) {
+        tabButtons.value[index] = el.$el as HTMLElement;
+      } else {
+        tabButtons.value[index] = null;
+      }
+    };
+
+    // Update tab slider position - FIXED: Return Promise<void>
+    const updateTabSliderPosition = async (index: number): Promise<void> => {
+      await nextTick();
+      
+      const button = tabButtons.value[index];
+      if (button) {
+        const container = button.parentElement;
+        
+        if (container) {
+          const buttonRect = button.getBoundingClientRect();
+          const containerRect = container.getBoundingClientRect();
+          
+          tabSliderPosition.value = buttonRect.left - containerRect.left;
+          tabSliderWidth.value = buttonRect.width;
+        }
+      }
+    };
+
+    // FIXED: Return Promise<void>
+    const setActiveCategory = async (category: string, index: number): Promise<void> => {
       activeCategory.value = category;
+      await updateTabSliderPosition(index);
     };
 
     const bookNow = (): void => {
@@ -415,6 +428,11 @@ export default {
     onMounted(() => {
       loadServices();
       loadPackages();
+      
+      // Initialize slider position
+      setTimeout(() => {
+        updateTabSliderPosition(0);
+      }, 100);
     });
 
     return {
@@ -424,6 +442,8 @@ export default {
       currentServices,
       packages,
       loading,
+      tabSliderStyle,
+      setTabButtonRef,
       setActiveCategory,
       bookNow,
       bookService,
@@ -434,28 +454,9 @@ export default {
 };
 </script>
 
-
-
 <style scoped>
-.loading-state {
-  text-align: center;
-  padding: 40px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  margin: 20px 0;
-  color: #666;
-}
+/* Enhanced CSS with your color palette and mobile responsiveness */
 
-.no-services {
-  text-align: center;
-  padding: 40px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  margin: 20px 0;
-  color: #666;
-}
-
-/* Rest of your CSS remains exactly the same */
 :root {
   --color-primary: #9DC9C7;
   --color-secondary: #FFD1C8;
@@ -464,14 +465,15 @@ export default {
   --color-dark: #2A363B;
   --color-text: #2A363B;
   --color-light: #FFFFFF;
+  --color-gold: #D4AF37;
+  --color-silver: #C0C0C0;
   --color-border: #E0E0E0;
-  --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.15);
+  --shadow: 0 4px 6px rgba(42, 54, 59, 0.1);
+  --shadow-hover: 0 8px 15px rgba(42, 54, 59, 0.15);
   --radius: 8px;
   --transition: all 0.3s ease;
 }
 
-/* ... rest of your existing CSS ... */
 /* Basic Reset & Font Styles */
 * {
   margin: 0;
@@ -493,95 +495,193 @@ body {
   padding: 0 15px;
 }
 
-/* Services Hero */
+.loading-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--color-light);
+  border-radius: var(--radius);
+  margin: 20px 0;
+  color: var(--color-dark);
+  box-shadow: var(--shadow);
+}
+
+.spinner {
+  border: 4px solid var(--color-neutral);
+  border-left-color: var(--color-primary);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.no-services {
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--color-light);
+  border-radius: var(--radius);
+  margin: 20px 0;
+  color: var(--color-dark);
+  box-shadow: var(--shadow);
+}
+
+.no-services i {
+  font-size: 3rem;
+  color: var(--color-primary);
+  margin-bottom: 20px;
+  display: block;
+}
+
+.no-services p {
+  margin-bottom: 20px;
+  font-size: 1.1rem;
+}
+
+/* Services Hero - Improved Mobile Responsiveness */
 .services-hero {
-  background: linear-gradient(rgba(42, 54, 59, 0.8), rgba(42, 54, 59, 0.8)),
+  background: linear-gradient(rgba(42, 54, 59, 0.5), rgba(42, 54, 59, 0.9)),
     url('https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
   background-size: cover;
   background-position: center;
-  color: var(--color-light);
+  color: var(--color-gold); /* Changed from --color-light to gold */
   text-align: center;
-  padding: 120px 0;
+  padding: 100px 0 80px;
   margin-bottom: 60px;
 }
 
 .services-hero h1 {
-  font-size: 3.5rem;
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
   margin-bottom: 20px;
-  color: var(--color-light);
+  color: var(--color-gold); /* Changed from --color-light to gold */
+  line-height: 1.2;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .services-hero p {
-  font-size: 1.2rem;
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
   max-width: 700px;
   margin: 0 auto 30px;
-  opacity: 0.9;
+  opacity: 0.95;
+  padding: 0 10px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  color: var(--color-silver); /* Changed from inherited gold to silver */
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .hero-btn {
   background: transparent;
-  border: 2px solid var(--color-light);
-  color: var(--color-light);
-  padding: 12px 30px;
+  border: 2px solid var(--color-gold); /* Changed from --color-light to gold */
+  color: var(--color-gold); /* Changed from --color-light to gold */
+  padding: 12px 25px;
   border-radius: 30px;
   font-weight: 600;
   cursor: pointer;
   transition: var(--transition);
-  margin: 0 10px;
+  flex: 0 1 auto;
+  min-width: 160px;
+  backdrop-filter: blur(10px);
 }
 
 .hero-btn.primary {
+  background: var(--color-gold); /* Changed from --color-accent to gold */
+  border-color: var(--color-gold); /* Changed from --color-accent to gold */
+  color: var(--color-dark);
+}
+
+.hero-btn:hover {
+  background: var(--color-gold); /* Changed from --color-light to gold */
+  color: var(--color-dark);
+  transform: translateY(-2px);
+}
+
+.hero-btn.primary:hover {
   background: var(--color-accent);
   border-color: var(--color-accent);
   color: var(--color-dark);
 }
 
-.hero-btn:hover {
-  background: var(--color-light);
-  color: var(--color-dark);
+/* Category Tabs with Sliding Indicator - CENTERED */
+.category-tabs-container {
+  overflow-x: auto;
+  margin-bottom: 40px;
+  padding-bottom: 10px;
+  scrollbar-width: none;
+  display: flex;
+  justify-content: center;
 }
 
-.hero-btn.primary:hover {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  color: var(--color-dark);
+.category-tabs-container::-webkit-scrollbar {
+  display: none;
 }
 
-/* Category Tabs */
 .category-tabs {
   display: flex;
   justify-content: center;
-  margin-bottom: 40px;
-  flex-wrap: wrap;
+  min-width: max-content;
   gap: 10px;
+  padding: 0 5px;
+  position: relative;
+  background: var(--color-light);
+  padding: 10px;
+  border-radius: 50px;
+  box-shadow: var(--shadow);
+  width: fit-content;
+  margin: 0 auto;
 }
 
 .tab-btn {
-  background: var(--color-light);
-  border: none;
-  padding: 12px 25px;
+  background: transparent;
+  border: 2px solid transparent;
+  padding: 12px 20px;
   border-radius: 30px;
   font-weight: 500;
   cursor: pointer;
   transition: var(--transition);
-  box-shadow: var(--shadow);
+  box-shadow: none;
   color: var(--color-dark);
+  white-space: nowrap;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
 }
 
 .tab-btn.active {
-  background: var(--color-primary);
   color: var(--color-dark);
+  font-weight: 600;
 }
 
 .tab-btn:hover:not(.active) {
-  background: var(--color-secondary);
+  color: var(--color-primary);
 }
 
-/* Services Grid */
+/* Tab Sliding Indicator */
+.tab-slider {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  height: calc(100% - 20px);
+  background: var(--color-primary);
+  border-radius: 30px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+  box-shadow: 0 2px 8px rgba(157, 201, 199, 0.3);
+}
+
+/* Services Grid - Improved for Mobile */
 .services-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
   margin-bottom: 80px;
 }
 
@@ -592,6 +692,9 @@ body {
   box-shadow: var(--shadow);
   transition: var(--transition);
   position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-neutral);
 }
 
 .service-card:hover {
@@ -603,6 +706,7 @@ body {
   height: 220px;
   overflow: hidden;
   position: relative;
+  flex-shrink: 0;
 }
 
 .service-img img {
@@ -622,14 +726,18 @@ body {
   right: 15px;
   background: var(--color-accent);
   color: var(--color-dark);
-  padding: 5px 12px;
+  padding: 6px 14px;
   border-radius: 20px;
   font-size: 0.8rem;
   font-weight: 600;
+  box-shadow: var(--shadow);
 }
 
 .service-content {
   padding: 25px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .service-content h3 {
@@ -644,12 +752,16 @@ body {
   margin-bottom: 15px;
   color: var(--color-primary);
   font-weight: 600;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .service-content p {
   color: var(--color-text);
   margin-bottom: 20px;
   font-size: 0.95rem;
+  flex-grow: 1;
+  opacity: 0.9;
 }
 
 .service-features {
@@ -658,31 +770,36 @@ body {
 }
 
 .service-features li {
-  padding: 5px 0;
+  padding: 6px 0;
   display: flex;
   align-items: center;
+  font-size: 0.9rem;
 }
 
 .service-features li i {
   color: var(--color-primary);
   margin-right: 10px;
+  flex-shrink: 0;
 }
 
 .service-btn {
   background: var(--color-secondary);
   color: var(--color-dark);
   border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
+  padding: 12px 20px;
+  border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
   transition: var(--transition);
   width: 100%;
+  margin-top: auto;
+  border: 2px solid transparent;
 }
 
 .service-btn:hover {
   background: var(--color-primary);
-  color: var(--color-dark);
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
 }
 
 /* Packages Section */
@@ -720,6 +837,7 @@ body {
   color: var(--color-dark);
   position: relative;
   display: inline-block;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
 }
 
 .section-title h2:after {
@@ -737,11 +855,14 @@ body {
   max-width: 600px;
   margin: 0 auto;
   color: var(--color-text);
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
+  padding: 0 15px;
+  opacity: 0.9;
 }
 
 .packages-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 30px;
 }
 
@@ -751,10 +872,12 @@ body {
   overflow: hidden;
   box-shadow: var(--shadow);
   text-align: center;
-  padding: 40px 30px;
+  padding: 40px 25px;
   position: relative;
   transition: var(--transition);
   border: 2px solid transparent;
+  display: flex;
+  flex-direction: column;
 }
 
 .package-card:hover {
@@ -764,7 +887,8 @@ body {
 
 .package-card.popular {
   border-color: var(--color-accent);
-  transform: scale(1.05);
+  transform: scale(1.02);
+  box-shadow: 0 10px 25px rgba(230, 200, 164, 0.3);
 }
 
 .popular-tag {
@@ -774,10 +898,12 @@ body {
   transform: translateX(-50%);
   background: var(--color-accent);
   color: var(--color-dark);
-  padding: 8px 25px;
+  padding: 8px 20px;
   border-radius: 20px;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 600;
+  white-space: nowrap;
+  box-shadow: var(--shadow);
 }
 
 .package-card h3 {
@@ -787,32 +913,43 @@ body {
 }
 
 .package-price {
-  font-size: 2.5rem;
+  font-size: 2.2rem;
   font-weight: 700;
   color: var(--color-primary);
   margin-bottom: 20px;
 }
 
-.package-price span {
+.original-price {
   font-size: 1rem;
   color: var(--color-text);
   text-decoration: line-through;
   margin-left: 10px;
+  display: inline-block;
+  opacity: 0.7;
 }
 
 .package-features {
   list-style: none;
   margin-bottom: 30px;
+  flex-grow: 1;
 }
 
 .package-features li {
   padding: 10px 0;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-neutral);
   color: var(--color-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
 .package-features li:last-child {
   border-bottom: none;
+}
+
+.package-features li i {
+  color: var(--color-primary);
 }
 
 .package-btn {
@@ -825,10 +962,13 @@ body {
   cursor: pointer;
   transition: var(--transition);
   width: 100%;
+  margin-top: auto;
+  border: 2px solid transparent;
 }
 
 .package-btn:hover {
   background: var(--color-accent);
+  border-color: var(--color-accent);
   transform: translateY(-3px);
 }
 
@@ -840,6 +980,25 @@ body {
   padding: 80px 0;
   margin-bottom: 80px;
   border-radius: var(--radius);
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-section:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80') center/cover;
+  opacity: 0.1;
+  z-index: 0;
+}
+
+.cta-section .container {
+  position: relative;
+  z-index: 1;
 }
 
 .cta-section h2 {
@@ -847,6 +1006,7 @@ body {
   margin-bottom: 20px;
   position: relative;
   display: inline-block;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
 }
 
 .cta-section h2:after {
@@ -865,117 +1025,41 @@ body {
   margin: 0 auto 30px;
   color: var(--color-dark);
   opacity: 0.9;
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
+  padding: 0 15px;
 }
 
 .cta-btn {
-  background: var(--color-dark);
-  color: var(--color-light);
+  background: #daccb1;
+  color: var(--color-dark);
   border: none;
   padding: 12px 30px;
   border-radius: 30px;
   font-weight: 600;
   cursor: pointer;
   transition: var(--transition);
+  min-width: 200px;
+  /* border: 2px solid var(--color-secondary); */
 }
 
 .cta-btn:hover {
-  background: var(--color-secondary);
-  color: var(--color-dark);
+  background: #daccb1ab;
+  color: var(--color-light);
+  /* border-color: var(--color-secondary); */
   transform: translateY(-3px);
 }
 
-/* Footer */
-footer {
-  background-color: var(--color-dark);
-  color: var(--color-light);
-  padding: 60px 0 30px;
+/* Enhanced Responsive Design */
+@media (max-width: 1200px) {
+  .container {
+    width: 95%;
+  }
 }
 
-.footer-content {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 40px;
-  margin-bottom: 40px;
-}
-
-.footer-column h3 {
-  font-size: 1.3rem;
-  margin-bottom: 20px;
-  position: relative;
-  padding-bottom: 10px;
-  color: var(--color-light);
-}
-
-.footer-column h3:after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 50px;
-  height: 2px;
-  background: var(--color-primary);
-}
-
-.footer-column p {
-  margin-bottom: 15px;
-  color: var(--color-neutral);
-}
-
-.footer-column ul {
-  list-style: none;
-}
-
-.footer-column ul li {
-  margin-bottom: 10px;
-}
-
-.footer-column ul li a {
-  color: var(--color-neutral);
-  text-decoration: none;
-  transition: var(--transition);
-}
-
-.footer-column ul li a:hover {
-  color: var(--color-primary);
-}
-
-.social-links {
-  display: flex;
-  gap: 15px;
-  margin-top: 20px;
-}
-
-.social-links a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  background: rgba(157, 201, 199, 0.1);
-  border-radius: 50%;
-  color: var(--color-light);
-  text-decoration: none;
-  transition: var(--transition);
-}
-
-.social-links a:hover {
-  background: var(--color-primary);
-  color: var(--color-dark);
-  transform: translateY(-3px);
-}
-
-.footer-bottom {
-  text-align: center;
-  padding-top: 30px;
-  border-top: 1px solid rgba(157, 201, 199, 0.1);
-  color: var(--color-neutral);
-  font-size: 0.9rem;
-}
-
-/* Responsive Design */
 @media (max-width: 992px) {
   .services-grid {
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
   }
   
   .package-card.popular {
@@ -985,45 +1069,58 @@ footer {
   .package-card.popular:hover {
     transform: translateY(-5px);
   }
+  
+  .packages-grid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  }
 }
 
 @media (max-width: 768px) {
+  .services-hero {
+    padding: 80px 0 60px;
+  }
+  
   .services-hero h1 {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
   }
   
   .services-hero p {
     font-size: 1rem;
   }
   
+  .hero-buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .hero-btn {
+    width: 200px;
+  }
+  
   .services-grid {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
   
   .category-tabs {
     flex-direction: column;
-    align-items: center;
+    border-radius: var(--radius);
+    padding: 15px;
   }
   
   .tab-btn {
-    width: 200px;
-    margin-bottom: 10px;
+    width: 100%;
+    justify-content: center;
   }
   
-  .hero-btn {
-    display: block;
-    width: 200px;
-    margin: 10px auto;
-  }
-}
-
-@media (max-width: 480px) {
-  .services-hero {
-    padding: 80px 0;
+  .tab-slider {
+    display: none;
   }
   
-  .services-hero h1 {
-    font-size: 2rem;
+  .tab-btn.active {
+    background: var(--color-primary);
+    color: var(--color-dark);
   }
   
   .package-card {
@@ -1032,6 +1129,98 @@ footer {
   
   .package-price {
     font-size: 2rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .services-hero {
+    padding: 60px 0 40px;
+  }
+  
+  .services-hero h1 {
+    font-size: 1.8rem;
+  }
+  
+  .service-content {
+    padding: 20px;
+  }
+  
+  .service-content h3 {
+    font-size: 1.2rem;
+  }
+  
+  .service-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+  
+  .packages-section,
+  .cta-section {
+    padding: 60px 0;
+  }
+  
+  .package-card {
+    padding: 25px 15px;
+  }
+  
+  .package-price {
+    font-size: 1.8rem;
+  }
+  
+  .cta-btn {
+    width: 100%;
+    max-width: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .services-hero {
+    padding: 50px 0 30px;
+  }
+  
+  .services-hero h1 {
+    font-size: 1.6rem;
+  }
+  
+  .service-img {
+    height: 180px;
+  }
+  
+  .package-card {
+    padding: 20px 15px;
+  }
+  
+  .package-price {
+    font-size: 1.6rem;
+  }
+}
+
+/* Touch device improvements */
+@media (hover: none) {
+  .service-card:hover {
+    transform: none;
+  }
+  
+  .service-card:active {
+    transform: scale(0.98);
+  }
+  
+  .tab-btn:active,
+  .hero-btn:active,
+  .service-btn:active,
+  .package-btn:active,
+  .cta-btn:active {
+    transform: scale(0.95);
+  }
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
 </style>

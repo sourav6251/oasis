@@ -5,7 +5,7 @@
     <div class="flex items-center gap-5">
       <v-container>
         <v-menu
-          open-on-hover
+          
           offset-y
         >
           <!-- Text activator -->
@@ -52,9 +52,9 @@ export default defineComponent({
         const { getIsLogin } = storeToRefs(userStore);
         const links= [
           { name: "Home", link: "/" },
-          { name: "Services", link: "/service" },
+          { name: "* Services", link: "/service" },
           { name: "Packages", link: "/packages" },
-          { name: "Gallery", link: "/gallery" },
+          { name: "* Gallery", link: "/gallery" },
           { name: "* Booking", link: "/booking" },
           { name: "* Contact", link: "/contact" },
           { name: "About Us", link: "/about" },
