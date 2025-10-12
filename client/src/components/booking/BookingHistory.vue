@@ -283,6 +283,7 @@
 
 
 <script lang="ts">
+import { BookingHistory } from '@/sampleData/BookingData';
 import type { Booking } from '@/types/Booking';
 import { defineComponent, ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
@@ -303,65 +304,7 @@ export default defineComponent({
     const statusFilters = ['All', 'Upcoming', 'Completed', 'Cancelled', 'No-show'];
     
     // Sample booking data
-    const sampleBookings: Booking[] = [
-      {
-        id: '1',
-        serviceName: 'Haircut & Styling',
-        date: '2023-10-15',
-        time: '10:00 AM',
-        location: 'Downtown Salon',
-        address: '123 Main Street, New York, NY',
-        stylist: 'Emma Wilson',
-        amount: 45,
-        status: 'Completed',
-        notes: 'Requested layers and thinning'
-      },
-      {
-        id: '2',
-        serviceName: 'Hair Coloring',
-        date: '2023-10-28',
-        time: '2:30 PM',
-        location: 'Home Service',
-        address: '456 Park Ave, Apartment 3B, New York, NY',
-        stylist: 'James Miller',
-        amount: 100,
-        status: 'Upcoming'
-      },
-      {
-        id: '3',
-        serviceName: 'Facial Treatment',
-        date: '2023-09-20',
-        time: '11:15 AM',
-        location: 'Beauty Spa',
-        address: '789 Beauty Lane, New York, NY',
-        stylist: 'Sophia Chen',
-        amount: 75,
-        status: 'Completed'
-      },
-      {
-        id: '4',
-        serviceName: 'Manicure & Pedicure',
-        date: '2023-09-05',
-        time: '4:00 PM',
-        location: 'Nail Studio',
-        address: '321 Nail Street, New York, NY',
-        stylist: 'Olivia Martinez',
-        amount: 65,
-        status: 'Cancelled',
-        notes: 'Rescheduled due to illness'
-      },
-      {
-        id: '5',
-        serviceName: 'Massage Therapy',
-        date: '2023-11-10',
-        time: '3:00 PM',
-        location: 'Wellness Center',
-        address: '555 Relaxation Road, New York, NY',
-        stylist: 'Michael Johnson',
-        amount: 90,
-        status: 'Upcoming'
-      }
-    ];
+    const sampleBookings: Booking[] = BookingHistory;
     
     onMounted(() => {
       // Simulate API call to fetch bookings

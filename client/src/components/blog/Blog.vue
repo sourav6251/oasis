@@ -122,9 +122,11 @@
               >
                <v-text-field
                 variant="outlined"
+                single-line
+
                 placeholder="Enter your email"
                 hide-details
-                class="flex-1 rounded-full w-full bg-white  outline-white outline-0 px-4"
+                class="flex-1 rounded-full w-full bg-white  outline-white outline-0 focus:outline-amber-300 px-4"
                 density="comfortable"
               ></v-text-field>
 

@@ -62,7 +62,7 @@ export default defineComponent({
           { name: "* Reviews", link: "/review" },
           { name: "Offers", link: "/offers" },
           { name: "FAQ", link: "/faq" },
-          { name: "Policies", link: "/policies" }
+          { name: "* Policies", link: "/policies" }
         ]
 
         
