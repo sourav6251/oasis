@@ -234,19 +234,11 @@
 
 <script lang="ts">
 import { blogData } from '@/sampleData/BlogData'
+import type { BlogData } from '@/types/Blog'
 import { useDevice } from '@/utils/useDevice'
 import { MotionDirective as motion } from '@vueuse/motion'
 import { Calendar, User, Plus } from 'lucide-vue-next'
 import { defineComponent, onBeforeMount, ref } from 'vue'
-
-interface BlogData {
-  id: number
-  image: string
-  writer: string
-  publishDate: string
-  title: string
-  content: string
-}
 
 export default defineComponent({
   name: 'Blog',

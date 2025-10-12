@@ -1,11 +1,4 @@
-export interface BlogData {
-    id: number;
-    image: string;
-    writer: string;
-    publishDate: string;
-    title: string;
-    content: string;
-}
+import type { BlogData } from "@/types/Blog";
 
 export const blogData: BlogData[] = [
     {

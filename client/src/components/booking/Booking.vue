@@ -245,41 +245,9 @@ import { useUserStore } from '@/stores/userStore';
 import { storeToRefs } from 'pinia';
 import { ref, computed, reactive, defineComponent } from 'vue';
 import BookingHistory from './BookingHistory.vue';
+import type { BookingInfo, CalendarDate, PaymentInfo, PaymentMethod, Service } from '@/types/Booking';
 
 
-// Define interfaces for type safety
-interface Service {
-  id: number;
-  name: string;
-  category: string;
-  price: number;
-  duration: number;
-}
-
-interface BookingInfo {
-  address: string;
-  apartment: string;
-  instructions: string;
-}
-
-interface PaymentInfo {
-  name: string;
-  number: string;
-  expiry: string;
-  cvv: string;
-}
-
-interface PaymentMethod {
-  id: string;
-  name: string;
-  icon: string;
-}
-
-interface CalendarDate {
-  day: number | string;
-  date: string | null;
-  available: boolean;
-}
 
 export default defineComponent({
   name: 'App',

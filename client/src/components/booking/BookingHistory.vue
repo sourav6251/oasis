@@ -283,21 +283,9 @@
 
 
 <script lang="ts">
+import type { Booking } from '@/types/Booking';
 import { defineComponent, ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-
-interface Booking {
-  id: string;
-  serviceName: string;
-  date: string;
-  time: string;
-  location: string;
-  address?: string;
-  stylist: string;
-  amount: number;
-  status: 'Upcoming' | 'Completed' | 'Cancelled' | 'No-show';
-  notes?: string;
-}
 
 export default defineComponent({
   name: 'BookingHistory',

@@ -1,0 +1,75 @@
+# ==========================
+# HTTP → HTTPS Redirect for Vue Client
+# ==========================
+server {
+    listen 80;
+    listen [::]:80;
+    server_name client.sourav.fun;
+
+    return 301 https://$host$request_uri;
+}
+
+# ==========================
+# HTTPS Server for Vue Client (SPA)
+# ==========================
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name client.sourav.fun;
+
+    ssl_certificate /etc/letsencrypt/live/client.sourav.fun/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/client.sourav.fun/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    location / {
+        proxy_pass http://127.0.0.1:8080;   # Vue container
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+        # SPA routing fallback
+        proxy_intercept_errors on;
+        error_page 404 /index.html;
+    }
+}
+
+# ==========================
+# HTTP → HTTPS Redirect for Backend API
+# ==========================
+server {
+    listen 80;
+    listen [::]:80;
+    server_name apioasis.sourav.fun;
+
+    return 301 https://$host$request_uri;
+}
+
+# ==========================
+# HTTPS Server for Backend API
+# ==========================
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name apioasis.sourav.fun;
+
+    ssl_certificate /etc/letsencrypt/live/client.sourav.fun/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/client.sourav.fun/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    location / {
+        proxy_pass http://127.0.0.1:5000;   # Backend container
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}

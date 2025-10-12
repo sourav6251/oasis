@@ -10,8 +10,8 @@
           Indulge in our wide range of beauty treatments designed to enhance your natural beauty and boost your confidence.
         </p>
         <div class="hero-buttons" v-motion :initial="{ opacity: 0, y: 50 }" :enter="{ opacity: 1, y: 0 }" :duration="1000" :delay="400">
-          <button class="hero-btn" @click="scrollToServices">View Services</button>
-          <button class="hero-btn primary" @click="bookNow">Book Appointment</button>
+          <button class="hero-btn hover:bg-[#9dc9c7bd]!" @click="scrollToServices">View Services</button>
+          <button class="hero-btn hover:bg-[#e6c8a4a2]!" @click="bookNow">Book Appointment</button>
         </div>
       </div>
     </section>
@@ -145,29 +145,11 @@
 </template>
 
 <script lang="ts">
+import { ServiceData, ServicePackageData } from '@/sampleData/ServiceData';
+import type { Service, ServicePackage } from '@/types/Services';
 import { ref, computed, onMounted, nextTick } from 'vue';
 import type { Ref } from 'vue';
 
-// Define TypeScript interfaces
-interface Service {
-  id: number;
-  name: string;
-  price: string;
-  duration: string;
-  img: string;
-  description: string;
-  features: string[];
-  category: string;
-}
-
-interface ServicePackage {
-  id: number;
-  name: string;
-  price: string;
-  originalPrice?: string;
-  features: string[];
-  popular: boolean;
-}
 
 export default {
   setup() {
@@ -203,168 +185,14 @@ export default {
     const loadServices = () => {
       // Simulate API call with setTimeout
       setTimeout(() => {
-        services.value = [
-          {
-            id: 1,
-            name: 'Haircut & Styling',
-            price: '₹800',
-            duration: '45 min',
-            img: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-            description: 'Expert haircut tailored to your face shape and personal style, including consultation and styling.',
-            features: ['Professional consultation', 'Precision cutting', 'Blow-dry styling', 'Product advice'],
-            category: 'Hair'
-          },
-          {
-            id: 2,
-            name: 'Hair Spa',
-            price: '₹1200',
-            duration: '60 min',
-            img: 'https://images.unsplash.com/photo-1559599101-f09722fb4948?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-            description: 'Revitalizing hair treatment that includes deep conditioning, scalp massage, and nourishment.',
-            features: ['Deep conditioning', 'Scalp massage', 'Hair nourishment', 'Relaxing experience'],
-            category: 'Hair'
-          },
-          {
-            id: 3,
-            name: 'Hair Coloring',
-            price: '₹1500+',
-            duration: '90 min',
-            img: 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-            description: 'Professional hair coloring services including highlights, balayage, and full color.',
-            features: ['Color consultation', 'Premium products', 'Precision application', 'Aftercare advice'],
-            category: 'Hair'
-          },
-          {
-            id: 4,
-            name: 'Facial Glow',
-            price: '₹1500',
-            duration: '75 min',
-            img: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-            description: 'Deep cleansing, exfoliation, extraction, and hydration for radiant, glowing skin.',
-            features: ['Deep cleansing', 'Exfoliation', 'Extraction', 'Hydration mask'],
-            category: 'Skincare'
-          },
-          {
-            id: 5,
-            name: 'Acne Treatment',
-            price: '₹1800',
-            duration: '90 min',
-            img: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-            description: 'Specialized treatment to reduce acne, inflammation, and prevent future breakouts.',
-            features: ['Acne analysis', 'Medicated treatment', 'Soothing mask', 'Aftercare plan'],
-            category: 'Skincare'
-          },
-          {
-            id: 6,
-            name: 'Manicure & Pedicure',
-            price: '₹1000',
-            duration: '50 min',
-            img: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-            description: 'Complete nail care including shaping, cuticle treatment, massage, and polish.',
-            features: ['Nail shaping', 'Cuticle care', 'Hand/foot massage', 'Polish application'],
-            category: 'Nails'
-          },
-          {
-            id: 7,
-            name: 'Gel Nails',
-            price: '₹1200',
-            duration: '60 min',
-            img: 'https://images.unsplash.com/photo-1607779044265-60d8017d3c48?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-            description: 'Long-lasting gel manicure with a glossy finish that lasts for weeks.',
-            features: ['Nail prep', 'Gel application', 'UV curing', 'Long-lasting finish'],
-            category: 'Nails'
-          },
-          {
-            id: 8,
-            name: 'Bridal Makeup',
-            price: '₹8000',
-            duration: '3 hrs',
-            img: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-            description: 'Flawless, long-lasting makeup application for your special day with trial session.',
-            features: ['Trial session', 'Long-lasting formula', 'Professional products', 'Touch-up kit'],
-            category: 'Makeup'
-          },
-          {
-            id: 9,
-            name: 'Evening Makeup',
-            price: '₹2500',
-            duration: '60 min',
-            img: 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-            description: 'Glamorous makeup perfect for special events, parties, or a night out.',
-            features: ['Skin preparation', 'Customized look', 'Photo-ready finish', 'Setting spray'],
-            category: 'Makeup'
-          },
-          {
-            id: 10,
-            name: 'Full Body Massage',
-            price: '₹2500',
-            duration: '90 min',
-            img: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-            description: 'Therapeutic full-body massage to relieve tension, reduce stress, and promote relaxation.',
-            features: ['Full body massage', 'Aromatherapy oils', 'Stress relief', 'Muscle relaxation'],
-            category: 'Spa'
-          },
-          {
-            id: 11,
-            name: 'Aromatherapy Session',
-            price: '₹1800',
-            duration: '60 min',
-            img: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-            description: 'Relaxing massage using essential oils to enhance physical and emotional well-being.',
-            features: ['Essential oil selection', 'Therapeutic massage', 'Mood enhancement', 'Deep relaxation'],
-            category: 'Spa'
-          }
-        ];
+        services.value = ServiceData;
         loading.value = false;
       }, 100);
     };
 
     // Load packages data
     const loadPackages = () => {
-      packages.value = [
-        {
-          id: 1,
-          name: 'Bridal Glow Package',
-          price: '₹12,000',
-          originalPrice: '₹15,000',
-          features: [
-            'Bridal Makeup',
-            'Hair Styling',
-            'Facial Glow',
-            'Manicure & Pedicure',
-            'Pre-wedding Consultation'
-          ],
-          popular: false
-        },
-        {
-          id: 2,
-          name: 'Relax & Refresh',
-          price: '₹4,500',
-          originalPrice: '₹5,800',
-          features: [
-            'Full Body Massage',
-            'Signature Facial',
-            'Manicure & Pedicure',
-            'Aromatherapy',
-            'Complimentary Drink'
-          ],
-          popular: true
-        },
-        {
-          id: 3,
-          name: 'Complete Beauty',
-          price: '₹6,200',
-          originalPrice: '₹7,500',
-          features: [
-            'Haircut & Styling',
-            'Facial Treatment',
-            'Manicure & Pedicure',
-            'Eyebrow Shaping',
-            'Makeup Application'
-          ],
-          popular: false
-        }
-      ];
+      packages.value = ServicePackageData
     };
 
     // Set tab button ref with proper typing
@@ -541,16 +369,26 @@ body {
   font-size: 1.1rem;
 }
 
-/* Services Hero - Improved Mobile Responsiveness */
 .services-hero {
-  background: linear-gradient(rgba(42, 54, 59, 0.5), rgba(42, 54, 59, 0.9)),
-    url('https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
-  background-size: cover;
-  background-position: center;
-  color: var(--color-gold); /* Changed from --color-light to gold */
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  color: var(--color-dark);
   text-align: center;
-  padding: 100px 0 80px;
-  margin-bottom: 60px;
+  padding: 80px 0;
+  margin-bottom: 80px;
+  border-radius: var(--radius);
+  position: relative;
+  overflow: hidden;
+}
+.services-hero:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80') center/cover;
+  opacity: 0.1;
+  z-index: 0;
 }
 
 .services-hero h1 {

@@ -170,23 +170,10 @@
   </template>
   
   <script lang="ts">
-  import { defineComponent, ref, computed, onMounted, nextTick, type ComponentPublicInstance } from 'vue';
+  import type { Filter, GalleryWork } from '@/types/Gallery';
+import { defineComponent, ref, computed, onMounted, nextTick, type ComponentPublicInstance } from 'vue';
   
-  interface GalleryWork {
-    id: number;
-    title: string;
-    category: string;
-    image: string;
-    description: string;
-    duration: string;
-    stylist: string;
-  }
-  
-  interface Filter {
-    id: string;
-    name: string;
-    icon: string;
-  }
+
   
   export default defineComponent({
     name: "Gallery",
@@ -505,18 +492,28 @@
     --transition: all 0.3s ease;
   }
   
-  /* Gallery Hero */
   .gallery-hero {
-    background: linear-gradient(rgba(42, 54, 59, 0.85), rgba(42, 54, 59, 0.9)),
-      url('https://images.unsplash.com/photo-1595475884562-073c30d45670?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
-    background-size: cover;
-    background-position: center;
-    color: var(--color-light);
-    text-align: center;
-    padding: 120px 0 80px;
-    margin-bottom: 60px;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  color: var(--color-dark);
+  text-align: center;
+  padding: 80px 0;
+  margin-bottom: 80px;
+  border-radius: var(--radius);
+  position: relative;
+  overflow: hidden;
   }
   
+  .gallery-hero:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('https://images.unsplash.com/photo-1595475884562-073c30d45670?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80') center/cover;
+  opacity: 0.1;
+  z-index: 0;
+}
   .gallery-hero h1 {
     font-size: clamp(2.5rem, 5vw, 4rem);
     margin-bottom: 20px;
