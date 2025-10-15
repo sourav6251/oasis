@@ -150,7 +150,6 @@ import type { Service, ServicePackage } from '@/types/Services';
 import { ref, computed, onMounted, nextTick } from 'vue';
 import type { Ref } from 'vue';
 
-
 export default {
   setup() {
     const activeCategory: Ref<string> = ref('All');
@@ -159,10 +158,11 @@ export default {
     const tabButtons = ref<(HTMLElement | null)[]>([]);
     const tabSliderPosition = ref<number>(0);
     const tabSliderWidth = ref<number>(0);
+    const tabSliderHeight = ref<number>(0);
+    const tabSliderTop = ref<number>(0);
 
     // Initialize services as an empty array first
     const services: Ref<Service[]> = ref([]);
-
     const packages: Ref<ServicePackage[]> = ref([]);
 
     // Computed property to get current category services
@@ -177,7 +177,10 @@ export default {
     const tabSliderStyle = computed(() => {
       return {
         transform: `translateX(${tabSliderPosition.value}px)`,
-        width: `${tabSliderWidth.value}px`
+        width: `${tabSliderWidth.value}px`,
+        height: `${tabSliderHeight.value}px`,
+        top: `${tabSliderTop.value}px`,
+        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
       };
     });
 
@@ -192,7 +195,7 @@ export default {
 
     // Load packages data
     const loadPackages = () => {
-      packages.value = ServicePackageData
+      packages.value = ServicePackageData;
     };
 
     // Set tab button ref with proper typing
@@ -206,7 +209,7 @@ export default {
       }
     };
 
-    // Update tab slider position - FIXED: Return Promise<void>
+    // Update tab slider position
     const updateTabSliderPosition = async (index: number): Promise<void> => {
       await nextTick();
       
@@ -220,11 +223,12 @@ export default {
           
           tabSliderPosition.value = buttonRect.left - containerRect.left;
           tabSliderWidth.value = buttonRect.width;
+          tabSliderHeight.value = buttonRect.height;
+          tabSliderTop.value = buttonRect.top - containerRect.top;
         }
       }
     };
 
-    // FIXED: Return Promise<void>
     const setActiveCategory = async (category: string, index: number): Promise<void> => {
       activeCategory.value = category;
       await updateTabSliderPosition(index);
@@ -394,7 +398,7 @@ body {
 .services-hero h1 {
   font-size: clamp(2.2rem, 5vw, 3.5rem);
   margin-bottom: 20px;
-  color: var(--color-gold); /* Changed from --color-light to gold */
+  color: var(--color-gold);
   line-height: 1.2;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
@@ -406,7 +410,7 @@ body {
   opacity: 0.95;
   padding: 0 10px;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-  color: var(--color-silver); /* Changed from inherited gold to silver */
+  color: var(--color-silver);
 }
 
 .hero-buttons {
@@ -418,8 +422,8 @@ body {
 
 .hero-btn {
   background: transparent;
-  border: 2px solid var(--color-gold); /* Changed from --color-light to gold */
-  color: var(--color-gold); /* Changed from --color-light to gold */
+  border: 2px solid var(--color-gold);
+  color: var(--color-gold);
   padding: 12px 25px;
   border-radius: 30px;
   font-weight: 600;
@@ -431,13 +435,13 @@ body {
 }
 
 .hero-btn.primary {
-  background: var(--color-gold); /* Changed from --color-accent to gold */
-  border-color: var(--color-gold); /* Changed from --color-accent to gold */
+  background: var(--color-gold);
+  border-color: var(--color-gold);
   color: var(--color-dark);
 }
 
 .hero-btn:hover {
-  background: var(--color-gold); /* Changed from --color-light to gold */
+  background: var(--color-gold);
   color: var(--color-dark);
   transform: translateY(-2px);
 }
@@ -448,33 +452,27 @@ body {
   color: var(--color-dark);
 }
 
-/* Category Tabs with Sliding Indicator - CENTERED */
+/* Category Tabs with Sliding Indicator */
 .category-tabs-container {
-  overflow-x: auto;
   margin-bottom: 40px;
   padding-bottom: 10px;
-  scrollbar-width: none;
   display: flex;
   justify-content: center;
-}
-
-.category-tabs-container::-webkit-scrollbar {
-  display: none;
 }
 
 .category-tabs {
   display: flex;
   justify-content: center;
-  min-width: max-content;
+  align-items: center;
   gap: 10px;
-  padding: 0 5px;
-  position: relative;
-  background: var(--color-light);
   padding: 10px;
+  background: var(--color-light);
   border-radius: 50px;
   box-shadow: var(--shadow);
   width: fit-content;
   margin: 0 auto;
+  flex-wrap: nowrap;
+  position: relative;
 }
 
 .tab-btn {
@@ -485,10 +483,10 @@ body {
   font-weight: 500;
   cursor: pointer;
   transition: var(--transition);
-  box-shadow: none;
   color: var(--color-dark);
   white-space: nowrap;
   flex-shrink: 0;
+  text-align: center;
   position: relative;
   z-index: 2;
 }
@@ -510,12 +508,12 @@ body {
   height: calc(100% - 20px);
   background: var(--color-primary);
   border-radius: 30px;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1;
   box-shadow: 0 2px 8px rgba(157, 201, 199, 0.3);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Services Grid - Improved for Mobile */
+/* Services Grid */
 .services-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -877,13 +875,11 @@ body {
   cursor: pointer;
   transition: var(--transition);
   min-width: 200px;
-  /* border: 2px solid var(--color-secondary); */
 }
 
 .cta-btn:hover {
   background: #daccb1ab;
   color: var(--color-light);
-  /* border-color: var(--color-secondary); */
   transform: translateY(-3px);
 }
 
@@ -913,6 +909,7 @@ body {
   }
 }
 
+/* Mobile Layout for Tabs - Multi-row layout with sliding animation */
 @media (max-width: 768px) {
   .services-hero {
     padding: 80px 0 60px;
@@ -941,24 +938,36 @@ body {
     gap: 20px;
   }
   
+  /* Multi-row tab layout for mobile with sliding animation */
   .category-tabs {
-    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
     border-radius: var(--radius);
-    padding: 15px;
+    width: 100%;
+    max-width: 500px;
   }
   
   .tab-btn {
-    width: 100%;
-    justify-content: center;
+    flex: 0 0 calc(33.333% - 8px);
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    position: relative;
+    z-index: 2;
   }
   
+  /* Make the last two items take 50% each in second row */
+  .tab-btn:nth-child(4),
+  .tab-btn:nth-child(5),
+  .tab-btn:nth-child(6) {
+    flex: 0 0 calc(50% - 8px);
+  }
+  
+  /* Update slider for mobile - now it will move in 2D */
   .tab-slider {
-    display: none;
-  }
-  
-  .tab-btn.active {
-    background: var(--color-primary);
-    color: var(--color-dark);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    /* We'll dynamically set position, width, height, and top via JavaScript */
   }
   
   .package-card {
@@ -1010,6 +1019,24 @@ body {
     width: 100%;
     max-width: 250px;
   }
+  
+  /* Adjust tabs for very small screens */
+  .category-tabs {
+    gap: 6px;
+    padding: 10px;
+  }
+  
+  .tab-btn {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    flex: 0 0 calc(33.333% - 6px);
+  }
+  
+  .tab-btn:nth-child(4),
+  .tab-btn:nth-child(5),
+  .tab-btn:nth-child(6) {
+    flex: 0 0 calc(50% - 6px);
+  }
 }
 
 @media (max-width: 480px) {
@@ -1031,6 +1058,24 @@ body {
   
   .package-price {
     font-size: 1.6rem;
+  }
+  
+  /* Further adjust tabs for extra small screens */
+  .category-tabs {
+    gap: 5px;
+    padding: 8px;
+  }
+  
+  .tab-btn {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+    flex: 0 0 calc(33.333% - 5px);
+  }
+  
+  .tab-btn:nth-child(4),
+  .tab-btn:nth-child(5),
+  .tab-btn:nth-child(6) {
+    flex: 0 0 calc(50% - 5px);
   }
 }
 
@@ -1059,6 +1104,10 @@ body {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+  
+  .tab-slider {
+    transition: none !important;
   }
 }
 </style>

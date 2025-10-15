@@ -228,13 +228,23 @@
         >
           <h2 class="section-title">Find Us</h2>
           <div class="map-container">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d366.42324932308657!2d88.68091799580972!3d22.606555644676863!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a02070071efcef7%3A0x988499263ccb9b78!2sRupashree%20Cinema%20hall!5e0!3m2!1sen!2sin!4v1757653176008!5m2!1sen!2sin" 
+            <!-- <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d366.42324932308657!2d88.68091799580972!3d22.606555644676863!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a02070071efcef7%3A0x988499263ccb9b78!2sRupashree%20Cinema%20hall!5e0!3m2!1sen!2sin!4v1757653176008!5m2!1sen!2sin" 
             width="100%" 
             height="450"
              style="border:0;"
               :allowfullscreen="true"
               loading="lazy" 
               referrerpolicy="no-referrer-when-downgrade">
+
+            </iframe> -->
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3691.7835859964234!2d87.9229940317383!3d22.286186264583712!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a0295966a336347%3A0x779f2f1d1f0a722f!2sOasis%20Makeover-Professional%20Beauty%20Premium%20%26%20Academy!5e0!3m2!1sen!2sin!4v1760371225912!5m2!1sen!2sin" 
+            width="100%" 
+            height="450"
+             style="border:0;"
+              :allowfullscreen="true"
+              loading="lazy" 
+              referrerpolicy="no-referrer-when-downgrade">
+>
 
             </iframe>
             <!-- <iframe

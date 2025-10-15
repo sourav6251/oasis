@@ -29,7 +29,7 @@ setup(){
 
 <template>
   <v-app>
-    <v-main class="overflow-y-auto">
+    <v-main >
       <Header/>
       <div class="mt-14">
         <RouterView />
