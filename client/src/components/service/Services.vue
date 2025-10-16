@@ -3,15 +3,15 @@
     <!-- Services Hero -->
     <section class="services-hero">
       <div class="container">
-        <h1 v-motion :initial="{ opacity: 0, y: -50 }" :enter="{ opacity: 1, y: 0 }" :duration="1000">
+        <h1 v-motion :initial="{ opacity: 0, y: -50 }" :enter="{ opacity: 1, y: 0 }" :duration="1000" class="fleur-de-leah-regular">
           Our Premium Services
         </h1>
-        <p v-motion :initial="{ opacity: 0, y: 50 }" :enter="{ opacity: 1, y: 0 }" :duration="1000" :delay="200">
+        <p v-motion :initial="{ opacity: 0, y: 50 }" :enter="{ opacity: 1, y: 0 }" :duration="1000" :delay="200" class="cursive">
           Indulge in our wide range of beauty treatments designed to enhance your natural beauty and boost your confidence.
         </p>
         <div class="hero-buttons" v-motion :initial="{ opacity: 0, y: 50 }" :enter="{ opacity: 1, y: 0 }" :duration="1000" :delay="400">
-          <button class="hero-btn hover:bg-[#9dc9c7bd]!" @click="scrollToServices">View Services</button>
-          <button class="hero-btn hover:bg-[#e6c8a4a2]!" @click="bookNow">Book Appointment</button>
+          <button class=" hero-btn hover:bg-[#9dc9c7bd]!" @click="scrollToServices">View Services</button>
+          <button class=" hero-btn hover:bg-[#e6c8a4a2]!" @click="bookNow">Book Appointment</button>
         </div>
       </div>
     </section>
@@ -88,7 +88,7 @@
     <section class="packages-section">
       <div class="container packages-container">
         <div class="section-title">
-          <h2 v-motion-slide-visible-once-bottom :delay="100">
+          <h2 v-motion-slide-visible-once-bottom :delay="100" class="splash-regular">
             Special Packages
           </h2>
           <p v-motion-slide-visible-once-bottom :delay="200">
@@ -125,7 +125,7 @@
     <!-- CTA Section -->
     <section class="cta-section">
       <div class="container">
-        <h2 v-motion-slide-visible-once-bottom :delay="100">
+        <h2 v-motion-slide-visible-once-bottom :delay="100" class="marck-script-regular">
           Ready for a Transformation?
         </h2>
         <p v-motion-slide-visible-once-bottom :delay="200">
@@ -428,28 +428,151 @@ body {
   border-radius: 30px;
   font-weight: 600;
   cursor: pointer;
-  transition: var(--transition);
+  transition: 
+    all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.5s ease;
   flex: 0 1 auto;
   min-width: 160px;
   backdrop-filter: blur(10px);
+  position: relative;
+  transform-style: preserve-3d;
+  perspective: 500px;
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.1),
+    0 6px 12px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  animation: float 6s ease-in-out infinite;
+}
+
+.hero-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.2) 0%, 
+    rgba(255, 255, 255, 0) 50%,
+    rgba(0, 0, 0, 0.1) 100%);
+  border-radius: 28px;
+  opacity: 0.6;
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.hero-btn:hover {
+  background: var(--color-gold);
+  color: var(--color-dark);
+  transform: 
+    translateY(-6px) 
+    rotateX(12deg) 
+    scale(1.05);
+  box-shadow: 
+    0 12px 25px rgba(0, 0, 0, 0.2),
+    0 16px 32px rgba(0, 0, 0, 0.15),
+    inset 0 3px 0 rgba(255, 255, 255, 0.4);
+  transition: 
+    all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.4s ease;
+}
+
+.hero-btn:hover::before {
+  opacity: 0.9;
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.3) 0%, 
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(0, 0, 0, 0.05) 100%);
+}
+
+.hero-btn:active {
+  transform: 
+    translateY(-2px) 
+    rotateX(6deg) 
+    scale(0.98);
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.15),
+    0 6px 12px rgba(0, 0, 0, 0.1),
+    inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .hero-btn.primary {
   background: var(--color-gold);
   border-color: var(--color-gold);
   color: var(--color-dark);
-}
-
-.hero-btn:hover {
-  background: var(--color-gold);
-  color: var(--color-dark);
-  transform: translateY(-2px);
+  box-shadow: 
+    0 4px 12px rgba(184, 134, 11, 0.3),
+    0 6px 16px rgba(184, 134, 11, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  animation: float-gold 6s ease-in-out infinite;
 }
 
 .hero-btn.primary:hover {
   background: var(--color-accent);
   border-color: var(--color-accent);
   color: var(--color-dark);
+  transform: 
+    translateY(-6px) 
+    rotateX(10deg) 
+    scale(1.06);
+  box-shadow: 
+    0 15px 30px rgba(184, 134, 11, 0.5),
+    0 20px 40px rgba(184, 134, 11, 0.4),
+    inset 0 3px 0 rgba(255, 255, 255, 0.6);
+}
+
+.hero-btn.primary:active {
+  transform: 
+    translateY(-2px) 
+    rotateX(5deg) 
+    scale(0.98);
+  box-shadow: 
+    0 5px 10px rgba(184, 134, 11, 0.4),
+    0 8px 16px rgba(184, 134, 11, 0.3),
+    inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Floating animation for subtle idle movement */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotateX(0deg);
+  }
+  50% {
+    transform: translateY(-2px) rotateX(2deg);
+  }
+}
+
+@keyframes float-gold {
+  0%, 100% {
+    transform: translateY(0px) rotateX(0deg);
+    box-shadow: 
+      0 4px 12px rgba(184, 134, 11, 0.3),
+      0 6px 16px rgba(184, 134, 11, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  }
+  50% {
+    transform: translateY(-2px) rotateX(2deg);
+    box-shadow: 
+      0 6px 15px rgba(184, 134, 11, 0.4),
+      0 8px 20px rgba(184, 134, 11, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  }
+}
+
+/* Focus states for accessibility */
+.hero-btn:focus {
+  outline: none;
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.1),
+    0 6px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+.hero-btn.primary:focus {
+  box-shadow: 
+    0 4px 12px rgba(184, 134, 11, 0.3),
+    0 6px 16px rgba(184, 134, 11, 0.2) !important;
 }
 
 /* Category Tabs with Sliding Indicator */

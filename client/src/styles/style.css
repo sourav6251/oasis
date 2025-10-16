@@ -1,6 +1,6 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Playfair:ital,opsz@1,5..1200&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Playfair:ital,opsz@1,5..1200&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Playfair:ital,opsz@1,5..1200&display=swap'); */
+/* @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Playfair:ital,opsz@1,5..1200&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap'); */
 
 .poppins-thin {
   font-family: "Poppins", sans-serif;
@@ -129,6 +129,50 @@ html, body {
   --color-accent: #E6C8A4;
   --color-neutral: #F0F5F3;
   --color-dark: #2A363B;
+}
+.fleur-de-leah-regular {
+  font-family: "Fleur De Leah", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+.bonbon-regular {
+  font-family: "Bonbon", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.cursive{
+  font-family:  cursive;
+  font-weight: 400;
+  font-style: normal;
+
+}
+.kranky-regular {
+  font-family: "Kranky", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+.akaya-kanadaka-regular {
+  font-family: "Akaya Kanadaka", system-ui;
+  font-weight: 400;
+  font-style: normal;
+}
+
+* {
+  font-family: cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.splash-regular {
+  font-family: "Splash", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+.marck-script-regular {
+  font-family: "Marck Script", cursive;
+  font-weight: 800;
+  font-style: normal;
 }
 
 /* Example usage */
