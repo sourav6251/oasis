@@ -7,6 +7,7 @@
   src: url('@/assets/fonts/Akaya_Kanadaka/AkayaKanadaka-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
+  font-display: swap; /* Critical for mobile performance */
 }
 
 /* Bonbon */
@@ -15,6 +16,7 @@
   src: url('@/assets/fonts/Bonbon/Bonbon-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
+  font-display: swap;
 }
 
 /* Fleur De Leah */
@@ -23,6 +25,7 @@
   src: url('@/assets/fonts/Fleur_De_Leah/FleurDeLeah-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
+  font-display: swap;
 }
 
 /* Kranky */
@@ -31,45 +34,17 @@
   src: url('@/assets/fonts/Kranky/Kranky-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
+  font-display: swap;
 }
 
-/* Marck Script */
+/* Marck Script - Set as default */
 @font-face {
   font-family: 'MarckScript';
   src: url('@/assets/fonts/Marck_Script/MarckScript-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
+  font-display: swap;
 }
-
-/* Playfair (Variable + Regular fallback) */
-/* @font-face {
-  font-family: 'Playfair';
-  src: url('@/assets/fonts/Playfair/Playfair-VariableFont_opsz,wdth,wght.ttf') format('truetype');
-  font-weight: 100 900;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Playfair';
-  src: url('@/assets/fonts/Playfair/static/Playfair_144pt-Regular.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-}
-
-
-@font-face {
-  font-family: 'PlayfairDisplay';
-  src: url('@/assets/fonts/Playfair_Display/PlayfairDisplay-VariableFont_wght.ttf') format('truetype');
-  font-weight: 100 900;
-  font-style: normal;
-} 
-
-@font-face {
-  font-family: 'PlayfairDisplay';
-  src: url('@/assets/fonts/Playfair_Display/static/PlayfairDisplay-Regular.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-}*/
 
 /* Splash */
 @font-face {
@@ -77,46 +52,53 @@
   src: url('@/assets/fonts/Splash/Splash-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
+  font-display: swap;
 }
 
-.akaya {
-  font-family: 'AkayaKanadaka', cursive;
-}
-
-.bonbon {
-  font-family: 'Bonbon', cursive;
-}
-
-.fleur {
-  font-family: 'FleurDeLeah', cursive;
-}
-.kranky{
-  font-family: 'Kranky', cursive;
-
-}
-.marck{
-
-  font-family: 'MarckScript', cursive;
-}
-/* .playfair {
-  font-family: 'Playfair', serif;
-} */
-
-.splash {
-  font-family: 'Splash', cursive;
-}
-
+/* Set default font for ALL elements with proper fallbacks */
 * {
-  font-family: cursive,serif;
+  font-family: 'MarckScript', 'AkayaKanadaka', cursive, serif !important;
   font-weight: 400;
   font-style: normal;
 }
-/* -------------------- END CUSTOM FONTS -------------------- */
 
-/*  Medium 500 Italic*/
+/* Ensure HTML and body use the same font */
 html, body {
+  font-family: 'MarckScript', 'AkayaKanadaka', cursive, serif !important;
   height: 100%;
 }
+
+/* Force font on all text elements */
+h1, h2, h3, h4, h5, h6, p, span, div, a, button, input, textarea, select, label, li {
+  font-family: inherit !important;
+}
+
+/* Utility classes for specific fonts */
+.akaya {
+  font-family: 'AkayaKanadaka', cursive !important;
+}
+
+.bonbon {
+  font-family: 'Bonbon', cursive !important;
+}
+
+.fleur {
+  font-family: 'FleurDeLeah', cursive !important;
+}
+
+.kranky {
+  font-family: 'Kranky', cursive !important;
+}
+
+.marck {
+  font-family: 'MarckScript', cursive !important;
+}
+
+.splash {
+  font-family: 'Splash', cursive !important;
+}
+
+/* -------------------- END CUSTOM FONTS -------------------- */
 
 :root {
   --color-primary: #9DC9C7;
@@ -125,50 +107,6 @@ html, body {
   --color-neutral: #F0F5F3;
   --color-dark: #2A363B;
 }
-/* .fleur-de-leah-regular {
-  font-family: "Fleur De Leah", cursive;
-  font-weight: 400;
-  font-style: normal;
-}
-.bonbon-regular {
-  font-family: "Bonbon", cursive;
-  font-weight: 400;
-  font-style: normal;
-}
-
-.cursive{
-  font-family:  cursive;
-  font-weight: 400;
-  font-style: normal;
-
-}
-.kranky-regular {
-  font-family: "Kranky", serif;
-  font-weight: 400;
-  font-style: normal;
-}
-.akaya-kanadaka-regular {
-  font-family: "Akaya Kanadaka", system-ui;
-  font-weight: 400;
-  font-style: normal;
-}
-
-* {
-  font-family: cursive;
-  font-weight: 400;
-  font-style: normal;
-}
-
-.splash-regular {
-  font-family: "Splash", cursive;
-  font-weight: 400;
-  font-style: normal;
-}
-.marck-script-regular {
-  font-family: "Marck Script", cursive;
-  font-weight: 800;
-  font-style: normal;
-} */
 
 /* Example usage */
 .bg-primary { background-color: var(--color-primary); }
@@ -177,18 +115,12 @@ html, body {
 .border-secondary { border-color: var(--color-secondary); }
 .btn-accent { background: var(--color-accent); color: #fff; }
 
-
-/* Force scrollbar always visible */
-
-
-/* For Firefox */
+/* Scrollbar styles */
 * {
   scrollbar-width: thin;              
-  scrollbar-color: var(--color-scroll) var(--color-neutral);  
-  
+  scrollbar-color: var(--color-accent) var(--color-neutral);  
 }
 
-/* For Chrome, Edge, Safari (WebKit-based) */
 *::-webkit-scrollbar {
   width: 8px;       
   height: 8px;     
@@ -206,4 +138,26 @@ html, body {
 
 *::-webkit-scrollbar-thumb:hover {
   background: var(--color-secondary);
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+  /* Ensure fonts load properly on mobile */
+  * {
+    font-family: 'MarckScript', 'AkayaKanadaka', cursive, serif !important;
+  }
+  
+  /* Improve font rendering on mobile */
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+/* Print styles */
+@media print {
+  * {
+    font-family: 'MarckScript', 'AkayaKanadaka', cursive, serif !important;
+  }
 }
