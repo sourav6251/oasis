@@ -1,123 +1,118 @@
 @import "tailwindcss";
-/* @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Playfair:ital,opsz@1,5..1200&display=swap'); */
-/* @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Playfair:ital,opsz@1,5..1200&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap'); */
+/* -------------------- CUSTOM FONTS -------------------- */
 
-.poppins-thin {
-  font-family: "Poppins", sans-serif;
-  font-weight: 100;
-  font-style: normal;
-}
-
-.poppins-extralight {
-  font-family: "Poppins", sans-serif;
-  font-weight: 200;
-  font-style: normal;
-}
-
-.poppins-light {
-  font-family: "Poppins", sans-serif;
-  font-weight: 300;
-  font-style: normal;
-}
-
-.poppins-regular {
-  font-family: "Poppins", sans-serif;
+/* Akaya Kanadaka */
+@font-face {
+  font-family: 'AkayaKanadaka';
+  src: url('@/assets/fonts/Akaya_Kanadaka/AkayaKanadaka-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
 }
 
-.poppins-medium {
-  font-family: "Poppins", sans-serif;
-  font-weight: 500;
-  font-style: normal;
-}
-
-.poppins-semibold {
-  font-family: "Poppins", sans-serif;
-  font-weight: 600;
-  font-style: normal;
-}
-
-.poppins-bold {
-  font-family: "Poppins", sans-serif;
-  font-weight: 700;
-  font-style: normal;
-}
-
-.poppins-extrabold {
-  font-family: "Poppins", sans-serif;
-  font-weight: 800;
-  font-style: normal;
-}
-
-.poppins-black {
-  font-family: "Poppins", sans-serif;
-  font-weight: 900;
-  font-style: normal;
-}
-
-.poppins-thin-italic {
-  font-family: "Poppins", sans-serif;
-  font-weight: 100;
-  font-style: italic;
-}
-
-.poppins-extralight-italic {
-  font-family: "Poppins", sans-serif;
-  font-weight: 200;
-  font-style: italic;
-}
-
-.poppins-light-italic {
-  font-family: "Poppins", sans-serif;
-  font-weight: 300;
-  font-style: italic;
-}
-
-.poppins-regular-italic {
-  font-family: "Poppins", sans-serif;
+/* Bonbon */
+@font-face {
+  font-family: 'Bonbon';
+  src: url('@/assets/fonts/Bonbon/Bonbon-Regular.ttf') format('truetype');
   font-weight: 400;
-  font-style: italic;
+  font-style: normal;
 }
 
-.poppins-medium-italic {
-  font-family: "Poppins", sans-serif;
-  font-weight: 500;
-  font-style: italic;
+/* Fleur De Leah */
+@font-face {
+  font-family: 'FleurDeLeah';
+  src: url('@/assets/fonts/Fleur_De_Leah/FleurDeLeah-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
 }
 
-.poppins-semibold-italic {
-  font-family: "Poppins", sans-serif;
-  font-weight: 600;
-  font-style: italic;
+/* Kranky */
+@font-face {
+  font-family: 'Kranky';
+  src: url('@/assets/fonts/Kranky/Kranky-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
 }
 
-.poppins-bold-italic {
-  font-family: "Poppins", sans-serif;
-  font-weight: 700;
-  font-style: italic;
+/* Marck Script */
+@font-face {
+  font-family: 'MarckScript';
+  src: url('@/assets/fonts/Marck_Script/MarckScript-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
 }
 
-.poppins-extrabold-italic {
-  font-family: "Poppins", sans-serif;
-  font-weight: 800;
-  font-style: italic;
+/* Playfair (Variable + Regular fallback) */
+/* @font-face {
+  font-family: 'Playfair';
+  src: url('@/assets/fonts/Playfair/Playfair-VariableFont_opsz,wdth,wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
 }
 
-.poppins-black-italic {
-  font-family: "Poppins", sans-serif;
-  font-weight: 900;
-  font-style: italic;
+@font-face {
+  font-family: 'Playfair';
+  src: url('@/assets/fonts/Playfair/static/Playfair_144pt-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
 }
 
-.playfair-d {
-  font-family: "Playfair Display", serif;
-  /* font-optical-sizing: auto; */
-  font-weight: 700;
-  /* font-style: italic; */
-  /* font-variation-settings:
-    "wdth" 100; */
+
+@font-face {
+  font-family: 'PlayfairDisplay';
+  src: url('@/assets/fonts/Playfair_Display/PlayfairDisplay-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+} 
+
+@font-face {
+  font-family: 'PlayfairDisplay';
+  src: url('@/assets/fonts/Playfair_Display/static/PlayfairDisplay-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}*/
+
+/* Splash */
+@font-face {
+  font-family: 'Splash';
+  src: url('@/assets/fonts/Splash/Splash-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
 }
+
+.akaya {
+  font-family: 'AkayaKanadaka', cursive;
+}
+
+.bonbon {
+  font-family: 'Bonbon', cursive;
+}
+
+.fleur {
+  font-family: 'FleurDeLeah', cursive;
+}
+.kranky{
+  font-family: 'Kranky', cursive;
+
+}
+.marck{
+
+  font-family: 'MarckScript', cursive;
+}
+/* .playfair {
+  font-family: 'Playfair', serif;
+} */
+
+.splash {
+  font-family: 'Splash', cursive;
+}
+
+* {
+  font-family: cursive,serif;
+  font-weight: 400;
+  font-style: normal;
+}
+/* -------------------- END CUSTOM FONTS -------------------- */
+
 /*  Medium 500 Italic*/
 html, body {
   height: 100%;
@@ -130,7 +125,7 @@ html, body {
   --color-neutral: #F0F5F3;
   --color-dark: #2A363B;
 }
-.fleur-de-leah-regular {
+/* .fleur-de-leah-regular {
   font-family: "Fleur De Leah", cursive;
   font-weight: 400;
   font-style: normal;
@@ -173,7 +168,7 @@ html, body {
   font-family: "Marck Script", cursive;
   font-weight: 800;
   font-style: normal;
-}
+} */
 
 /* Example usage */
 .bg-primary { background-color: var(--color-primary); }

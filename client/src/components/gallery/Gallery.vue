@@ -2,8 +2,8 @@
   <div>
     <!-- Gallery Hero -->
     <section class="gallery-hero">
-      <div class="container">
-        <h1 v-motion :initial="{ opacity: 0, y: -50 }" :enter="{ opacity: 1, y: 0 }" :duration="1000">
+      <div class="container px-4">
+        <h1 v-motion :initial="{ opacity: 0, y: -50 }" :enter="{ opacity: 1, y: 0 }" :duration="1000" class="fleur" >
           Our Gallery
         </h1>
         <p v-motion :initial="{ opacity: 0, y: 50 }" :enter="{ opacity: 1, y: 0 }" :duration="1000" :delay="200">
@@ -315,6 +315,13 @@ export default defineComponent({
   --radius: 8px;
   --transition: all 0.3s ease;
 }
+
+/* .container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+} */
 
 .gallery-hero {
 background: linear-gradient(135deg, var(--color-primary), var(--color-accent));

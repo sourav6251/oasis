@@ -3,7 +3,7 @@
     <!-- Services Hero -->
     <section class="services-hero">
       <div class="container">
-        <h1 v-motion :initial="{ opacity: 0, y: -50 }" :enter="{ opacity: 1, y: 0 }" :duration="1000" class="fleur-de-leah-regular">
+        <h1 v-motion :initial="{ opacity: 0, y: -50 }" :enter="{ opacity: 1, y: 0 }" :duration="1000" class="fleur">
           Our Premium Services
         </h1>
         <p v-motion :initial="{ opacity: 0, y: 50 }" :enter="{ opacity: 1, y: 0 }" :duration="1000" :delay="200" class="cursive">
@@ -88,7 +88,7 @@
     <section class="packages-section">
       <div class="container packages-container">
         <div class="section-title">
-          <h2 v-motion-slide-visible-once-bottom :delay="100" class="splash-regular">
+          <h2 v-motion-slide-visible-once-bottom :delay="100" class="splash">
             Special Packages
           </h2>
           <p v-motion-slide-visible-once-bottom :delay="200">
@@ -125,7 +125,7 @@
     <!-- CTA Section -->
     <section class="cta-section">
       <div class="container">
-        <h2 v-motion-slide-visible-once-bottom :delay="100" class="marck-script-regular">
+        <h2 v-motion-slide-visible-once-bottom :delay="100" class="marck">
           Ready for a Transformation?
         </h2>
         <p v-motion-slide-visible-once-bottom :delay="200">
