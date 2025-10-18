@@ -7,7 +7,7 @@
   src: url('@/assets/fonts/Akaya_Kanadaka/AkayaKanadaka-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
-  font-display: swap; /* Critical for mobile performance */
+  font-display: swap;
 }
 
 /* Bonbon */
@@ -37,7 +37,7 @@
   font-display: swap;
 }
 
-/* Marck Script - Set as default */
+/* Marck Script */
 @font-face {
   font-family: 'MarckScript';
   src: url('@/assets/fonts/Marck_Script/MarckScript-Regular.ttf') format('truetype');
@@ -55,25 +55,25 @@
   font-display: swap;
 }
 
-/* Set default font for ALL elements with proper fallbacks */
+/* Set cursive as default font for ALL elements */
 * {
-  font-family: 'MarckScript', 'AkayaKanadaka', cursive, serif !important;
+  font-family: cursive, serif !important;
   font-weight: 400;
   font-style: normal;
 }
 
 /* Ensure HTML and body use the same font */
 html, body {
-  font-family: 'MarckScript', 'AkayaKanadaka', cursive, serif !important;
+  font-family: cursive, serif !important;
   height: 100%;
 }
 
 /* Force font on all text elements */
-h1, h2, h3, h4, h5, h6, p, span, div, a, button, input, textarea, select, label, li {
+h1, h2, h3, h4, h5, h6, p, span, div, a, button, input, textarea, select, label, li, th, td, small, strong, em {
   font-family: inherit !important;
 }
 
-/* Utility classes for specific fonts */
+/* Utility classes for specific custom fonts */
 .akaya {
   font-family: 'AkayaKanadaka', cursive !important;
 }
@@ -96,6 +96,11 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, input, textarea, select, label,
 
 .splash {
   font-family: 'Splash', cursive !important;
+}
+
+/* Default font class (cursive) */
+.default-font {
+  font-family: cursive, serif !important;
 }
 
 /* -------------------- END CUSTOM FONTS -------------------- */
@@ -142,9 +147,9 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, input, textarea, select, label,
 
 /* Mobile-specific optimizations */
 @media (max-width: 768px) {
-  /* Ensure fonts load properly on mobile */
+  /* Ensure cursive font is used on mobile */
   * {
-    font-family: 'MarckScript', 'AkayaKanadaka', cursive, serif !important;
+    font-family: cursive, serif !important;
   }
   
   /* Improve font rendering on mobile */
@@ -158,6 +163,6 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, input, textarea, select, label,
 /* Print styles */
 @media print {
   * {
-    font-family: 'MarckScript', 'AkayaKanadaka', cursive, serif !important;
+    font-family: cursive, serif !important;
   }
 }
