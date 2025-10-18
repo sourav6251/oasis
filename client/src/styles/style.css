@@ -7,7 +7,6 @@
   src: url('@/assets/fonts/Akaya_Kanadaka/AkayaKanadaka-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
 }
 
 /* Bonbon */
@@ -16,7 +15,6 @@
   src: url('@/assets/fonts/Bonbon/Bonbon-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
 }
 
 /* Fleur De Leah */
@@ -25,7 +23,6 @@
   src: url('@/assets/fonts/Fleur_De_Leah/FleurDeLeah-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
 }
 
 /* Kranky */
@@ -34,7 +31,6 @@
   src: url('@/assets/fonts/Kranky/Kranky-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
 }
 
 /* Marck Script */
@@ -43,67 +39,78 @@
   src: url('@/assets/fonts/Marck_Script/MarckScript-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
 }
 
+/* Roboto */
+@font-face {
+  font-family: 'Roboto';
+  src: url('@/assets/fonts/Roboto/RobotoFlex-VariableFont_GRAD,XOPQ,XTRA,YOPQ,YTAS,YTDE,YTFI,YTLC,YTUC,opsz,slnt,wdth,wght.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Sansation */
+/* @font-face {
+  font-family: 'Sansation';
+  src: url('@/assets/fonts/Sansation/Sansation-LightItalic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+} */
+/* Patrick_Hand */
+@font-face {
+  font-family: 'Patrick_Hand';
+  src: url('@/assets/fonts/Patrick_Hand/PatrickHand-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
 /* Splash */
 @font-face {
   font-family: 'Splash';
   src: url('@/assets/fonts/Splash/Splash-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
 }
 
-/* Set cursive as default font for ALL elements */
-* {
-  font-family: cursive, serif !important;
-  font-weight: 400;
-  font-style: normal;
-}
-
-/* Ensure HTML and body use the same font */
-html, body {
-  font-family: cursive, serif !important;
-  height: 100%;
-}
-
-/* Force font on all text elements */
-h1, h2, h3, h4, h5, h6, p, span, div, a, button, input, textarea, select, label, li, th, td, small, strong, em {
-  font-family: inherit !important;
-}
-
-/* Utility classes for specific custom fonts */
 .akaya {
-  font-family: 'AkayaKanadaka', cursive !important;
+  font-family: 'AkayaKanadaka', cursive;
 }
 
 .bonbon {
-  font-family: 'Bonbon', cursive !important;
+  font-family: 'Bonbon', cursive;
 }
 
 .fleur {
-  font-family: 'FleurDeLeah', cursive !important;
+  font-family: 'FleurDeLeah', cursive;
 }
+.kranky{
+  font-family: 'Kranky', cursive;
 
-.kranky {
-  font-family: 'Kranky', cursive !important;
 }
+.marck{
 
-.marck {
-  font-family: 'MarckScript', cursive !important;
+  font-family: 'MarckScript', cursive;
 }
+/* .playfair {
+  font-family: 'Playfair', serif;
+} */
 
 .splash {
-  font-family: 'Splash', cursive !important;
+  font-family: 'Splash', cursive;
 }
 
-/* Default font class (cursive) */
-.default-font {
-  font-family: cursive, serif !important;
-}
+*{
+  font-family: Georgia, 'Times New Roman', Times, serif,'Roboto', serif;
+  font-weight: 500;
+  font-style: italic;
+  /* font-style: italic; */
 
-/* -------------------- END CUSTOM FONTS -------------------- */
+}
+/* Glass_Antiqua -------------------- END CUSTOM FONTS -------------------- */
+
+/*  Medium 500 Italic*/
+html, body {
+  height: 100%;
+}
 
 :root {
   --color-primary: #9DC9C7;
@@ -112,6 +119,7 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, input, textarea, select, label,
   --color-neutral: #F0F5F3;
   --color-dark: #2A363B;
 }
+/* Sansation not required */
 
 /* Example usage */
 .bg-primary { background-color: var(--color-primary); }
@@ -120,12 +128,18 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, input, textarea, select, label,
 .border-secondary { border-color: var(--color-secondary); }
 .btn-accent { background: var(--color-accent); color: #fff; }
 
-/* Scrollbar styles */
+
+/* Force scrollbar always visible */
+
+
+/* For Firefox */
 * {
   scrollbar-width: thin;              
-  scrollbar-color: var(--color-accent) var(--color-neutral);  
+  scrollbar-color: var(--color-scroll) var(--color-neutral);  
+  
 }
 
+/* For Chrome, Edge, Safari (WebKit-based) */
 *::-webkit-scrollbar {
   width: 8px;       
   height: 8px;     
@@ -145,24 +159,7 @@ h1, h2, h3, h4, h5, h6, p, span, div, a, button, input, textarea, select, label,
   background: var(--color-secondary);
 }
 
-/* Mobile-specific optimizations */
-@media (max-width: 768px) {
-  /* Ensure cursive font is used on mobile */
-  * {
-    font-family: cursive, serif !important;
-  }
-  
-  /* Improve font rendering on mobile */
-  body {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-  }
-}
 
-/* Print styles */
-@media print {
-  * {
-    font-family: cursive, serif !important;
-  }
-}
+/**
+splash
+*/
