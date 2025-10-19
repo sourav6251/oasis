@@ -4,8 +4,8 @@
 
     <!-- Hero Section with Animation -->
     <section class="hero">
-      <div class="container">
-        <h1 v-motion :initial="{ opacity: 0, y: -50 }" :enter="{ opacity: 1, y: 0 }" :duration="1000">
+      <div class="container"  >
+        <h1 v-motion :initial="{ opacity: 0, y: -50 }" :enter="{ opacity: 1, y: 0 }" :duration="1000" class="fleur">
           Book Your Appointment
         </h1>
         <p v-motion :initial="{ opacity: 0, y: 50 }" :enter="{ opacity: 1, y: 0 }" :delay="200" :duration="1000">
@@ -16,11 +16,8 @@
 
 
     <div class="h-14 w-full  flex justify-end items-center pr-10">
-      <!-- <v-btn class="px-5">
-        <span @click="showBookingSection=!showBookingSection" class="cursor-pointer  Playfair Display ">Book Now</span>
-      </v-btn> -->
       <v-btn color="primary px-5" depressed @click="showBookingSection=!showBookingSection">
-        <span class="mdi mdi-plus mr-2"></span>
+        <v-icon icon="mdi-plus" class="mr-2"></v-icon>
         New Booking
       </v-btn>
     </div>
@@ -93,7 +90,7 @@
                      :class="{ 'selected': selectedLocation === 'salon' }"
                      @click="selectedLocation = 'salon'">
                   <div class="location-icon">
-                    <i class="fas fa-store"></i>
+                    <v-icon icon="mdi-store"></v-icon>
                   </div>
                   <div class="location-title">At Salon</div>
                   <div class="location-desc">Visit our beautiful salon for the full experience</div>
@@ -104,7 +101,7 @@
                      :class="{ 'selected': selectedLocation === 'home' }"
                      @click="selectedLocation = 'home'">
                   <div class="location-icon">
-                    <i class="fas fa-home"></i>
+                    <v-icon icon="mdi-home"></v-icon>
                   </div>
                   <div class="location-title">Home Service</div>
                   <div class="location-desc">Our professionals will come to your location</div>
@@ -405,10 +402,10 @@ export default defineComponent({
     // Payment selection
     const selectedPayment = ref<string>('card');
     const paymentMethods = ref<PaymentMethod[]>([
-      { id: 'card', name: 'Credit/Debit Card', icon: 'far fa-credit-card' },
-      { id: 'paypal', name: 'PayPal', icon: 'fab fa-paypal' },
-      { id: 'googlepay', name: 'Google Pay', icon: 'fab fa-google-pay' },
-      { id: 'applepay', name: 'Apple Pay', icon: 'fab fa-apple-pay' }
+      { id: 'card', name: 'Credit/Debit Card', icon: 'mdi-credit-card-outline' },
+      { id: 'paypal', name: 'PayPal', icon: 'mdi-paypal' },
+      { id: 'googlepay', name: 'Google Pay', icon: 'mdi-google' },
+      { id: 'applepay', name: 'Apple Pay', icon: 'mdi-apple' }
     ]);
     
     const paymentInfo = reactive<PaymentInfo>({
@@ -526,7 +523,7 @@ export default defineComponent({
 }
 
 body {
-  font-family: 'Poppins', sans-serif;
+  /* font-family: 'Poppins', sans-serif; */
   color: var(--color-dark);
   background-color: var(--color-neutral);
   line-height: 1.6;

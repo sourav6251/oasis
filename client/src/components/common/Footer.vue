@@ -1,72 +1,78 @@
-    <template>
-    <!-- Footer -->
-    <footer>
-      <div class="container">
-        <div class="footer-content">
-          <div class="footer-column">
-            <h3>Oasis Salon</h3>
-            <p>Oasis is a best beauty premium in Tamluk. We expertise in Makeup,Skin Care,Hair,Spa and Many More.
-                All Type of Bridal Makeup,Party Makeup,Weeding,Pre Weeding Makeup,Hair Stylish,Hair Smoothning,Spa done here.</p>
-            <div class="social-links">
-              <a target="_blank" rel="noopener noreferrer" href="https://www.facebook.com/oasismakeover?mibextid=ZbWKwL"><i class="fab fa-facebook-f"></i></a>
-              <!-- <a href="#"><i class="fab fa-instagram"></i></a>
-              <a href="#"><i class="fab fa-twitter"></i></a> -->
-              <a target="_blank" rel="noopener noreferrer" href="https://youtube.com/@Oasismakeover?si=HIspPYpV68fnXtZo"><i class="fab fa-youtube"></i></a>
-              
-            </div>
+<template>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <!-- About Column -->
+        <div class="footer-column">
+          <h3>Oasis Salon</h3>
+          <p>
+            Oasis is a best beauty premium in Tamluk. We expertise in Makeup, Skin Care, Hair, Spa, and Many More.
+            All Type of Bridal Makeup, Party Makeup, Wedding, Pre-Wedding Makeup, Hair Styling, Hair Smoothing, Spa done here.
+          </p>
+          <div class="social-links">
+            <a target="_blank" rel="noopener noreferrer" href="https://www.facebook.com/oasismakeover?mibextid=ZbWKwL">
+              <v-icon icon="mdi-facebook" size="20"></v-icon>
+            </a>
+            <a target="_blank" rel="noopener noreferrer" href="https://youtube.com/@Oasismakeover?si=HIspPYpV68fnXtZo">
+              <v-icon icon="mdi-youtube" size="20"></v-icon>
+            </a>
           </div>
-          <div class="footer-column">
-            <h3>Contact Info</h3>
-            <p><i class="fas fa-map-marker-alt"></i> 2nd Floor,Left Side of Rupasree Cinema Hall,Tamluk</p>
-            <p><i class="fas fa-phone"></i> 9531500843 / 9932269688</p>
-            <!-- <p><i class="fas fa-phone"></i> 9932269688</p> -->
-            <p><i class="fas fa-envelope"></i> oasismakeover@gmail.com</p>
-            <p><i class="fas fa-clock"></i> Open: Tue-Sun 9AM-7PM</p>
+        </div>
+
+        <!-- Contact Column -->
+        <div class="footer-column">
+          <h3>Contact Info</h3>
+          <p><v-icon icon="mdi-map-marker" size="16"></v-icon> 2nd Floor, Left Side of Rupasree Cinema Hall, Tamluk</p>
+          <p><v-icon icon="mdi-phone" size="16"></v-icon> 9531500843 / 9932269688</p>
+          <p><v-icon icon="mdi-email" size="16"></v-icon> oasismakeover@gmail.com</p>
+          <p><v-icon icon="mdi-clock-outline" size="16"></v-icon> Open: Tue-Sun 9AM-7PM</p>
+        </div>
+
+        <!-- Links Column -->
+        <div class="footer-column grid grid-cols-2 gap-4">
+          <div>
+            <h3>Main Links</h3>
+            <router-link to="/" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Home</router-link>
+            <router-link to="/service" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Services</router-link>
+            <router-link to="/packages" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Packages</router-link>
+            <router-link to="/gallery" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Gallery</router-link>
+            <router-link to="/booking" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Booking</router-link>
+            <router-link to="/contact" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Contact</router-link>
           </div>
-          <div class="footer-column grid grid-cols-2 gap-4">
-            <div>
-              <h3>Main Links</h3>
-              <router-link to="/" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Home</router-link>
-              <router-link to="/service" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Services</router-link>
-              <router-link to="/packages" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Packages</router-link>
-              <router-link to="/gallery" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Gallery</router-link>
-              <router-link to="/booking" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Booking</router-link>
-              <router-link to="/contact" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Contact</router-link>
-            </div>
-            <div>
-              <h3>More Info</h3>
-              <router-link to="/about" class="block mb-2 text-gray-300 hover:text-primary transition-colors">About Us</router-link>
-              <router-link to="/beauty-tips" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Beauty Tips</router-link>
-              <router-link to="/review" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Reviews</router-link>
-              <router-link to="/offers" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Offers</router-link>
-              <router-link to="/faq" class="block mb-2 text-gray-300 hover:text-primary transition-colors">FAQ</router-link>
-              <router-link to="/policies" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Policies</router-link>
-            </div>
+          <div>
+            <h3>More Info</h3>
+            <router-link to="/about" class="block mb-2 text-gray-300 hover:text-primary transition-colors">About Us</router-link>
+            <router-link to="/beauty-tips" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Beauty Tips</router-link>
+            <router-link to="/review" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Reviews</router-link>
+            <router-link to="/offers" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Offers</router-link>
+            <router-link to="/faq" class="block mb-2 text-gray-300 hover:text-primary transition-colors">FAQ</router-link>
+            <router-link to="/policies" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Policies</router-link>
           </div>
-          <div class="footer-column rounded-sm">
-             <h3>Location</h3>
-           <!-- <p>Subscribe to our newsletter for special offers and updates.</p>
-            <form @submit.prevent>
-              <input type="email" class="form-control" placeholder="Your Email Address" style="margin-bottom: 10px;" />
-              <button type="submit" class="btn-submit">Subscribe</button>
-            </form> -->
-             <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3691.7835859964234!2d87.9229940317383!3d22.286186264583712!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a0295966a336347%3A0x779f2f1d1f0a722f!2sOasis%20Makeover-Professional%20Beauty%20Premium%20%26%20Academy!5e0!3m2!1sen!2sin!4v1760371225912!5m2!1sen!2sin"
+        </div>
+
+        <!-- Location Column -->
+        <div class="footer-column rounded-sm">
+          <h3>Location</h3>
+          <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3691.7835859964234!2d87.9229940317383!3d22.286186264583712!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a0295966a336347%3A0x779f2f1d1f0a722f!2sOasis%20Makeover-Professional%20Beauty%20Premium%20%26%20Academy!5e0!3m2!1sen!2sin!4v1760371225912!5m2!1sen!2sin"
             width="100%" 
             height="90%"
-             style="border:0;"
-              :allowfullscreen="true"
-              loading="lazy" 
-              referrerpolicy="no-referrer-when-downgrade"
-                class=" rounded-sm">
-            </iframe>
-          </div>
-        </div>
-        <div class="copyright">
-          <p>&copy; 2023 Glamour Salon. All rights reserved.</p>
+            style="border:0;"
+            allowfullscreen
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade"
+            class="rounded-sm">
+          </iframe>
         </div>
       </div>
-    </footer>
+      <div class="copyright">
+        <p>&copy; 2023 Glamour Salon. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
 </template>
+
 
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -359,7 +365,7 @@ footer {
 }
 
 .social-links a:hover {
-  background: var(--color-primary);
+  /* background: var(--color-primary); */
   transform: translateY(-3px);
 }
 

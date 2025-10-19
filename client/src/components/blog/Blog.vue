@@ -19,7 +19,7 @@
           :initial="{ opacity: 0, y: 100 }"
           :enter="{ opacity: 1, y: 0 }"
           :duration="1200"
-          class="playfair-d text-3xl md:text-5xl font-bold text-white drop-shadow-lg"
+          class="playfair-d text-3xl md:text-5xl font-bold text-black drop-shadow-lg fleur " 
         >
           Beauty Blog & Tips
         </h1>
@@ -28,7 +28,7 @@
           :initial="{ opacity: 0, y: 100 }"
           :enter="{ opacity: 1, y: 0 }"
           :duration="1200"
-          class="poppins-light mt-4 text-white max-w-2xl drop-shadow-md"
+          class="poppins-light mt-4 text-black max-w-2xl drop-shadow-md"
         >
           Discover the latest beauty trends, expert tips, and product reviews to
           enhance your natural beauty

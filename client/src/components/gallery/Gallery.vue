@@ -18,17 +18,21 @@
       <div class="gallery-filters-container">
         <div class="gallery-filters">
           <button
-            v-for="(filter, index) in filters"
-            :key="filter.id"
-            class="filter-btn"
-            :class="{ active: activeFilter === filter.id }"
-            @click="setActiveFilter(filter.id, index)"
-            v-motion :initial="{ opacity: 0, y: 20 }" :enter="{ opacity: 1, y: 0 }" :delay="index * 100"
-            :ref="el => setFilterButtonRef(el, index)"
-          >
-            <i :class="filter.icon"></i>
-            {{ filter.name }}
-          </button>
+  v-for="(filter, index) in filters"
+  :key="filter.id"
+  class="filter-btn group"
+  :class="{ active: activeFilter === filter.id }"
+  @click="setActiveFilter(filter.id, index)"
+  v-motion :initial="{ opacity: 0, y: 20 }" :enter="{ opacity: 1, y: 0 }" :delay="index * 100"
+  :ref="el => setFilterButtonRef(el, index)"
+>
+  <v-icon 
+    :icon="filter.icon" 
+    color="black" 
+    :class="activeFilter !== filter.id ? 'group-hover:!text-[#9DC9C7] transition-colors duration-300' : ''"
+  ></v-icon>
+  {{ filter.name }}
+</button>
           <!-- Sliding Indicator -->
           <div 
             class="filter-slider" 
@@ -54,8 +58,8 @@
                 <h4>{{ work.title }}</h4>
                 <p>{{ work.category }}</p>
                 <div class="gallery-actions">
-                  <button class="view-btn" @click.stop="openLightbox(work, index)">
-                    <i class="fas fa-expand"></i>
+                  <button class="view-btn " @click.stop="openLightbox(work, index)">
+                    <v-icon icon="mdi-arrow-expand"></v-icon>
                   </button>
                 </div>
               </div>
@@ -76,13 +80,13 @@
     <div v-if="showLightbox" class="lightbox" @click="closeLightbox">
       <div class="lightbox-content" @click.stop>
         <button class="lightbox-close" @click="closeLightbox">
-          <i class="fas fa-times"></i>
+          <v-icon icon="mdi-close"></v-icon>
         </button>
         <button class="lightbox-nav lightbox-prev" @click="prevImage">
-          <i class="fas fa-chevron-left"></i>
+          <v-icon icon="mdi-chevron-left"></v-icon>
         </button>
         <button class="lightbox-nav lightbox-next" @click="nextImage">
-          <i class="fas fa-chevron-right"></i>
+          <v-icon icon="mdi-chevron-right"></v-icon>
         </button>
         
         <div class="lightbox-image">
@@ -93,8 +97,8 @@
           <p class="lightbox-category">{{ currentWork.category }}</p>
           <p class="lightbox-description">{{ currentWork.description }}</p>
           <div class="lightbox-meta">
-            <span><i class="far fa-clock"></i> {{ currentWork.duration }}</span>
-            <span><i class="fas fa-user"></i> {{ currentWork.stylist }}</span>
+            <span><v-icon icon="mdi-clock-outline"></v-icon> {{ currentWork.duration }}</span>
+            <span><v-icon icon="mdi-account"></v-icon> {{ currentWork.stylist }}</span>
           </div>
         </div>
       </div>
@@ -126,8 +130,6 @@ import { GalleryData } from '@/sampleData/GalleryData';
 import type { Filter, GalleryWork } from '@/types/Gallery';
 import { defineComponent, ref, computed, onMounted, nextTick, type ComponentPublicInstance } from 'vue';
 
-
-
 export default defineComponent({
   name: "Gallery",
   setup() {
@@ -143,12 +145,12 @@ export default defineComponent({
     const sliderTop = ref<number>(0);
 
     const filters = ref<Filter[]>([
-      { id: 'all', name: 'All Works', icon: 'fas fa-star' },
-      { id: 'hair', name: 'Hair', icon: 'fas fa-cut' },
-      { id: 'makeup', name: 'Makeup', icon: 'fas fa-palette' },
-      { id: 'nails', name: 'Nails', icon: 'fas fa-hand-sparkles' },
-      { id: 'skincare', name: 'Skincare', icon: 'fas fa-spa' },
-      { id: 'bridal', name: 'Bridal', icon: 'fas fa-heart' }
+      { id: 'all', name: 'All Works', icon: 'mdi-star' },
+      { id: 'hair', name: 'Hair', icon: 'mdi-content-cut' },
+      { id: 'makeup', name: 'Makeup', icon: 'mdi-palette' },
+      { id: 'nails', name: 'Nails', icon: 'mdi-hand-heart' },
+      { id: 'skincare', name: 'Skincare', icon: 'mdi-spa' },
+      { id: 'bridal', name: 'Bridal', icon: 'mdi-heart' }
     ]);
 
     // Fix: Properly type the ref callback
@@ -511,7 +513,7 @@ z-index: 0;
 }
 
 .view-btn {
-  background: var(--color-primary);
+  /* background: var(--color-primary); */
   color: var(--color-dark);
   border: none;
   width: 40px;
@@ -525,7 +527,8 @@ z-index: 0;
 }
 
 .view-btn:hover {
-  background: var(--color-accent);
+  /* background: var(--color-accent); */
+  border:solid 1px var(--color-primary) ;
   transform: scale(1.1);
 }
 

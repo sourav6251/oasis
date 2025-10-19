@@ -72,31 +72,35 @@
 }
 
 .akaya {
-  font-family: 'AkayaKanadaka', cursive;
+  font-family: 'AkayaKanadaka', cursive !important;
 }
 
 .bonbon {
-  font-family: 'Bonbon', cursive;
+  font-family: 'Bonbon', cursive !important;
 }
 
 .fleur {
-  font-family: 'FleurDeLeah', cursive;
+  font-family: 'FleurDeLeah', cursive !important;
 }
 .kranky{
-  font-family: 'Kranky', cursive;
+  font-family: 'Kranky', cursive !important;
 
 }
 .marck{
 
-  font-family: 'MarckScript', cursive;
+  font-family: 'MarckScript', cursive !important;
 }
 /* .playfair {
   font-family: 'Playfair', serif;
 } */
 
 .splash {
-  font-family: 'Splash', cursive;
+  font-family: 'Splash', cursive !important;
 }
+/* .patrick{
+
+  font-family: 'Patrick_Hand', cursive !important;
+} */
 
 *{
   font-family: Georgia, 'Times New Roman', Times, serif,'Roboto', serif;
@@ -111,7 +115,9 @@
 html, body {
   height: 100%;
 }
-
+h1{
+  font-family: 'fleur';
+}
 :root {
   --color-primary: #9DC9C7;
   --color-secondary: #FFD1C8;
@@ -159,6 +165,9 @@ html, body {
   background: var(--color-secondary);
 }
 
+.v-icon{
+  color:var(--color-primary)
+}
 
 /**
 splash
