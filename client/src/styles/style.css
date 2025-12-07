@@ -169,7 +169,7 @@ h1{
 }
 
 * {
-  font-family: cursive;
+  /* font-family: cursive; */
   font-weight: 400;
   font-style: normal;
 }

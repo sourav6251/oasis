@@ -118,11 +118,7 @@
             <div class="service-item d-flex flex-column bg-white p-3 pb-0">
               <div class="position-relative">
                 <img class="img-fluid" src="/6.jpg" alt="Makeup Services">
-                <div class="service-overlay">
-                  <a class="btn btn-lg-square btn-outline-light rounded-circle" href="service.html#makeup">
-                    <i class="fa fa-link text-warning"></i>
-                  </a>
-                </div>
+                
               </div>
               <div class="text-center p-4">
                 <h4>Makeup</h4>
@@ -133,11 +129,6 @@
             <div class="service-item d-flex flex-column bg-white p-3 pb-0">
               <div class="position-relative">
                 <img class="img-fluid" src="/7.jpg" alt="Hair Services">
-                <div class="service-overlay">
-                  <a class="btn btn-lg-square btn-outline-light rounded-circle" href="service.html#hair">
-                    <i class="fa fa-link text-warning"></i>
-                  </a>
-                </div>
               </div>
               <div class="text-center p-4">
                 <h4>Hair</h4>
@@ -148,11 +139,11 @@
             <div class="service-item d-flex flex-column bg-white p-3 pb-0">
               <div class="position-relative">
                 <img class="img-fluid" src="/8.jpg" alt="Skin Services">
-                <div class="service-overlay">
+                <!-- <div class="service-overlay">
                   <a class="btn btn-lg-square btn-outline-light rounded-circle" href="service.html#skin">
                     <i class="fa fa-link text-warning"></i>
                   </a>
-                </div>
+                </div> -->
               </div>
               <div class="text-center p-4">
                 <h4>Skin</h4>
@@ -163,11 +154,11 @@
             <div class="service-item d-flex flex-column bg-white p-3 pb-0">
               <div class="position-relative">
                 <img class="img-fluid" src="/9.jpg" alt="Spa Services">
-                <div class="service-overlay">
+                <!-- <div class="service-overlay">
                   <a class="btn btn-lg-square btn-outline-light rounded-circle" href="service.html#spa">
                     <i class="fa fa-link text-warning"></i>
                   </a>
-                </div>
+                </div> -->
               </div>
               <div class="text-center p-4">
                 <h4>Spa</h4>
@@ -175,6 +166,7 @@
             </div>
           </div>
         </div>
+        <button >Explor more</button>
       </div>
     </div>
     <!-- Service End -->
@@ -252,6 +244,8 @@
             </div>
           </div>
         </div>
+
+        <button >Explor more</button>
       </div>
     </div>
     <!-- Project End -->
@@ -288,6 +282,8 @@
             <p class="mb-0">"Oasis Makeover worked magic on my bridal look! Impeccable makeup that lasted all day. I felt truly radiant. Grateful for their exceptional artistry!"</p>
           </div>
         </div>
+
+        <button >Explor more</button>
       </div>
     </div>
     <!-- Testimonial End -->
@@ -296,21 +292,13 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'HomePage',
-  // You can add reactive data or methods here if needed
-  data() {
-    return {
-      // Add reactive data here if needed
-    }
-  }
-}
+<script setup lang="ts">
+
 </script>
 
 <style scoped>
 /* Import Google Fonts */
-/* @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap');
 
 /* --- CSS Reset & Base --- */
 .home-page *,
