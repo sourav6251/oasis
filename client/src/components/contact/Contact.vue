@@ -7,7 +7,7 @@
           v-motion
           :initial="{ opacity: 0, y: -50 }"
           :enter="{ opacity: 1, y: 0 }"
-          :duration="1000"
+          :duration="1000"  class="fleur"
         >Contact Us</h1>
         <p
           v-motion
@@ -72,7 +72,7 @@
             </div>
             <div 
               class="info-item"
-              v-motion
+              v-motion 
               :initial="{ opacity: 0, x: -50 }"
               :enter="{ opacity: 1, x: 0 }"
               :delay="800"

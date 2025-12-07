@@ -6,7 +6,7 @@
         <h1 v-motion :initial="{ opacity: 0, y: -50 }" :enter="{ opacity: 1, y: 0 }" :duration="1000" class="fleur">
           Our Premium Services
         </h1>
-        <p v-motion :initial="{ opacity: 0, y: 50 }" :enter="{ opacity: 1, y: 0 }" :duration="1000" :delay="200" class="cursive">
+        <p v-motion :initial="{ opacity: 0, y: 50 }" :enter="{ opacity: 1, y: 0 }" :duration="1000" :delay="200" class="patrick">
           Indulge in our wide range of beauty treatments designed to enhance your natural beauty and boost your confidence.
         </p>
         <div class="hero-buttons" v-motion :initial="{ opacity: 0, y: 50 }" :enter="{ opacity: 1, y: 0 }" :duration="1000" :delay="400">
@@ -51,7 +51,7 @@
         <div
           v-for="(service, index) in currentServices"
           :key="service.id"
-          class="service-card"
+          class="service-card patrick"
           v-motion-slide-visible-once-bottom
           :delay="index * 20"
         >
@@ -62,13 +62,13 @@
           <div class="service-content">
             <h3>{{ service.name }}</h3>
             <div class="service-meta">
-              <span><i class="far fa-clock"></i> {{ service.duration }}</span>
-              <span><i class="fas fa-tag"></i> {{ service.price }}</span>
+              <span><v-icon icon="mdi-clock-outline" size="16"></v-icon> {{ service.duration }}</span>
+              <span><v-icon icon="mdi-tag-outline" size="16"></v-icon> {{ service.price }}</span>
             </div>
             <p>{{ service.description }}</p>
             <ul class="service-features">
               <li v-for="feature in service.features" :key="feature">
-                <i class="fas fa-check"></i> {{ feature }}
+                <v-icon icon="mdi-check" size="16"></v-icon> {{ feature }}
               </li>
             </ul>
             <button class="service-btn" @click="bookService(service)">Book Now</button>
@@ -78,7 +78,7 @@
 
       <!-- No Services Found -->
       <div v-else class="no-services">
-        <i class="fas fa-search"></i>
+        <v-icon icon="mdi-magnify" size="48" ></v-icon>
         <p>No services found for {{ activeCategory }}.</p>
         <button class="hero-btn" @click="setActiveCategory('All', 0)">View All Services</button>
       </div>
@@ -113,7 +113,7 @@
             </div>
             <ul class="package-features">
               <li v-for="feature in packageItem.features" :key="feature">
-                <i class="fas fa-check"></i> {{ feature }}
+                <v-icon icon="mdi-check" size="16"></v-icon> {{ feature }}
               </li>
             </ul>
             <button class="package-btn" @click="bookPackage(packageItem)">Book Package</button>
@@ -314,7 +314,7 @@ export default {
 }
 
 body {
-  font-family: 'Poppins', sans-serif;
+  /* font-family: 'Poppins', sans-serif; */
   color: var(--color-text);
   background-color: var(--color-neutral);
   line-height: 1.6;
@@ -359,13 +359,6 @@ body {
   margin: 20px 0;
   color: var(--color-dark);
   box-shadow: var(--shadow);
-}
-
-.no-services i {
-  font-size: 3rem;
-  color: var(--color-primary);
-  margin-bottom: 20px;
-  display: block;
 }
 
 .no-services p {
@@ -715,6 +708,12 @@ body {
   gap: 10px;
 }
 
+.service-meta span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .service-content p {
   color: var(--color-text);
   margin-bottom: 20px;
@@ -733,12 +732,7 @@ body {
   display: flex;
   align-items: center;
   font-size: 0.9rem;
-}
-
-.service-features li i {
-  color: var(--color-primary);
-  margin-right: 10px;
-  flex-shrink: 0;
+  gap: 10px;
 }
 
 .service-btn {
@@ -905,10 +899,6 @@ body {
 
 .package-features li:last-child {
   border-bottom: none;
-}
-
-.package-features li i {
-  color: var(--color-primary);
 }
 
 .package-btn {

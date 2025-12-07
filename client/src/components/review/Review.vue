@@ -1,124 +1,121 @@
 <template>
   <div>
-
-
-    <!-- Hero Section -->
+    <!-- ================= HERO SECTION ================= -->
     <section class="hero">
       <div class="container">
         <h1
-          v-motion
-          :initial="{ opacity: 0, y: -50 }"
-          :enter="{ opacity: 1, y: 0 }"
-          :duration="1000"
-        >Client Reviews</h1>
-        <p
-          v-motion
-          :initial="{ opacity: 0, y: 30 }"
-          :enter="{ opacity: 1, y: 0 }"
-          :delay="500"
+          v-motion-slide-visible-once-bottom
+          :delay="100"
           :duration="800"
-        >See what our clients are saying about their experiences at our salon</p>
+          class="fleur"
+        >
+          Client Reviews
+        </h1>
+
+        <p
+          v-motion-slide-visible-once-bottom
+          :delay="200"
+          :duration="800"
+          class="subtitle marck"
+        >
+          Discover the stories behind our beautiful transformations
+        </p>
+
+        <div
+          class="hero-stats"
+          v-motion-slide-visible-once-bottom
+          :delay="300"
+        >
+          <div class="stat-badge">
+            <v-icon icon="mdi-star" color="var(--color-accent)" size="24" />
+            <span>4.9/5 Average Rating</span>
+          </div>
+
+          <div class="stat-badge">
+            <v-icon icon="mdi-account-group" color="var(--color-primary)" size="24" />
+            <span>500+ Happy Clients</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Decorative Circles -->
+      <div class="hero-decoration">
+        <div class="decoration-circle circle-1"></div>
+        <div class="decoration-circle circle-2"></div>
+        <div class="decoration-circle circle-3"></div>
       </div>
     </section>
 
-    <!-- Reviews Section -->
+    <!-- ================= REVIEWS SECTION ================= -->
     <section class="reviews-section">
       <div class="container">
-        <h2 class="section-title">What Our Clients Say</h2>
+        <h2
+          class="section-title"
+          v-motion-slide-visible-once-bottom
+          :delay="100"
+        >
+          What Our Clients Say
+        </h2>
+
+        <!-- Reviews Grid -->
         <div class="reviews-container">
-          <div 
-            v-for="(review, index) in reviewData" 
-            :key="index" 
+          <div
+            v-for="(review, index) in reviewData"
+            :key="index"
             class="review-card"
-            v-motion
-            :initial="{ opacity: 0, y: 100 }"
-            :enter="{ opacity: 1, y: 0 }"
-            :delay="index * 200"
-            :duration="800"
+            v-motion-slide-visible-once-bottom
+            :delay="index * 100"
           >
             <div class="review-header">
-              <img 
-                :src="review.image" 
-                alt="Client" 
+              <img
+                :src="review.image"
+                alt="Client"
                 class="client-image"
-                v-motion
-                :initial="{ scale: 0 }"
-                :enter="{ scale: 1 }"
-                :delay="(index * 200) + 400"
               />
               <div class="client-info">
                 <h3>{{ review.name }}</h3>
                 <p>{{ review.service }}</p>
               </div>
             </div>
+
             <div class="rating">
               <v-rating
                 v-model="review.rating"
                 :length="5"
-                :readonly="true"
+                readonly
                 color="amber"
                 half-increments
                 density="compact"
-              ></v-rating>
+              />
             </div>
+
             <p class="review-content">{{ review.text }}</p>
             <span class="service-tag">{{ review.service }}</span>
+
             <div class="review-meta">
               <span>{{ review.date }}</span>
-              <!-- <span>
-                <i :class="review.liked ? 'fas fa-thumbs-up' : 'far fa-thumbs-up'" @click="toggleLike(index)"></i>
-                {{ review.likes }}
-              </span> -->
             </div>
           </div>
         </div>
 
         <!-- Add Review Form -->
-        <v-card 
-          class="add-review mx-auto" 
-          max-width="800" 
+        <v-card
+          class="add-review mx-auto"
+          max-width="800"
           elevation="3"
-          v-motion
-          :initial="{ opacity: 0, y: 100, scale: 0.9 }"
-          :enter="{ opacity: 1, y: 0, scale: 1 }"
-          :duration="1000"
+          v-motion-pop-visible-once
+          :delay="200"
         >
           <v-card-title class="text-center pt-6">
-            <h3 
-              class="text-h4 font-weight-bold"
-              v-motion
-              :initial="{ opacity: 0, y: 20 }"
-              :enter="{ opacity: 1, y: 0 }"
-              :delay="500"
-            >Share Your Experience</h3>
+            <h3 class="text-h4 font-weight-bold">
+              Share Your Experience
+            </h3>
           </v-card-title>
-          
+
           <v-card-text>
             <v-form @submit.prevent="submitReview" class="px-4 py-6">
               <v-row>
-                <!-- <v-col cols="12" md="6">
-                  <v-text-field
-                    v-model="form.name"
-                    label="Your Name"
-                    variant="outlined"
-                    :rules="[v => !!v || 'Name is required']"
-                    required
-                    prepend-inner-icon="mdi-account"
-                  ></v-text-field>
-                </v-col>
-
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    v-model="form.email"
-                    label="Email Address"
-                    variant="outlined"
-                    type="email"
-                    :rules="[v => !!v || 'Email is required', v => /.+@.+\..+/.test(v) || 'Email must be valid']"
-                    required
-                    prepend-inner-icon="mdi-email"
-                  ></v-text-field>
-                </v-col> -->
-
+                <!-- Rating -->
                 <v-col cols="12">
                   <label class="text-subtitle-1 mb-2 d-block">Your Rating</label>
                   <v-rating
@@ -127,9 +124,10 @@
                     half-increments
                     hover
                     size="large"
-                  ></v-rating>
+                  />
                 </v-col>
 
+                <!-- Service Select -->
                 <v-col cols="12">
                   <v-select
                     v-model="form.service"
@@ -139,9 +137,10 @@
                     required
                     :rules="[v => !!v || 'Service is required']"
                     prepend-inner-icon="mdi-spa"
-                  ></v-select>
+                  />
                 </v-col>
 
+                <!-- Review Text -->
                 <v-col cols="12">
                   <v-textarea
                     v-model="form.review"
@@ -152,9 +151,10 @@
                     :rules="[v => !!v || 'Review is required']"
                     required
                     prepend-inner-icon="mdi-comment"
-                  ></v-textarea>
+                  />
                 </v-col>
 
+                <!-- Submit Button -->
                 <v-col cols="12" class="text-center">
                   <v-btn
                     type="submit"
@@ -162,63 +162,55 @@
                     color="var(--color-primary)"
                     class="px-8"
                     rounded="pill"
-                    v-motion
-                    @click="animateButton"
-                    :initial="{ scale: 1, rotate: 0 }"
-                    :enter="buttonAnimation"
+                    v-motion-pop-visible-once
+                    :delay="400"
                   >
                     Submit Review
-                    <v-icon end icon="mdi-send"></v-icon>
+                    <v-icon end icon="mdi-send" />
                   </v-btn>
                 </v-col>
               </v-row>
             </v-form>
           </v-card-text>
         </v-card>
-     
-    </div>
+      </div>
     </section>
 
-    <!-- Stats Section -->
+    <!-- ================= STATS SECTION ================= -->
     <section class="stats-section">
       <div class="container">
         <div class="stats-container">
-          <div 
+          <div
             class="stat-item"
-            v-motion
-            :initial="{ opacity: 0, scale: 0.5 }"
-            :enter="{ opacity: 1, scale: 1 }"
-            :delay="200"
+            v-motion-pop-visible-once
+            :delay="100"
           >
             <h2>4.9</h2>
             <p>Average Rating</p>
           </div>
-          <div 
+
+          <div
             class="stat-item"
-            v-motion
-            :initial="{ opacity: 0, scale: 0.5 }"
-            :enter="{ opacity: 1, scale: 1 }"
-            :delay="400"
+            v-motion-pop-visible-once
+            :delay="200"
           >
             <h2>500+</h2>
             <p>Happy Clients</p>
           </div>
-          <div 
+
+          <div
             class="stat-item"
-            v-motion
-            :initial="{ opacity: 0, scale: 0.5 }"
-            :enter="{ opacity: 1, scale: 1 }"
-            :delay="600"
+            v-motion-pop-visible-once
+            :delay="300"
           >
             <h2>98%</h2>
             <p>Would Recommend</p>
           </div>
-          <div 
+
+          <div
             class="stat-item"
-            v-motion
-            :initial="{ opacity: 0, scale: 0.5 }"
-            :enter="{ opacity: 1, scale: 1 }"
-            :delay="800"
+            v-motion-pop-visible-once
+            :delay="400"
           >
             <h2>250+</h2>
             <p>5-Star Reviews</p>
@@ -226,87 +218,63 @@
         </div>
       </div>
     </section>
-
   </div>
 </template>
 
 <script lang="ts">
-import { reviews, type Review } from '@/sampleData/BlogData';
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref } from 'vue'
+import { reviews, type Review } from '@/sampleData/BlogData'
 
 export default defineComponent({
   name: 'ClientReviews',
-  components: {},
+
   setup() {
-    const reviewData = ref<Review[]>([...reviews]);
+    const reviewData = ref<Review[]>([...reviews])
     const form = ref({
       name: '',
       email: '',
       rating: 0,
       service: '',
-      review: ''
-    });
+      review: '',
+    })
 
     const services = [
       'Hair Services',
       'Makeup',
       'Skincare',
       'Nail Services',
-      'Spa Treatments'
-    ];
-
-    const buttonAnimation = ref({ scale: 1, rotate: 0 });
-    
-    const animateButton = () => {
-      // Shake and scale animation
-      buttonAnimation.value = { scale: 1.1, rotate: -5 };
-      setTimeout(() => {
-        buttonAnimation.value = { scale: 1.1, rotate: 5 };
-        setTimeout(() => {
-          buttonAnimation.value = { scale: 1, rotate: 0 };
-        }, 100);
-      }, 100);
-    };
+      'Spa Treatments',
+    ]
 
     const submitReview = () => {
-      // Add your submission logic here
-      console.log('Form submitted:', form.value);
-      // Reset form after submission
-      form.value = {
-        name: '',
-        email: '',
-        rating: 0,
-        service: '',
-        review: ''
-      };
-      // Trigger button animation on submit
-      animateButton();
-    };
+      console.log('Form submitted:', form.value)
+      form.value = { name: '', email: '', rating: 0, service: '', review: '' }
+    }
 
     return {
       reviewData,
       form,
       services,
       submitReview,
-      buttonAnimation,
-      animateButton
-    };
-  }
-});
+    }
+  },
+})
 </script>
 
 
 <style scoped>
+/* ================= VARIABLES ================= */
 :root {
-  --color-primary: #9DC9C7;
-  --color-secondary: #FFD1C8;
-  --color-accent: #E6C8A4;
-  --color-neutral: #F0F5F3;
-  --color-dark: #2A363B;
-  --color-light: #FFFFFF;
+  --color-primary: #9dc9c7;
+  --color-secondary: #ffd1c8;
+  --color-accent: #e6c8a4;
+  --color-neutral: #f0f5f3;
+  --color-dark: #2a363b;
+  --color-light: #ffffff;
   --transition: all 0.3s ease;
 }
 
+/* ================= GLOBAL STYLES ================= */
 * {
   margin: 0;
   padding: 0;
@@ -326,71 +294,81 @@ body {
   padding: 0 20px;
 }
 
-/* Header */
-header {
-  background-color: var(--color-light);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 0;
-}
-
-.logo {
-  font-family: 'Playfair Display', serif;
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--color-primary);
-}
-
-.logo span {
-  color: var(--color-accent);
-}
-
-nav ul {
-  display: flex;
-  list-style: none;
-  gap: 30px;
-}
-
-nav a {
-  text-decoration: none;
-  color: var(--color-dark);
-  font-weight: 500;
-  transition: var(--transition);
-}
-
-nav a:hover {
-  color: var(--color-primary);
-}
-
-/* Hero Section */
+/* ================= HERO SECTION ================= */
 .hero {
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
-  padding: 80px 0;
+  padding: 100px 0 80px;
   text-align: center;
-  color: var(--color-light);
+  color: black;
+  position: relative;
+  overflow: hidden;
 }
 
 .hero h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 48px;
+  font-size: 4rem;
   margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(42, 54, 59, 0.3);
 }
 
-.hero p {
-  font-size: 18px;
-  max-width: 700px;
-  margin: 0 auto;
+.subtitle {
+  font-size: 1.5rem;
+  max-width: 600px;
+  margin: 0 auto 40px;
+  opacity: 0.95;
 }
 
-/* Reviews Section */
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.stat-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.hero-decoration {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.decoration-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.circle-1 {
+  width: 120px;
+  height: 120px;
+  top: 10%;
+  left: 10%;
+}
+
+.circle-2 {
+  width: 80px;
+  height: 80px;
+  top: 60%;
+  right: 15%;
+}
+
+.circle-3 {
+  width: 60px;
+  height: 60px;
+  bottom: 20%;
+  left: 20%;
+}
+
+/* ================= REVIEWS SECTION ================= */
 .reviews-section {
   padding: 80px 0;
 }
@@ -404,7 +382,7 @@ nav a:hover {
   position: relative;
 }
 
-.section-title:after {
+.section-title::after {
   content: '';
   display: block;
   width: 60px;
@@ -460,8 +438,6 @@ nav a:hover {
 
 .rating {
   margin-bottom: 15px;
-  display: flex;
-  align-items: center;
 }
 
 .review-content {
@@ -487,7 +463,7 @@ nav a:hover {
   margin-top: 15px;
 }
 
-/* Review Form */
+/* ================= ADD REVIEW FORM ================= */
 .add-review {
   margin-top: 50px;
   background: var(--color-light);
@@ -498,7 +474,7 @@ nav a:hover {
   color: var(--color-dark);
 }
 
-/* Stats Section */
+/* ================= STATS SECTION ================= */
 .stats-section {
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
   padding: 60px 0;
@@ -522,81 +498,8 @@ nav a:hover {
   font-size: 18px;
 }
 
-/* Footer */
-footer {
-  background: var(--color-dark);
-  color: var(--color-light);
-  padding: 60px 0 30px;
-}
-
-.footer-content {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 40px;
-  margin-bottom: 40px;
-}
-
-.footer-column h3 {
-  font-family: 'Playfair Display', serif;
-  font-size: 22px;
-  margin-bottom: 20px;
-  color: var(--color-primary);
-}
-
-.footer-column p,
-.footer-column a {
-  color: #ccc;
-  margin-bottom: 10px;
-  display: block;
-  text-decoration: none;
-  transition: var(--transition);
-}
-
-.footer-column a:hover {
-  color: var(--color-primary);
-}
-
-.social-links {
-  display: flex;
-  gap: 15px;
-  margin-top: 20px;
-}
-
-.social-links a {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: var(--transition);
-}
-
-.social-links a:hover {
-  background: var(--color-primary);
-  transform: translateY(-3px);
-}
-
-.copyright {
-  text-align: center;
-  padding-top: 30px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  color: #999;
-}
-
-/* Responsive Design */
+/* ================= RESPONSIVE ================= */
 @media (max-width: 768px) {
-  .header-content {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  nav ul {
-    margin-top: 20px;
-    justify-content: center;
-  }
-
   .hero h1 {
     font-size: 36px;
   }
@@ -611,11 +514,6 @@ footer {
 }
 
 @media (max-width: 480px) {
-  nav ul {
-    flex-direction: column;
-    gap: 10px;
-  }
-
   .hero {
     padding: 60px 0;
   }
@@ -639,7 +537,8 @@ footer {
   }
 
   .stats-container {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
   }
 }
 </style>
