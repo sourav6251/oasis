@@ -4,13 +4,10 @@ import AboutView from '@/views/AboutView.vue'
 import ServicesView from '@/views/ServicesView.vue'
 import BookingView from '@/views/BookingView.vue'
 import GalleryView from '@/views/GalleryView.vue'
-import PackagesView from '@/views/PackagesView.vue'
 import BeautyView from '@/views/BeautyView.vue'
 import ContactView from '@/views/ContactView.vue'
 import ReviewsView from '@/views/ReviewsView.vue'
-import FAQView from '@/views/FAQView.vue'
 import PoliciesView from '@/views/PoliciesView.vue'
-import OffersView from '@/views/OffersView.vue'
 import AdminView from '@/views/AdminView.vue'
 
 const router = createRouter({
@@ -42,11 +39,6 @@ const router = createRouter({
       component: GalleryView,
     },
     {
-      path: '/packages',
-      name: 'Packages',
-      component: PackagesView,
-    },
-    {
       path: '/beauty-tips',
       name: 'Beauty',
       component: BeautyView,
@@ -62,19 +54,9 @@ const router = createRouter({
       component: ReviewsView,
     },
     {
-      path: '/faq',
-      name: 'FAQ',
-      component: FAQView,
-    },
-    {
       path: '/policies',
       name: 'Policies',
       component: PoliciesView,
-    },
-    {
-      path: '/offers',
-      name: 'Offers',
-      component: OffersView,
     },
     {
       path: '/update',

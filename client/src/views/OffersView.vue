@@ -1,1 +1,0 @@
-<template>Offers view</template>

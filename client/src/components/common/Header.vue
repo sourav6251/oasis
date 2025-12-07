@@ -53,15 +53,12 @@ export default defineComponent({
         const links= [
           { name: "Home", link: "/" },
           { name: "* Services", link: "/service" },
-          { name: "Packages", link: "/packages" },
           { name: "* Gallery", link: "/gallery" },
           { name: "* Booking", link: "/booking" },
           { name: "* Contact", link: "/contact" },
           { name: "About Us", link: "/about" },
           { name: "* Beauty Tips", link: "/beauty-tips" },
           { name: "* Reviews", link: "/review" },
-          { name: "Offers", link: "/offers" },
-          { name: "FAQ", link: "/faq" },
           { name: "* Policies", link: "/policies" }
         ]
 

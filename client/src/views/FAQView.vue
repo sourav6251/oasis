@@ -1,1 +1,0 @@
-<template>FAQ view</template>
