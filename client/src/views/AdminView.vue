@@ -373,7 +373,7 @@ const loadCategories = async () => {
   try {
     categories.value = await apiStore.getAllServiceCategories();
   } catch (error) {
-    alert('Failed to load categories');
+    // alert('Failed to load categories');
     console.error(error);
   }
 };
@@ -382,7 +382,7 @@ const loadServices = async () => {
   try {
     services.value = await apiStore.getAllServices();
   } catch (error) {
-    alert('Failed to load services');
+    // alert('Failed to load services');
     console.error(error);
   }
 };
@@ -391,7 +391,7 @@ const loadGalleryCategories = async () => {
   try {
     galleryCategories.value = await apiStore.getAllGalleryCategories();
   } catch (error) {
-    alert('Failed to load gallery categories');
+    // alert('Failed to load gallery categories');
     console.error(error);
   }
 };
@@ -400,7 +400,7 @@ const loadGalleryWorks = async () => {
   try {
     galleryWorks.value = await apiStore.getAllGalleries();
   } catch (error) {
-    alert('Failed to load gallery works');
+    // alert('Failed to load gallery works');
     console.error(error);
   }
 };

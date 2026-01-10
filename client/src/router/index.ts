@@ -90,7 +90,7 @@ const router = createRouter({
       path: '/update',
       name: 'Admin',
       component: AdminView,
-      meta: { requiresAuth: true, requiresAdmin: true }
+      // meta: { requiresAuth: true, requiresAdmin: true }
     },
   ],
 })
