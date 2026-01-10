@@ -49,7 +49,7 @@
 //         },
 //       },
 //     },
-    
+
 //   },
 // })
 
@@ -80,7 +80,7 @@ import 'vue-sonner/style.css'
 import App from './App.vue'
 import router from './router'
 
-const getCssVar = (name:any) =>
+const getCssVar = (name: any) =>
   getComputedStyle(document.documentElement).getPropertyValue(name).trim()
 
 const vuetify = createVuetify({
@@ -119,4 +119,11 @@ app.use(MotionPlugin)
 app.use(pinia)
 app.use(router)
 app.use(vuetify)
+
+// Mount app
 app.mount('#app')
+
+// Check authentication after app is mounted
+import { useAuthStore } from './stores/authStore'
+const authStore = useAuthStore()
+authStore.checkAuth()

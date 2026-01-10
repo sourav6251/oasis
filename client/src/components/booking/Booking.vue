@@ -62,7 +62,32 @@
                 </button>
               </div>
               
-              <div class="service-list">
+              <!-- Loading State -->
+              <div v-if="serviceStore.isLoading" class="loading-state">
+                <v-progress-circular
+                  indeterminate
+                  color="primary"
+                  :size="60"
+                  :width="5"
+                ></v-progress-circular>
+                <p>Loading services...</p>
+              </div>
+
+              <!-- Error State -->
+              <div v-else-if="serviceStore.getError" class="error-state">
+                <v-icon icon="mdi-alert-circle-outline" size="60" color="error"></v-icon>
+                <p class="error-message">{{ serviceStore.getError }}</p>
+                <v-btn 
+                  color="primary" 
+                  @click="serviceStore.refreshData()"
+                  prepend-icon="mdi-refresh"
+                >
+                  Retry
+                </v-btn>
+              </div>
+
+              <!-- Service List -->
+              <div v-else-if="filteredServices.length > 0" class="service-list">
                 <div v-for="service in filteredServices" :key="service.id" v-motion :initial="{ opacity: 0, y: 20 }" :enter="{ opacity: 1, y: 0 }" :delay="100 * service.id" :duration="300"
                      :class="['service-item', { 'selected': isServiceSelected(service.id) }]"
                      @click="toggleService(service)">
@@ -72,6 +97,12 @@
                   </div>
                   <div class="service-price">${{ service.price }}</div>
                 </div>
+              </div>
+
+              <!-- Empty State -->
+              <div v-else class="empty-state">
+                <v-icon icon="mdi-emoticon-sad-outline" size="60" color="grey"></v-icon>
+                <p>No services available{{ selectedCategory !== 'All' ? ' in this category' : '' }}</p>
               </div>
               
               <div class="form-actions">
@@ -119,6 +150,19 @@
                 <div class="form-group">
                   <label for="apartment">Apartment/Unit (Optional)</label>
                   <input type="text" id="apartment" v-model="bookingInfo.apartment" class="form-control" placeholder="Apartment, unit, suite, etc.">
+                </div>
+                
+                <div class="form-group">
+                  <label for="phoneNumber">Phone Number <span class="required">*</span></label>
+                  <input 
+                    type="tel" 
+                    id="phoneNumber" 
+                    v-model="bookingInfo.phoneNumber" 
+                    class="form-control" 
+                    placeholder="Enter your phone number (e.g., 1234567890)"
+                    pattern="[0-9]{10}"
+                  >
+                  <small class="form-hint">📞 We'll use this number to coordinate the home service</small>
                 </div>
                 
                 <div class="form-group">
@@ -239,11 +283,12 @@
 
 <script lang="ts">
 import { useUserStore } from '@/stores/userStore';
+import { useServiceStore } from '@/stores/serviceStore';
 import { storeToRefs } from 'pinia';
-import { ref, computed, reactive, defineComponent } from 'vue';
+import { ref, computed, reactive, defineComponent, onMounted } from 'vue';
 import BookingHistory from './BookingHistory.vue';
 import type { BookingInfo, CalendarDate, PaymentInfo, PaymentMethod, Service } from '@/types/Booking';
-import { BookingData } from '@/sampleData/BookingData';
+import { convertToBookingService } from '@/types/Booking';
 
 
 
@@ -254,22 +299,30 @@ export default defineComponent({
     // Current step in the booking process
     const currentStep = ref<number>(1);
     const userStore = useUserStore();
+    const serviceStore = useServiceStore();
     const showBookingSection=ref(false);
     
     const { getIsLogin, getName, getUserEmail } = storeToRefs(userStore);
 
-    // Service selection
-    const categories = ref<string[]>(['All', 'Hair', 'Skincare', 'Nails', 'Makeup', 'Spa']);
+    // Service selection - using store
+    const categories = computed<string[]>(() => serviceStore.getCategoryNames);
     const selectedCategory = ref<string>('All');
 
-    
-    const services = ref<Service[]>(BookingData);
+    // Convert backend services to booking format
+    const services = computed<Service[]>(() => {
+      return serviceStore.getAllServices.map(convertToBookingService);
+    });
     
     const selectedServices = ref<Service[]>([]);
     
     const filteredServices = computed<Service[]>(() => {
       if (selectedCategory.value === 'All') return services.value;
       return services.value.filter(service => service.category === selectedCategory.value);
+    });
+
+    // Fetch data on component mount
+    onMounted(async () => {
+      await serviceStore.fetchAllData();
     });
     
     const toggleService = (service: Service): void => {
@@ -290,6 +343,7 @@ export default defineComponent({
     const bookingInfo = reactive<BookingInfo>({
       address: '',
       apartment: '',
+      phoneNumber: '',
       instructions: ''
     });
     
@@ -449,6 +503,7 @@ export default defineComponent({
       selectedLocation.value = 'salon';
       bookingInfo.address = '';
       bookingInfo.apartment = '';
+      bookingInfo.phoneNumber = '';
       bookingInfo.instructions = '';
       selectedDate.value = null;
       selectedTime.value = null;
@@ -500,6 +555,7 @@ export default defineComponent({
       makePayment,
       showBookingSection,
       BookingHistory,
+      serviceStore, // Make store accessible in template
     };
   }
 });
@@ -737,6 +793,18 @@ nav a:hover {
   box-shadow: 0 0 0 2px rgba(157, 201, 199, 0.2);
 }
 
+.form-hint {
+  display: block;
+  margin-top: 5px;
+  font-size: 12px;
+  color: #666;
+}
+
+.required {
+  color: #d32f2f;
+  font-weight: bold;
+}
+
 select.form-control {
   appearance: none;
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
@@ -852,6 +920,37 @@ select.form-control {
 .service-price {
   font-weight: 600;
   color: var(--color-primary);
+}
+
+/* Loading, Error, and Empty States */
+.loading-state,
+.error-state,
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  min-height: 300px;
+}
+
+.loading-state p,
+.error-state p,
+.empty-state p {
+  margin-top: 20px;
+  font-size: 16px;
+  color: #777;
+}
+
+.error-state .error-message {
+  color: #d32f2f;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.empty-state p {
+  color: #999;
 }
 
 /* Location Selection */

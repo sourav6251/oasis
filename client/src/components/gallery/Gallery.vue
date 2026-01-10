@@ -126,8 +126,8 @@
 </template>
 
 <script lang="ts">
-import { GalleryData } from '@/sampleData/GalleryData';
-import type { Filter, GalleryWork } from '@/types/Gallery';
+import apiStore from '@/api/apiStore';
+import type { Filter, GalleryWork, GalleryCategory } from '@/types/Gallery';
 import { defineComponent, ref, computed, onMounted, nextTick, type ComponentPublicInstance } from 'vue';
 
 export default defineComponent({
@@ -143,14 +143,10 @@ export default defineComponent({
     const sliderWidth = ref<number>(0);
     const sliderHeight = ref<number>(0);
     const sliderTop = ref<number>(0);
+    const loading = ref<boolean>(true);
 
     const filters = ref<Filter[]>([
-      { id: 'all', name: 'All Works', icon: 'mdi-star' },
-      { id: 'hair', name: 'Hair', icon: 'mdi-content-cut' },
-      { id: 'makeup', name: 'Makeup', icon: 'mdi-palette' },
-      { id: 'nails', name: 'Nails', icon: 'mdi-hand-heart' },
-      { id: 'skincare', name: 'Skincare', icon: 'mdi-spa' },
-      { id: 'bridal', name: 'Bridal', icon: 'mdi-heart' }
+      { id: 'all', name: 'All Works', icon: 'mdi-star' }
     ]);
 
     // Fix: Properly type the ref callback
@@ -165,7 +161,36 @@ export default defineComponent({
       }
     };
 
-    const galleryWorks = ref<GalleryWork[]>(GalleryData);
+    const galleryWorks = ref<GalleryWork[]>([]);
+
+    // Load gallery categories from backend
+    const loadGalleryCategories = async () => {
+      try {
+        const categories = await apiStore.getAllGalleryCategories();
+        filters.value = [
+          { id: 'all', name: 'All Works', icon: 'mdi-star' },
+          ...categories.map((cat: GalleryCategory) => ({
+            id: cat.name.toLowerCase(),
+            name: cat.name,
+            icon: cat.icon
+          }))
+        ];
+      } catch (error) {
+        console.error('Failed to load gallery categories:', error);
+      }
+    };
+
+    // Load gallery works from backend
+    const loadGalleryWorks = async () => {
+      try {
+        loading.value = true;
+        galleryWorks.value = await apiStore.getAllGalleries();
+      } catch (error) {
+        console.error('Failed to load gallery works:', error);
+      } finally {
+        loading.value = false;
+      }
+    };
 
     // Computed properties
     const filteredWorks = computed(() => {
@@ -266,7 +291,10 @@ export default defineComponent({
     };
 
     // Initialize
-    onMounted(() => {
+    onMounted(async () => {
+      await loadGalleryCategories();
+      await loadGalleryWorks();
+      
       setTimeout(() => {
         updateSliderPosition(0);
       }, 100);
@@ -288,6 +316,7 @@ export default defineComponent({
       currentWork,
       showLoadMore,
       sliderStyle,
+      loading,
       setFilterButtonRef,
       setActiveFilter,
       openLightbox,

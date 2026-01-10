@@ -57,7 +57,7 @@
         >
           <div class="service-img">
             <img :src="service.img" :alt="service.name" loading="lazy" />
-            <div class="service-badge">{{ service.category }}</div>
+            <div class="service-badge">{{ service.category.name }}</div>
           </div>
           <div class="service-content">
             <h3>{{ service.name }}</h3>
@@ -145,8 +145,8 @@
 </template>
 
 <script lang="ts">
-import { ServiceData, ServicePackageData } from '@/sampleData/ServiceData';
-import type { Service, ServicePackage } from '@/types/Services';
+import apiStore from '@/api/apiStore';
+import type { Service, ServiceCategory, ServicePackage } from '@/types/Services';
 import { ref, computed, onMounted, nextTick } from 'vue';
 import type { Ref } from 'vue';
 
@@ -154,7 +154,7 @@ export default {
   setup() {
     const activeCategory: Ref<string> = ref('All');
     const loading: Ref<boolean> = ref(true);
-    const categories: Ref<string[]> = ref(['All', 'Hair', 'Skincare', 'Nails', 'Makeup', 'Spa']);
+    const categories: Ref<string[]> = ref(['All']);
     const tabButtons = ref<(HTMLElement | null)[]>([]);
     const tabSliderPosition = ref<number>(0);
     const tabSliderWidth = ref<number>(0);
@@ -170,7 +170,7 @@ export default {
       if (activeCategory.value === 'All') {
         return services.value;
       }
-      return services.value.filter(service => service.category === activeCategory.value);
+      return services.value.filter(service => service.category.name === activeCategory.value);
     });
 
     // Computed property for tab slider style
@@ -184,18 +184,36 @@ export default {
       };
     });
 
+    // Load categories
+    const loadCategories = async () => {
+      try {
+        const fetchedCategories = await apiStore.getAllServiceCategories();
+        // Extract names and prepend 'All'
+        categories.value = ['All', ...fetchedCategories.map((c: any) => c.name)];
+      } catch (error) {
+        console.error("Failed to load categories:", error);
+      }
+    };
+
     // Load services data
-    const loadServices = () => {
-      // Simulate API call with setTimeout
-      setTimeout(() => {
-        services.value = ServiceData;
+    const loadServices = async () => {
+      try {
+        loading.value = true;
+        services.value = await apiStore.getAllServices();
+      } catch (error) {
+        console.error("Failed to load services:", error);
+      } finally {
         loading.value = false;
-      }, 100);
+      }
     };
 
     // Load packages data
-    const loadPackages = () => {
-      packages.value = ServicePackageData;
+    const loadPackages = async () => {
+      try {
+        packages.value = await apiStore.getAllServicePackages();
+      } catch (error) {
+        console.error("Failed to load packages:", error);
+      }
     };
 
     // Set tab button ref with proper typing
@@ -257,9 +275,10 @@ export default {
     };
 
     // Load data when component mounts
-    onMounted(() => {
-      loadServices();
-      loadPackages();
+    onMounted(async () => {
+      await loadCategories();
+      await loadServices();
+      await loadPackages();
       
       // Initialize slider position
       setTimeout(() => {
@@ -371,6 +390,7 @@ body {
   color: var(--color-dark);
   text-align: center;
   padding: 80px 0;
+  /* padding-top: 0px; */
   margin-bottom: 80px;
   border-radius: var(--radius);
   position: relative;

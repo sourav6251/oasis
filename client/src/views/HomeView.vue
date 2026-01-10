@@ -5,24 +5,24 @@
     <div class="container-fluid hero-header bg-light mb-5">
       <div class="container">
         <div class="row g-5 align-items-center">
-          <div class="col-lg-6">
+          <div class="col-lg-6" v-motion :initial="{ opacity: 0, x: -100 }" :visibleOnce="{ opacity: 1, x: 0 }" :delay="100" :duration="1000">
             <p class="text-warning text-uppercase mb-2 font-weight-bold">Welcome To Oasis</p>
             <h1 class=" mb-3" style="font-weight: 800; font-size: 50px;">The Best Professional Beauty Premium & Academy</h1>
             <p>All Type of Bridal Makeup, Party Makeup, Weeding, Pre Weeding Makeup, Hair Stylish, Hair Smoothing, Spa done here.</p>
-            <div class="d-flex align-items-center">
-              <a href="service.html" class="btn btn-warning py-3 px-4 me-5">Explore More</a>
-              <a href="https://wa.me/9932269688" class="btn btn-lg btn-success rounded-circle">
-                <i class="bi bi-whatsapp"></i>
+            <div class="flex align-items-center">
+              <a href="service.html" class="btn btn-warning py-3 px-4 me-5 text-black">Explore More</a>
+              <a href="https://wa.me/9932269688" class="btn btn-lg btn-success rounded-circle flex justify-content-center align-items-center" style="width: 50px; height: 50px;">
+                <v-icon icon="mdi-whatsapp" size="30" color="white"></v-icon>
               </a>
             </div>
           </div>
           <div class="col-lg-6">
             <div class="row g-3">
-              <div class="col-6 text-end flex  flex-col justify-end">
+              <div class="col-6 text-end flex flex-col justify-end" v-motion :initial="{ opacity: 0, x: 100 }" :visibleOnce="{ opacity: 1, x: 0 }" :delay="200" :duration="1000">
                 <img class="img-fluid bg-white p-3 w-100 mb-3" src="/1.jpg" alt="Makeup Service">
                 <img class="img-fluid bg-white p-3 w-50 self-end" src="/3.jpg" alt="Beauty Service">
               </div>
-              <div class="col-6">
+              <div class="col-6" v-motion :initial="{ opacity: 0, x: 100 }" :visibleOnce="{ opacity: 1, x: 0 }" :delay="400" :duration="1000">
                   <img class="img-fluid bg-white p-3 w-40" src="/2.png" alt="Bridal Makeup">
                 <img class="img-fluid bg-white p-3 mt-5 mb-3 h-56" src="/4.jpg" alt="Hair Service">
               </div>
@@ -38,7 +38,7 @@
       <div class="container">
         <div class="row g-5">
           <div class="col-lg-6">
-            <div class="row g-3 img-twice position-relative h-100">
+            <div class="row g-3 img-twice position-relative h-100" v-motion :initial="{ opacity: 0, x: -100 }" :visibleOnce="{ opacity: 1, x: 0 }" :delay="100" :duration="1000">
               <div class="col-6">
                 <img class="img-fluid bg-light p-3" src="/logocov.png" alt="About Oasis Makeover">
               </div>
@@ -48,7 +48,7 @@
             </div>
           </div>
           <div class="col-lg-6">
-            <div class="h-100">
+            <div class="h-100" v-motion :initial="{ opacity: 0, x: 100 }" :visibleOnce="{ opacity: 1, x: 0 }" :delay="300" :duration="1000">
               <p class="text-warning text-uppercase mb-2">About Us</p>
               <h1 class="display-6 mb-4">We Are Creative And Professional Makeup Studio & Academy</h1>
               <p>Welcome to Oasis, the premium beauty parlour in Tamluk! Our passion lies in transforming your look through stunning makeovers, exquisite hair designs, and rejuvenating skin treatments. With a team of skilled professionals, we not only offer top-notch services but also provide training to aspiring beauticians.</p>
@@ -61,13 +61,13 @@
                   <i class="fa fa-check text-warning me-3"></i>Premium Service
                 </div>
                 <div class="col-sm-6">
-                  <i class="fa fa-check text-warning me-3"></i>Online Booking
+                  <i class="fa fa-check  text-warning me-3"></i>Online Booking
                 </div>
                 <div class="col-sm-6">
                   <i class="fa fa-check text-warning me-3"></i>Home Appointment
                 </div>
               </div>
-              <a class="btn btn-warning py-3 px-5 text-black" href="about.html">Read More</a>
+              <a class="btn btn-warning py-3 px-5 text-black " href="about.html">Read More</a>
             </div>
           </div>
         </div>
@@ -78,24 +78,24 @@
     <!-- Why We Start -->
     <div class="container-xxl py-5">
       <div class="container">
-        <div class="text-center mx-auto" style="max-width: 500px;">
+        <div class="text-center mx-auto" style="max-width: 500px;" v-motion :initial="{ opacity: 0, y: 50 }" :visibleOnce="{ opacity: 1, y: 0 }" :delay="100" :duration="1000">
           <p class="text-warning text-uppercase mb-2">Why Choose Us!</p>
           <h1 class="display-6 mb-5">The Best Parlour You Have Ever Seen</h1>
         </div>
         <div class="row g-3">
-          <div class="col-lg-4 col-md-6 pt-lg-5">
+          <div class="col-lg-4 col-md-6 pt-lg-5 rounded" v-motion :initial="{ opacity: 0, y: 100 }" :visibleOnce="{ opacity: 1, y: 0 }" :delay="200" :duration="1000">
             <div class="fact-item bg-light text-center h-100 p-5">
               <h3 class="text-warning mb-3">Best Service</h3>
               <span>Experience the ultimate in beauty services at Oasis. We are committed to providing our clients with the very best service and exceptional results.</span>
             </div>
           </div>
-          <div class="col-lg-4 col-md-6">
+          <div class="col-lg-4 col-md-6" v-motion :initial="{ opacity: 0, y: 100 }" :visibleOnce="{ opacity: 1, y: 0 }" :delay="300" :duration="1000">
             <div class="fact-item bg-light text-center h-100 p-5">
               <h3 class="mb-3 text-warning">Premium Work</h3>
               <span>Experience the pinnacle of beauty at Oasis: where clients receive premium, top-quality services. Discover Tamluk's finest beauty parlour today.</span>
             </div>
           </div>
-          <div class="col-lg-4 col-md-6 pt-lg-5">
+          <div class="col-lg-4 col-md-6 pt-lg-5" v-motion :initial="{ opacity: 0, y: 100 }" :visibleOnce="{ opacity: 1, y: 0 }" :delay="400" :duration="1000">
             <div class="fact-item bg-light text-center h-100 p-5">
               <h3 class="mb-3 text-warning">100% Satisfaction</h3>
               <span>At Oasis, we guarantee 100% client satisfaction. Experience our exceptional beauty services and leave feeling truly satisfied.</span>
@@ -109,13 +109,13 @@
     <!-- Service Start -->
     <div class="container-xxl bg-light py-5 my-5">
       <div class="container py-5">
-        <div class="text-center mx-auto mb-5" style="max-width: 500px;">
+        <div class="text-center mx-auto mb-5" style="max-width: 500px;" v-motion :initial="{ opacity: 0, y: 50 }" :visibleOnce="{ opacity: 1, y: 0 }" :delay="100" :duration="1000">
           <p class="text-warning text-uppercase mb-2">Our Services</p>
           <h1 class="display-6 mb-4">We Provide Best Professional Services</h1>
         </div>
         <div class="row g-3">
-          <div class="col-lg-3 col-md-6">
-            <div class="service-item d-flex flex-column bg-white p-3 pb-0">
+          <div class="col-lg-3 col-md-6" v-motion :initial="{ opacity: 0, y: 100 }" :visibleOnce="{ opacity: 1, y: 0 }" :delay="200" :duration="1000">
+            <div class="service-item flex flex-column bg-white p-3 pb-0">
               <div class="position-relative">
                 <img class="img-fluid" src="/6.jpg" alt="Makeup Services">
                 
@@ -125,8 +125,8 @@
               </div>
             </div>
           </div>
-          <div class="col-lg-3 col-md-6 pt-lg-5">
-            <div class="service-item d-flex flex-column bg-white p-3 pb-0">
+          <div class="col-lg-3 col-md-6 pt-lg-5" v-motion :initial="{ opacity: 0, y: 100 }" :visibleOnce="{ opacity: 1, y: 0 }" :delay="300" :duration="1000">
+            <div class="service-item flex flex-column bg-white p-3 pb-0">
               <div class="position-relative">
                 <img class="img-fluid" src="/7.jpg" alt="Hair Services">
               </div>
@@ -135,8 +135,8 @@
               </div>
             </div>
           </div>
-          <div class="col-lg-3 col-md-6">
-            <div class="service-item d-flex flex-column bg-white p-3 pb-0">
+          <div class="col-lg-3 col-md-6" v-motion :initial="{ opacity: 0, y: 100 }" :visibleOnce="{ opacity: 1, y: 0 }" :delay="400" :duration="1000">
+            <div class="service-item flex flex-column bg-white p-3 pb-0">
               <div class="position-relative">
                 <img class="img-fluid" src="/8.jpg" alt="Skin Services">
                 <!-- <div class="service-overlay">
@@ -150,8 +150,8 @@
               </div>
             </div>
           </div>
-          <div class="col-lg-3 col-md-6 pt-lg-5">
-            <div class="service-item d-flex flex-column bg-white p-3 pb-0">
+          <div class="col-lg-3 col-md-6 pt-lg-5" v-motion :initial="{ opacity: 0, y: 100 }" :visibleOnce="{ opacity: 1, y: 0 }" :delay="500" :duration="1000">
+            <div class="service-item flex flex-column bg-white p-3 pb-0">
               <div class="position-relative">
                 <img class="img-fluid" src="/9.jpg" alt="Spa Services">
                 <!-- <div class="service-overlay">
@@ -166,7 +166,7 @@
             </div>
           </div>
         </div>
-        <button >Explor more</button>
+        <button class="btn btn-explore mt-4">Explore More</button>
       </div>
     </div>
     <!-- Service End -->
@@ -174,12 +174,12 @@
     <!-- Project Start -->
     <div class="container-xxl py-5">
       <div class="container">
-        <div class="text-center mx-auto mb-5" style="max-width: 500px;">
+        <div class="text-center mx-auto mb-5" style="max-width: 500px;" v-motion :initial="{ opacity: 0, y: 50 }" :visibleOnce="{ opacity: 1, y: 0 }" :delay="100" :duration="1000">
           <p class="text-warning text-uppercase mb-2">Our Works</p>
           <h1 class="display-6 mb-0">Discover Our Premium, Unique & Creative Works</h1>
         </div>
         <div class="row g-3">
-          <div class="col-lg-3 col-md-6">
+          <div class="col-lg-3 col-md-6" v-motion :initial="{ opacity: 0, x: -100 }" :visibleOnce="{ opacity: 1, x: 0 }" :delay="200" :duration="1000">
             <div class="row g-3">
               <div class="col-12">
                 <div class="project-item">
@@ -195,7 +195,7 @@
               </div>
             </div>
           </div>
-          <div class="col-lg-3 col-md-6">
+          <div class="col-lg-3 col-md-6" v-motion :initial="{ opacity: 0, y: 100 }" :visibleOnce="{ opacity: 1, y: 0 }" :delay="300" :duration="1000">
             <div class="row g-3">
               <div class="col-12">
                 <div class="project-item">
@@ -211,7 +211,7 @@
               </div>
             </div>
           </div>
-          <div class="col-lg-3 col-md-6">
+          <div class="col-lg-3 col-md-6" v-motion :initial="{ opacity: 0, y: 100 }" :visibleOnce="{ opacity: 1, y: 0 }" :delay="400" :duration="1000">
             <div class="row g-3">
               <div class="col-12">
                 <div class="project-item">
@@ -227,7 +227,7 @@
               </div>
             </div>
           </div>
-          <div class="col-lg-3 col-md-6">
+          <div class="col-lg-3 col-md-6" v-motion :initial="{ opacity: 0, x: 100 }" :visibleOnce="{ opacity: 1, x: 0 }" :delay="500" :duration="1000">
             <div class="row g-3">
               <div class="col-12">
                 <div class="project-item">
@@ -245,7 +245,7 @@
           </div>
         </div>
 
-        <button >Explor more</button>
+        <button class="btn btn-explore mt-4">Explore More</button>
       </div>
     </div>
     <!-- Project End -->
@@ -253,28 +253,28 @@
     <!-- Testimonial Start (Static) -->
     <div class="container-xxl py-5">
       <div class="container">
-        <div class="text-center mx-auto mb-5" style="max-width: 500px;">
+        <div class="text-center mx-auto mb-5" style="max-width: 500px;" v-motion :initial="{ opacity: 0, y: 50 }" :visibleOnce="{ opacity: 1, y: 0 }" :delay="100" :duration="1000">
           <p class="text-warning text-uppercase mb-2">Client's Review</p>
         </div>
         <div class="testimonial-grid">
-          <div class="testimonial-item bg-white p-4">
-            <div class="d-flex align-items-center mb-4">
+          <div class="testimonial-item bg-white p-4" v-motion :initial="{ opacity: 0, x: -100 }" :visibleOnce="{ opacity: 1, x: 0 }" :delay="200" :duration="1000">
+            <div class="flex align-items-center mb-4">
               <div class="ms-4">
                 <h5 class="mb-1">Diya De</h5>
               </div>
             </div>
             <p class="mb-0">"Exquisite transformations await at this beauty parlour! Expert treatments, skilled stylists, and a welcoming atmosphere combine for an unforgettable pampering experience. Highly recommend!"</p>
           </div>
-          <div class="testimonial-item bg-white p-4">
-            <div class="d-flex align-items-center mb-4">
+          <div class="testimonial-item bg-white p-4" v-motion :initial="{ opacity: 0, y: 100 }" :visibleOnce="{ opacity: 1, y: 0 }" :delay="300" :duration="1000">
+            <div class="flex align-items-center mb-4">
               <div class="ms-4">
                 <h5 class="mb-1">Shreya Mondal</h5>
               </div>
             </div>
             <p class="mb-0">"Thrilled with my hair service! The parlour's expertise shone through, leaving me with stunning results. A top-notch experience I'll rave about!"</p>
           </div>
-          <div class="testimonial-item bg-white p-4">
-            <div class="d-flex align-items-center mb-4">
+          <div class="testimonial-item bg-white p-4" v-motion :initial="{ opacity: 0, x: 100 }" :visibleOnce="{ opacity: 1, x: 0 }" :delay="400" :duration="1000">
+            <div class="flex align-items-center mb-4">
               <div class="ms-4">
                 <h5 class="mb-1">Sujata Maity</h5>
               </div>
@@ -283,17 +283,18 @@
           </div>
         </div>
 
-        <button >Explor more</button>
+        <button class="btn btn-explore mt-4">Explore More</button>
       </div>
     </div>
     <!-- Testimonial End -->
 
 
   </div>
+  <Footer/>
 </template>
 
 <script setup lang="ts">
-
+import Footer from '@/components/common/Footer.vue';
 </script>
 
 <style scoped>
@@ -511,7 +512,7 @@
 }
 
 /* --- Utilities --- */
-.d-flex {
+.flex {
   display: flex !important;
 }
 
@@ -534,7 +535,7 @@
 }
 
 @media (min-width: 768px) {
-  .d-md-flex {
+  .d-mflex {
     display: flex !important;
   }
 }
@@ -1507,8 +1508,45 @@
   animation: fadeIn 1s ease-in;
 }
 
-/* Additional padding for fixed navbar */
-/* .hero-header {
-  padding-top: 80px;
-} */
+
+/* Explore More Button Styling */
+.btn-explore {
+  background: var(--primary);
+  color: #1e1916;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 15px 40px;
+  border-radius: 50px;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s ease;
+  z-index: 1;
+  box-shadow: 0 5px 15px rgba(234, 166, 54, 0.3);
+}
+
+.btn-explore::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 100%;
+  background-color: #635c58;
+  transition: all 0.4s ease;
+  z-index: -1;
+  border-radius: 50px;
+}
+
+.btn-explore:hover {
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(234, 166, 54, 0.5);
+}
+
+.btn-explore:hover::before {
+  width: 100%;
+}
 </style>

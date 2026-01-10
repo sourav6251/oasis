@@ -31,7 +31,7 @@ setup(){
   <v-app>
     <v-main >
       <Header/>
-      <div class="mt-14">
+      <div class="mt-0">
         <RouterView />
       </div>
       <!-- Vue Sonner toaster -->
