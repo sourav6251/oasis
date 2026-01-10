@@ -324,7 +324,8 @@ public class AuthService {
      */
     private String generateToken(Users user) {
         UserDetails userDetails = new User(
-                user.getEmail(),
+            // user.getEmail(),
+                user.getId(), // ✅ Fixed: Use user ID instead of email for JWT subject
                 user.getPassword(),
                 List.of(new SimpleGrantedAuthority("ROLE_" + user.getUserType().name())));
         return jwtCreate.generateToken(userDetails);

@@ -80,7 +80,7 @@ class ApiStore {
      */
     getAllServices = async () => {
         try {
-            const response = await axiosInstance.get("/services");
+            const response = await axiosInstance.get("/api/services");
             return response.data;
         } catch (error) {
             console.error("Error fetching services:", error);
@@ -94,7 +94,7 @@ class ApiStore {
      */
     getServiceById = async (id: number) => {
         try {
-            const response = await axiosInstance.get(`/services/${id}`);
+            const response = await axiosInstance.get(`/api/services/${id}`);
             return response.data;
         } catch (error) {
             console.error(`Error fetching service ${id}:`, error);
@@ -108,7 +108,7 @@ class ApiStore {
      */
     createService = async (service: any) => {
         try {
-            const response = await axiosInstance.post("/services", service);
+            const response = await axiosInstance.post("/api/services", service);
             return response.data;
         } catch (error) {
             console.error("Error creating service:", error);
@@ -122,7 +122,7 @@ class ApiStore {
      */
     updateService = async (id: number, service: any) => {
         try {
-            const response = await axiosInstance.put(`/services/${id}`, service);
+            const response = await axiosInstance.put(`/api/services/${id}`, service);
             return response.data;
         } catch (error) {
             console.error(`Error updating service ${id}:`, error);
@@ -136,7 +136,7 @@ class ApiStore {
      */
     deleteService = async (id: number) => {
         try {
-            const response = await axiosInstance.delete(`/services/${id}`);
+            const response = await axiosInstance.delete(`/api/services/${id}`);
             return response.data;
         } catch (error) {
             console.error(`Error deleting service ${id}:`, error);
@@ -150,7 +150,7 @@ class ApiStore {
      */
     getServicesByCategory = async (categoryId: number) => {
         try {
-            const response = await axiosInstance.get(`/services/category/${categoryId}`);
+            const response = await axiosInstance.get(`/api/services/category/${categoryId}`);
             return response.data;
         } catch (error) {
             console.error(`Error fetching services for category ${categoryId}:`, error);
@@ -196,7 +196,7 @@ class ApiStore {
      */
     getAllServiceCategories = async () => {
         try {
-            const response = await axiosInstance.get("/service-categories");
+            const response = await axiosInstance.get("/api/service-categories");
             return response.data;
         } catch (error) {
             console.error("Error fetching service categories:", error);
@@ -210,7 +210,7 @@ class ApiStore {
      */
     getServiceCategoryById = async (id: number) => {
         try {
-            const response = await axiosInstance.get(`/service-categories/${id}`);
+            const response = await axiosInstance.get(`/api/service-categories/${id}`);
             return response.data;
         } catch (error) {
             console.error(`Error fetching service category ${id}:`, error);
@@ -224,7 +224,7 @@ class ApiStore {
      */
     createServiceCategory = async (category: any) => {
         try {
-            const response = await axiosInstance.post("/service-categories", category);
+            const response = await axiosInstance.post("/api/service-categories", category);
             return response.data;
         } catch (error) {
             console.error("Error creating service category:", error);
@@ -238,7 +238,7 @@ class ApiStore {
      */
     updateServiceCategory = async (id: number, category: any) => {
         try {
-            const response = await axiosInstance.put(`/service-categories/${id}`, category);
+            const response = await axiosInstance.put(`/api/service-categories/${id}`, category);
             return response.data;
         } catch (error) {
             console.error(`Error updating service category ${id}:`, error);
@@ -270,7 +270,7 @@ class ApiStore {
      */
     getAllGalleries = async () => {
         try {
-            const response = await axiosInstance.get("/galleries");
+            const response = await axiosInstance.get("/api/gallery");
             return response.data;
         } catch (error) {
             console.error("Error fetching galleries:", error);
@@ -284,7 +284,7 @@ class ApiStore {
      */
     getGalleryById = async (id: number) => {
         try {
-            const response = await axiosInstance.get(`/galleries/${id}`);
+            const response = await axiosInstance.get(`/api/gallery/${id}`);
             return response.data;
         } catch (error) {
             console.error(`Error fetching gallery ${id}:`, error);
@@ -298,7 +298,7 @@ class ApiStore {
      */
     createGallery = async (gallery: any) => {
         try {
-            const response = await axiosInstance.post("/galleries", gallery);
+            const response = await axiosInstance.post("/api/gallery", gallery);
             return response.data;
         } catch (error) {
             console.error("Error creating gallery:", error);
@@ -312,7 +312,7 @@ class ApiStore {
      */
     updateGallery = async (id: number, gallery: any) => {
         try {
-            const response = await axiosInstance.put(`/galleries/${id}`, gallery);
+            const response = await axiosInstance.put(`/api/gallery/${id}`, gallery);
             return response.data;
         } catch (error) {
             console.error(`Error updating gallery ${id}:`, error);
@@ -326,7 +326,7 @@ class ApiStore {
      */
     deleteGallery = async (id: number) => {
         try {
-            const response = await axiosInstance.delete(`/galleries/${id}`);
+            const response = await axiosInstance.delete(`/api/gallery/${id}`);
             return response.data;
         } catch (error) {
             console.error(`Error deleting gallery ${id}:`, error);
@@ -344,7 +344,7 @@ class ApiStore {
      */
     getAllGalleryCategories = async () => {
         try {
-            const response = await axiosInstance.get("/gallery-categories");
+            const response = await axiosInstance.get("/api/gallery-categories");
             return response.data;
         } catch (error) {
             console.error("Error fetching gallery categories:", error);
@@ -358,7 +358,7 @@ class ApiStore {
      */
     getGalleryCategoryById = async (id: number) => {
         try {
-            const response = await axiosInstance.get(`/gallery-categories/${id}`);
+            const response = await axiosInstance.get(`/api/gallery-categories/${id}`);
             return response.data;
         } catch (error) {
             console.error(`Error fetching gallery category ${id}:`, error);
@@ -372,7 +372,7 @@ class ApiStore {
      */
     createGalleryCategory = async (category: any) => {
         try {
-            const response = await axiosInstance.post("/gallery-categories", category);
+            const response = await axiosInstance.post("/api/gallery-categories", category);
             return response.data;
         } catch (error) {
             console.error("Error creating gallery category:", error);
@@ -386,7 +386,7 @@ class ApiStore {
      */
     updateGalleryCategory = async (id: number, category: any) => {
         try {
-            const response = await axiosInstance.put(`/gallery-categories/${id}`, category);
+            const response = await axiosInstance.put(`/api/gallery-categories/${id}`, category);
             return response.data;
         } catch (error) {
             console.error(`Error updating gallery category ${id}:`, error);
@@ -400,7 +400,7 @@ class ApiStore {
      */
     deleteGalleryCategory = async (id: number) => {
         try {
-            const response = await axiosInstance.delete(`/gallery-categories/${id}`);
+            const response = await axiosInstance.delete(`/api/gallery-categories/${id}`);
             return response.data;
         } catch (error) {
             console.error(`Error deleting gallery category ${id}:`, error);
@@ -499,7 +499,7 @@ class ApiStore {
             const formData = new FormData();
             formData.append("file", file);
 
-            const response = await axiosInstance.post("/upload", formData, {
+            const response = await axiosInstance.post("/api/upload", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
