@@ -1,0 +1,9 @@
+All avelable services
+service catagory
+Galary catagory
+project image
+Booking booking history
+send whatsapp message
+Blogs
+add review
+show review
