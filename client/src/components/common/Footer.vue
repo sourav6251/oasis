@@ -1,436 +1,127 @@
 <template>
-  <!-- Footer -->
-  <footer>
-    <div class="container">
-      <div class="footer-content">
+  <footer style="padding-top: 20px;" class="relative bg-[#1e1916] text-[#d1d1d1] pb-10 overflow-hidden font-['Open_Sans',sans-serif]">
+    <!-- Decorative Glows -->
+    <div class="absolute top-0 left-0 w-96 h-96 bg-[#eaa636]/5 rounded-full blur-[100px] -ml-48 -mt-48"></div>
+    <div class="absolute bottom-0 right-0 w-64 h-64 bg-[#eaa636]/5 rounded-full blur-[80px] -mr-32 -mb-32"></div>
+
+    <div class="max-w-[1240px] mx-auto px-6 relative z-10">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 ">
+        
         <!-- About Column -->
-        <div class="footer-column">
-          <h3>Oasis Salon</h3>
-          <p>
-            Oasis is a best beauty premium in Tamluk. We expertise in Makeup, Skin Care, Hair, Spa, and Many More.
-            All Type of Bridal Makeup, Party Makeup, Wedding, Pre-Wedding Makeup, Hair Styling, Hair Smoothing, Spa done here.
+        <div class="space-y-6">
+          <div class="flex items-center gap-2">
+            <h2 class="text-3xl font-[Playfair_Display,serif] font-bold text-white tracking-tight">Oasis<span class="text-[#eaa636]">.</span></h2>
+          </div>
+          <p class="text-sm leading-relaxed text-gray-400">
+            Expertly curating beauty in Tamluk. We combine premium artistry with high-end luxury in Makeup, Skin Care, Hair, and Spa rituals. Your ultimate destination for elegance.
           </p>
-          <div class="social-links">
-            <a target="_blank" rel="noopener noreferrer" href="https://www.facebook.com/oasismakeover?mibextid=ZbWKwL">
-              <v-icon icon="mdi-facebook" size="20"></v-icon>
-            </a>
-            <a target="_blank" rel="noopener noreferrer" href="https://youtube.com/@Oasismakeover?si=HIspPYpV68fnXtZo">
-              <v-icon icon="mdi-youtube" size="20"></v-icon>
+          <div class="flex gap-4 pt-2">
+            <a 
+              v-for="social in socials" 
+              :key="social.icon"
+              :href="social.link"
+              target="_blank"
+              class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[#eaa636] hover:border-[#eaa636] transition-all duration-300 group"
+            >
+              <v-icon :icon="social.icon" size="18" class="text-gray-400 group-hover:text-black transition-colors"></v-icon>
             </a>
           </div>
         </div>
 
         <!-- Contact Column -->
-        <div class="footer-column">
-          <h3>Contact Info</h3>
-          <p><v-icon icon="mdi-map-marker" size="16"></v-icon> 2nd Floor, Left Side of Rupasree Cinema Hall, Tamluk</p>
-          <p><v-icon icon="mdi-phone" size="16"></v-icon> 9531500843 / 9932269688</p>
-          <p><v-icon icon="mdi-email" size="16"></v-icon> oasismakeover@gmail.com</p>
-          <p><v-icon icon="mdi-clock-outline" size="16"></v-icon> Open: Tue-Sun 9AM-7PM</p>
+        <div class="space-y-6">
+          <h3 class="text-xl font-[Playfair_Display,serif] font-bold text-white relative inline-block pb-5">
+            Get In Touch
+            <span class="absolute bottom-4 left-0 w-8 h-[2px] bg-[#eaa636]"></span>
+          </h3>
+          <ul class="space-y-4 pt-2">
+            <li v-for="contact in contactInfo" :key="contact.text" class="flex items-center gap-3 group ">
+              <div class="mt-1 w-8 h-8 rounded-lg bg-[#eaa636]/10 flex items-center justify-center flex-shrink-0 group-hover:bg-[#eaa636] transition-colors duration-300">
+                <v-icon :icon="contact.icon" size="14" class="text-[#eaa636] group-hover:text-black transition-colors"></v-icon>
+              </div>
+              <span class="text-sm leading-snug ">{{ contact.text }}</span>
+            </li>
+          </ul>
         </div>
 
-        <!-- Links Column -->
-        <div class="footer-column grid grid-cols-2 gap-4">
-          <div>
-            <h3>Main Links</h3>
-            <router-link to="/" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Home</router-link>
-            <router-link to="/service" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Services</router-link>
-            <router-link to="/packages" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Packages</router-link>
-            <router-link to="/gallery" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Gallery</router-link>
-            <router-link to="/booking" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Booking</router-link>
-            <router-link to="/contact" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Contact</router-link>
-          </div>
-          <div>
-            <h3>More Info</h3>
-            <router-link to="/about" class="block mb-2 text-gray-300 hover:text-primary transition-colors">About Us</router-link>
-            <router-link to="/beauty-tips" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Beauty Tips</router-link>
-            <router-link to="/review" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Reviews</router-link>
-            <router-link to="/offers" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Offers</router-link>
-            <router-link to="/faq" class="block mb-2 text-gray-300 hover:text-primary transition-colors">FAQ</router-link>
-            <router-link to="/policies" class="block mb-2 text-gray-300 hover:text-primary transition-colors">Policies</router-link>
+        <!-- Quick Links Column -->
+        <div class="space-y-6">
+          <h3 class="text-xl font-[Playfair_Display,serif] font-bold text-white relative inline-block pb-5">
+            Quick Navigation
+            <span class="absolute bottom-4 left-0 w-8 h-[2px] bg-[#eaa636]"></span>
+          </h3>
+          <div class="grid grid-cols-2 gap-x-4 gap-y-3 pt-2">
+            <template v-for="link in navigationLinks" :key="link.name">
+              <router-link :to="link.path" class="text-sm text-gray-400 hover:text-[#eaa636] transition-all duration-300 flex items-center group hover:translate-x-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#eaa636] scale-0 group-hover:scale-100 mr-0 group-hover:mr-2 transition-all duration-300"></span>
+                {{ link.name }}
+              </router-link>
+            </template>
           </div>
         </div>
 
-        <!-- Location Column -->
-        <div class="footer-column rounded-sm">
-          <h3>Location</h3>
-          <iframe 
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3691.7835859964234!2d87.9229940317383!3d22.286186264583712!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a0295966a336347%3A0x779f2f1d1f0a722f!2sOasis%20Makeover-Professional%20Beauty%20Premium%20%26%20Academy!5e0!3m2!1sen!2sin!4v1760371225912!5m2!1sen!2sin"
-            width="100%" 
-            height="90%"
-            style="border:0;"
-            allowfullscreen
-            loading="lazy" 
-            referrerpolicy="no-referrer-when-downgrade"
-            class="rounded-sm">
-          </iframe>
+        <!-- Maps Column -->
+        <div class="space-y-6">
+          <h3 class="text-xl font-[Playfair_Display,serif] font-bold text-white relative inline-block pb-5">
+            Find Us
+            <span class="absolute bottom-4 left-0 w-8 h-[2px] bg-[#eaa636]"></span>
+          </h3>
+          <div class="rounded-xl overflow-hidden border-2 border-white/5 h-48 w-full group pt-2">
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3691.7835859964234!2d87.9229940317383!3d22.286186264583712!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a0295966a336347%3A0x779f2f1d1f0a722f!2sOasis%20Makeover-Professional%20Beauty%20Premium%20%26%20Academy!5e0!3m2!1sen!2sin!4v1760371225912!5m2!1sen!2sin"
+              width="100%" 
+              height="100%"
+              style="border:0;"
+              allowfullscreen
+              loading="lazy"
+              class="opacity-70 group-hover:opacity-100 transition-opacity duration-700 grayscale hover:grayscale-0"
+            ></iframe>
+          </div>
         </div>
       </div>
-      <div class="copyright">
-        <p>&copy; 2023 Glamour Salon. All rights reserved.</p>
+
+      <!-- Bottom Bar -->
+      <div class="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500 uppercase tracking-widest">
+        <p>&copy; {{ new Date().getFullYear() }} Oasis Makeover. Designed with Elegance.</p>
+        <div class="flex gap-6">
+          <router-link to="/policies" class="hover:text-[#eaa636] transition-colors">Privacy Policy</router-link>
+          <router-link to="/faq" class="hover:text-[#eaa636] transition-colors">Terms of Service</router-link>
+        </div>
       </div>
     </div>
   </footer>
 </template>
 
+<script setup lang="ts">
+const socials = [
+  { icon: 'mdi-facebook', link: 'https://www.facebook.com/oasismakeover?mibextid=ZbWKwL' },
+  { icon: 'mdi-youtube', link: 'https://youtube.com/@Oasismakeover?si=HIspPYpV68fnXtZo' },
+  { icon: 'mdi-instagram', link: '#' }, // Added for layout balance
+  { icon: 'mdi-whatsapp', link: 'https://wa.me/919531500843' }
+];
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-import { useRouter } from 'vue-router'
+const contactInfo = [
+  { icon: 'mdi-map-marker', text: '2nd Floor, Left Side of Rupasree Cinema Hall, Tamluk' },
+  { icon: 'mdi-phone', text: '9531500843 / 9932269688' },
+  { icon: 'mdi-email', text: 'oasismakeover@gmail.com' },
+  { icon: 'mdi-clock-outline', text: 'Open: Tue-Sun 9AM - 7PM' }
+];
 
-export default defineComponent({
-  name: 'Footer',
-  setup() {
-    const router = useRouter()
-    return { router }
-  }
-})
+const navigationLinks = [
+  { name: 'Home', path: '/' },
+  { name: 'Services', path: '/service' },
+  { name: 'Packages', path: '/packages' },
+  { name: 'Gallery', path: '/gallery' },
+  { name: 'Booking', path: '/booking' },
+  { name: 'Contact', path: '/contact' },
+  { name: 'About Us', path: '/about' },
+  { name: 'Reviews', path: '/review' }
+];
 </script>
 
 <style scoped>
-:root {
-  --color-primary: #9DC9C7;
-  --color-secondary: #FFD1C8;
-  --color-accent: #E6C8A4;
-  --color-neutral: #F0F5F3;
-  --color-dark: #2A363B;
-  --color-light: #FFFFFF;
-  --transition: all 0.3s ease;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Poppins', sans-serif;
-  color: var(--color-dark);
-  background-color: var(--color-neutral);
-  line-height: 1.6;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-/* Header */
-header {
-  background-color: var(--color-light);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 0;
-}
-
-.logo {
-  font-family: 'Playfair Display', serif;
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--color-primary);
-}
-
-.logo span {
-  color: var(--color-accent);
-}
-
-nav ul {
-  display: flex;
-  list-style: none;
-  gap: 30px;
-}
-
-nav a {
-  text-decoration: none;
-  color: var(--color-dark);
-  font-weight: 500;
-  transition: var(--transition);
-}
-
-nav a:hover {
-  color: var(--color-primary);
-}
-
-/* Hero Section */
-.hero {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
-  padding: 80px 0;
-  text-align: center;
-  color: var(--color-light);
-}
-
-.hero h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 48px;
-  margin-bottom: 20px;
-}
-
-.hero p {
-  font-size: 18px;
-  max-width: 700px;
-  margin: 0 auto;
-}
-
-/* Reviews Section */
-.reviews-section {
-  padding: 80px 0;
-}
-
-.section-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 36px;
-  text-align: center;
-  margin-bottom: 50px;
-  color: var(--color-dark);
-  position: relative;
-}
-
-.section-title:after {
-  content: '';
-  display: block;
-  width: 60px;
-  height: 3px;
-  background: var(--color-primary);
-  margin: 15px auto;
-}
-
-.reviews-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 30px;
-  margin-bottom: 50px;
-}
-
-.review-card {
-  background: var(--color-light);
-  border-radius: 15px;
-  padding: 30px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-  transition: var(--transition);
-}
-
-.review-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
-}
-
-.review-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.client-image {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 15px;
-  border: 3px solid var(--color-primary);
-}
-
-.client-info h3 {
-  font-size: 18px;
-  margin-bottom: 5px;
-}
-
-.client-info p {
-  color: #777;
-  font-size: 14px;
-}
-
-.rating {
-  margin-bottom: 15px;
-  display: flex;
-  align-items: center;
-}
-
-.review-content {
-  line-height: 1.8;
-  color: #555;
-}
-
-.review-meta {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-  color: #999;
-  font-size: 14px;
-}
-
-.service-tag {
-  background: var(--color-secondary);
-  color: var(--color-dark);
-  padding: 5px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  display: inline-block;
-  margin-top: 15px;
-}
-
-/* Review Form */
-.add-review {
-  margin-top: 50px;
-  background: var(--color-light);
-}
-
-.text-h4 {
-  font-family: 'Playfair Display', serif;
-  color: var(--color-dark);
-}
-
-/* Stats Section */
-.stats-section {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
-  padding: 60px 0;
-  color: var(--color-light);
-  text-align: center;
-  margin-top: 80px;
-}
-
-.stats-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 30px;
-}
-
-.stat-item h2 {
-  font-size: 42px;
-  margin-bottom: 10px;
-}
-
-.stat-item p {
-  font-size: 18px;
-}
-
-/* Footer */
-footer {
-  background: var(--color-dark);
-  color: var(--color-light);
-  padding: 60px 0 30px;
-}
-
-.footer-content {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 40px;
-  margin-bottom: 40px;
-}
-
-.footer-column h3 {
-  font-family: 'Playfair Display', serif;
-  font-size: 22px;
-  margin-bottom: 20px;
-  color: var(--color-primary);
-}
-
-.footer-column p,
-.footer-column a {
-  color: #ccc;
-  margin-bottom: 10px;
-  display: block;
-  text-decoration: none;
-  transition: var(--transition);
-}
-
-.footer-column a:hover {
-  color: var(--color-primary);
-}
-
-.social-links {
-  display: flex;
-  gap: 15px;
-  margin-top: 20px;
-}
-
-.social-links a {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: var(--transition);
-}
-
-.social-links a:hover {
-  /* background: var(--color-primary); */
-  transform: translateY(-3px);
-}
-
-.copyright {
-  text-align: center;
-  padding-top: 30px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  color: #999;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .header-content {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  nav ul {
-    margin-top: 20px;
-    justify-content: center;
-  }
-
-  .hero h1 {
-    font-size: 36px;
-  }
-
-  .reviews-container {
-    grid-template-columns: 1fr;
-  }
-
-  .stats-container {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media (max-width: 480px) {
-  nav ul {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .hero {
-    padding: 60px 0;
-  }
-
-  .hero h1 {
-    font-size: 28px;
-  }
-
-  .section-title {
-    font-size: 28px;
-  }
-
-  .review-header {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .client-image {
-    margin-right: 0;
-    margin-bottom: 15px;
-  }
-
-  .stats-container {
-    grid-template-columns: 1fr;
-  }
+/* Scoped styles kept to minimum as Tailwind drives the layout */
+.tracking-tight {
+  letter-spacing: -0.025em;
 }
 </style>

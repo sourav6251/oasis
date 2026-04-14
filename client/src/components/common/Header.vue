@@ -1,9 +1,9 @@
 <template>
   <header
-    class="sticky top-0 z-[999] w-full bg-[#fdf5eb]/95 backdrop-blur-sm border-b border-[#eaa636]/20 transition-all duration-300"
+    class="max-h-[50px] sticky top-0 z-[999] w-full bg-[#fdf5eb]/95 backdrop-blur-sm border-b border-[#eaa636]/20 transition-all duration-300"
     :class="{ 'shadow-md': y > 0 }"
   >
-    <div class="container mx-auto px-4 h-20 flex items-center justify-between">
+    <div class="container mx-auto px-4 h-[50px] flex items-center justify-between">
       <!-- Logo -->
       <router-link to="/" class="flex items-center gap-2 group">
         <!-- Optional: Add an icon or logo image here if available -->
