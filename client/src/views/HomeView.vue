@@ -1,8 +1,8 @@
 <template>
-  <div class="pb-10 home-page font-[Open_Sans,sans-serif] text-base text-[#545454] bg-white m-0">
+  <div class=" home-page font-[Open_Sans,sans-serif] text-base text-[#545454] bg-white m-0">
 
     <!-- Header Start -->
-    <div class="hero-banner w-full relative overflow-hidden flex items-center bg-[#1e1916] mb-12">
+    <div class="hero-banner w-full relative overflow-hidden flex items-center bg-[#1e1916]">
       <div class="container mx-auto px-4 md:px-6 lg:px-8 max-w-[1140px]">
         <div class="flex flex-wrap -mx-4 items-center">
           <div class="w-full lg:w-7/12 px-4" v-motion :initial="{ opacity: 0, x: -100 }" :visibleOnce="{ opacity: 1, x: 0 }" :delay="100" :duration="1000">
@@ -11,7 +11,7 @@
             <p class="text-white/80 mb-6 text-base max-w-[600px] ">All Type of Bridal Makeup, Party Makeup, Weeding, Pre Weeding Makeup, Hair Stylish, Hair Smoothing, Spa done here.</p>
             <div class="flex items-center gap-4">
               <!-- <a href="#" class="inline-block font-semibold leading-normal text-center cursor-pointer select-none bg-[#eaa636] border border-[#eaa636] text-[#1e1916] rounded-md px-4 py-2 transition-all duration-500 hover:bg-[#d6942a] hover:border-[#d6942a] hover:text-black">Explore More</a> -->
-              <button class="relative overflow-hidden z-[1] bg-[#d8c72f] text-[#ffffff] font-[Playfair_Display,serif] font-bold uppercase tracking-[1px] px-3 py-2 rounded-[10px] border-none transition-all duration-400 ease-[ease]  hover:text-white hover:-translate-y-[3px]  before:content-[''] before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-[#1e1916] before:transition-all before:duration-400 before:ease-[ease] before:-z-[1] before:rounded-[10px] hover:before:w-full">Explore More</button>
+              <button class="relative overflow-hidden z-[1] bg-[#d8c72f] text-[#ff0000] font-[Playfair_Display,serif] font-bold uppercase tracking-[1px] px-3 py-2 rounded-[10px] border-none transition-all duration-400 ease-[ease]  hover:text-white hover:-translate-y-[3px]  before:content-[''] before:absolute before:top-0 before:left-0 before:w-0 before:h-full before:bg-[#1e1916] before:transition-all before:duration-400 before:ease-[ease] before:-z-[1] before:rounded-[10px] hover:before:w-full">Explore More</button>
               <a href="https://wa.me/9932269688" class="inline-flex justify-center items-center ml-3 w-[50px] h-[50px] rounded-full bg-[#198754] text-white hover:bg-[#157347] transition-all duration-500">
                 <v-icon icon="mdi-whatsapp" size="24" color="white"></v-icon>
               </a>
@@ -23,8 +23,10 @@
     <!-- Header End -->
 
     <!-- About Start -->
-    <section id="about" class="py-24 overflow-hidden bg-white">
-      <div class="max-w-[1140px] mx-auto px-4 md:px-6 lg:px-8">
+    <section id="about" class="py-24 pt-10 overflow-hidden relative" style="background: linear-gradient(135deg, #fffdf7 0%, #fdf5eb 40%, #fff9f0 70%, #ffffff 100%);">
+      <!-- Decorative gold glows -->
+      <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse at 0% 0%, rgba(234,166,54,0.12) 0%, transparent 55%), radial-gradient(ellipse at 100% 100%, rgba(234,166,54,0.08) 0%, transparent 50%);"></div>
+      <div class="max-w-[1140px] mx-auto px-4 md:px-6 lg:px-8 relative z-10">
         <div class="flex flex-wrap -mx-4 items-center">
           <!-- Left: Image Section -->
           <div class="w-full lg:w-1/2 px-4 mb-16 lg:mb-0">
@@ -108,7 +110,7 @@
                     :initial="{ opacity: 0, x: 20 }" 
                     :visibleOnce="{ opacity: 1, x: 0 }" 
                     :delay="200 + (index * 100)"
-                    class="flex items-center gap-4 p-4 rounded-xl bg-[#fdf5eb] hover:bg-[#eaa636]/10 transition-colors group cursor-default"
+                    class="flex items-center gap-4 py-1 px-2 rounded-md bg-[#fdf5eb] hover:bg-[#eaa636]/10 transition-colors group cursor-default"
                   >
                     <div class="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center group-hover:scale-110 transition-transform">
                       <v-icon :icon="feature.icon" color="#eaa636" size="20"></v-icon>
@@ -138,19 +140,18 @@
 
 
     <!-- Why We Start -->
-    <div class="why-section relative overflow-hidden py-24">
+    <div class="why-section relative overflow-hidden py-24" style="background: linear-gradient(135deg, #fffcf7 0%, #fdf5eb 35%, #fff9f0 70%, #ffffff 100%);">
       <!-- Background layers -->
-      <div class="absolute inset-0 bg-[#1e1916]"></div>
-      <div class="absolute inset-0" style="background: radial-gradient(ellipse at 20% 50%, rgba(234,166,54,0.12) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(197,166,117,0.08) 0%, transparent 50%);"></div>
+      <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse at 20% 50%, rgba(234,166,54,0.1) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(234,166,54,0.06) 0%, transparent 50%);"></div>
       <!-- Decorative line -->
-      <div class="absolute top-0 left-0 right-0 h-[2px]" style="background: linear-gradient(90deg, transparent, #eaa636, transparent);"></div>
-      <div class="absolute bottom-0 left-0 right-0 h-[2px]" style="background: linear-gradient(90deg, transparent, #eaa636, transparent);"></div>
+      <div class="absolute top-0 left-0 right-0 h-[1px]" style="background: linear-gradient(90deg, transparent, rgba(234,166,54,0.3), transparent);"></div>
+      <div class="absolute bottom-0 left-0 right-0 h-[1px]" style="background: linear-gradient(90deg, transparent, rgba(234,166,54,0.3), transparent);"></div>
 
       <div class="relative z-10 max-w-[1140px] mx-auto py-5 px-4 md:px-6 lg:px-8">
         <!-- Section Header -->
         <div class="text-center mb-16" v-motion :initial="{ opacity: 0, y: 40 }" :visibleOnce="{ opacity: 1, y: 0 }" :duration="900">
           <span class="inline-block text-[#eaa636] uppercase tracking-[4px] text-xs font-bold mb-4">Why Choose Us</span>
-          <h2 class="text-[2rem] md:text-[3rem] font-[Playfair_Display,serif] font-bold text-white leading-tight">
+          <h2 class="text-[2rem] md:text-[3rem] font-[Playfair_Display,serif] font-bold text-[#1e1916] leading-tight">
             The Best Parlour<br><span class="text-[#eaa636]">You Have Ever Seen</span>
           </h2>
           <div class="flex items-center justify-center gap-3 mt-5">
@@ -170,34 +171,34 @@
             :visibleOnce="{ opacity: 1, y: 0 }"
             :delay="150 + index * 150"
             :duration="900"
-            class="why-card group relative rounded-2xl overflow-hidden cursor-default"
-            :class="{ 'md:-mt-6': card.featured }"
+            class="why-card group relative rounded-2xl overflow-hidden cursor-default transition-all duration-500"
+            :class="[
+              card.featured ? 'card-premium-bg-featured md:-mt-6' : 'card-premium-bg'
+            ]"
             :style="card.featured
-              ? 'padding: 2rem; background: linear-gradient(145deg, rgba(234,166,54,0.12), rgba(30,25,22,0.6)); border: 1px solid rgba(234,166,54,0.35); transition: all 0.5s ease; box-shadow: 0 20px 60px rgba(234,166,54,0.15);'
-              : 'padding: 2rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(234,166,54,0.15); transition: all 0.5s ease;'"
+              ? 'padding: 2rem; border: 1px solid rgba(234,166,54,0.4); box-shadow: 0 20px 60px rgba(234,166,54,0.15);'
+              : 'padding: 2rem; border: 1px solid rgba(234,166,54,0.15); backdrop-filter: blur(8px);'"
           >
             <!-- Hover glow overlay -->
             <div
-              class="absolute inset-0 transition-opacity duration-500"
-              :class="card.featured ? 'opacity-0 group-hover:opacity-100' : 'opacity-0 group-hover:opacity-100'"
+              class="absolute inset-0 transition-opacity duration-500 opacity-0 group-hover:opacity-100"
               :style="card.featured
-                ? 'background: linear-gradient(135deg, rgba(234,166,54,0.15) 0%, transparent 70%);'
-                : 'background: linear-gradient(135deg, rgba(234,166,54,0.08) 0%, transparent 70%);'"
+                ? 'background: linear-gradient(135deg, rgba(234,166,54,0.08) 0%, transparent 70%);'
+                : 'background: linear-gradient(135deg, rgba(234,166,54,0.05) 0%, transparent 70%);'"
             ></div>
             <!-- Top border line -->
             <div
-              class="absolute top-0 left-0 right-0 h-[1px]"
-              :class="card.featured ? '' : 'opacity-0 group-hover:opacity-100 transition-opacity duration-500'"
+              class="absolute top-0 left-0 right-0 h-[1px] opacity-0 group-hover:opacity-100 transition-opacity duration-500"
               style="background: linear-gradient(90deg, transparent, #eaa636, transparent);"
             ></div>
             <!-- Decorative number -->
             <span
-              class="absolute -top-4 -right-2 text-[8rem] font-bold font-[Playfair_Display,serif] leading-none select-none pointer-events-none"
-              :style="`color: rgba(234,166,54,${card.featured ? '0.09' : '0.06'});`"
+              class="absolute -top-4 -right-2 text-[8rem] font-bold font-[Playfair_Display,serif] leading-none select-none pointer-events-none transition-transform duration-700 group-hover:scale-110"
+              :style="`color: rgba(234,166,54,${card.featured ? '0.12' : '0.08'});`"
             >{{ card.num }}</span>
             <!-- Icon badge -->
             <div
-              class="relative z-10 mb-6 w-14 h-14 rounded-xl flex items-center justify-center"
+              class="relative z-10 mb-6 w-14 h-14 rounded-xl flex items-center justify-center transition-transform duration-500 group-hover:rotate-6"
               :style="card.featured
                 ? 'background: linear-gradient(135deg, #eaa636, #d4962e); box-shadow: 0 8px 24px rgba(234,166,54,0.45);'
                 : 'background: linear-gradient(135deg, #eaa636, #c5a675); box-shadow: 0 8px 24px rgba(234,166,54,0.35);'"
@@ -208,11 +209,11 @@
             <div class="relative z-10">
               <h3
                 class="font-[Playfair_Display,serif] font-bold text-[1.4rem] mb-3 transition-colors duration-300"
-                :class="card.featured ? 'text-[#eaa636]' : 'text-white group-hover:text-[#eaa636]'"
+                :class="card.featured ? 'text-[#eaa636]' : 'text-[#1e1916] group-hover:text-[#eaa636]'"
               >{{ card.title }}</h3>
               <p
                 class="text-sm leading-relaxed transition-colors duration-300"
-                :class="card.featured ? 'text-white/65 group-hover:text-white/85' : 'text-white/55 group-hover:text-white/75'"
+                :class="card.featured ? 'text-[#545454]/90' : 'text-[#545454]/80 group-hover:text-[#545454]'"
               >{{ card.description }}</p>
             </div>
           </div>
@@ -222,9 +223,9 @@
     <!-- Why We End -->
 
     <!-- Service Start -->
-    <section class="relative py-24 overflow-hidden" style="background: #fff;">
+    <section class="relative py-24 pt-10 overflow-hidden" style="background: linear-gradient(160deg, #fff8ee 0%, #fdf3e3 30%, #fffcf5 70%, #fff6e8 100%);">
       <!-- Subtle background decoration -->
-      <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse at 50% 0%, rgba(234,166,54,0.06) 0%, transparent 65%);"></div>
+      <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse at 50% 0%, rgba(234,166,54,0.14) 0%, transparent 65%), radial-gradient(ellipse at 0% 100%, rgba(234,166,54,0.08) 0%, transparent 50%), radial-gradient(ellipse at 100% 50%, rgba(197,131,30,0.06) 0%, transparent 50%);"></div>
 
       <div class="relative z-10 max-w-[1140px] mx-auto px-4 md:px-6 lg:px-8">
         <!-- Header -->
@@ -303,10 +304,10 @@
     <!-- Service End -->
 
     <!-- Project Start -->
-    <section class="py-24 bg-white overflow-hidden">
+    <section class="py-24 pt-10 overflow-hidden relative" style="background: linear-gradient(180deg, #fdf3e3 0%, #fff8ee 35%, #fffcf7 65%, #fdf5eb 100%);">
       <div class="max-w-[1140px] mx-auto px-4 md:px-6 lg:px-8">
         <!-- Section Header -->
-        <div class="text-center mb-16" v-motion :initial="{ opacity: 0, y: 40 }" :visibleOnce="{ opacity: 1, y: 0 }" :duration="900">
+        <div class="text-center mb-5" v-motion :initial="{ opacity: 0, y: 40 }" :visibleOnce="{ opacity: 1, y: 0 }" :duration="900">
           <span class="inline-block text-[#eaa636] uppercase tracking-[4px] text-xs font-bold mb-4">Our Gallery</span>
           <h2 class="text-[2rem] md:text-[2.8rem] font-[Playfair_Display,serif] font-bold text-[#1e1916] leading-tight">
             Discover Our <span class="text-[#eaa636]">Creative Masterpieces</span>
@@ -404,9 +405,9 @@
       <div class="absolute top-0 right-0 w-96 h-96 bg-[#eaa636]/10 rounded-full blur-[100px] -mr-48 -mt-48"></div>
       <div class="absolute bottom-0 left-0 w-96 h-96 bg-[#eaa636]/5 rounded-full blur-[100px] -ml-48 -mb-48"></div>
       
-      <div class="max-w-[1140px] mx-auto px-4 md:px-6 lg:px-8 relative z-10">
+      <div class="max-w-[1140px] mx-auto px-4 md:px-6 lg:px-8 relative z-10 py-10">
         <!-- Section Header -->
-        <div class="text-center mb-16" v-motion :initial="{ opacity: 0, y: 40 }" :visibleOnce="{ opacity: 1, y: 0 }" :duration="900">
+        <div class="text-center mb-3" v-motion :initial="{ opacity: 0, y: 40 }" :visibleOnce="{ opacity: 1, y: 0 }" :duration="900">
           <span class="inline-block text-[#eaa636] font-bold uppercase tracking-[4px] text-xs mb-4">Client's Review</span>
           <h2 class="text-[2rem] md:text-[2.8rem] font-[Playfair_Display,serif] font-bold text-[#1e1916] leading-tight">
             Our Satisfied <span class="text-[#eaa636]">Clients Say</span>
@@ -615,6 +616,24 @@ const services = [
 .glass-effect {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(253, 250, 245, 0.9) 100%);
   backdrop-blur: 10px;
+}
+
+.card-premium-bg {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(253, 250, 245, 0.8) 100%);
+  background-image: 
+    linear-gradient(135deg, rgba(234, 166, 54, 0.02) 0%, transparent 70%),
+    linear-gradient(rgba(234, 166, 54, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(234, 166, 54, 0.04) 1px, transparent 1px);
+  background-size: 100% 100%, 20px 20px, 20px 20px;
+}
+
+.card-premium-bg-featured {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(254, 249, 235, 0.9) 100%);
+  background-image: 
+    linear-gradient(135deg, rgba(234, 166, 54, 0.06) 0%, transparent 70%),
+    linear-gradient(rgba(234, 166, 54, 0.07) 1.5px, transparent 1.5px),
+    linear-gradient(90deg, rgba(234, 166, 54, 0.07) 1.5px, transparent 1.5px);
+  background-size: 100% 100%, 25px 25px, 25px 25px;
 }
 
 .shimmer-effect {
