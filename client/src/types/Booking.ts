@@ -1,7 +1,7 @@
 import type { Service as BackendService } from './Services';
 
 export interface Service {
-  id: number;
+  id: string;
   name: string;
   category: string;
   price: number;
@@ -15,7 +15,7 @@ export interface Service {
  */
 export function convertToBookingService(backendService: BackendService): Service {
   return {
-    id: backendService.id,
+    id: backendService._id,
     name: backendService.name,
     category: backendService.category.name,
     price: parsePrice(backendService.price),

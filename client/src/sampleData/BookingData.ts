@@ -1,14 +1,14 @@
 import type { Booking, Service } from "@/types/Booking";
 
 export const BookingData:Service[]=[
-    { id: 1, name: 'Haircut & Styling', category: 'Hair', price: 45, duration: 60 },
-    { id: 2, name: 'Hair Coloring', category: 'Hair', price: 85, duration: 120 },
-    { id: 3, name: 'Facial Treatment', category: 'Skincare', price: 75, duration: 60 },
-    { id: 4, name: 'Manicure', category: 'Nails', price: 35, duration: 45 },
-    { id: 5, name: 'Pedicure', category: 'Nails', price: 45, duration: 60 },
-    { id: 6, name: 'Full Makeup', category: 'Makeup', price: 65, duration: 90 },
-    { id: 7, name: 'Massage Therapy', category: 'Spa', price: 80, duration: 60 },
-    { id: 8, name: 'Waxing', category: 'Skincare', price: 40, duration: 30 }
+    { id: '1', name: 'Haircut & Styling', category: 'Hair', price: 45, duration: 60 },
+    { id: '2', name: 'Hair Coloring', category: 'Hair', price: 85, duration: 120 },
+    { id: '3', name: 'Facial Treatment', category: 'Skincare', price: 75, duration: 60 },
+    { id: '4', name: 'Manicure', category: 'Nails', price: 35, duration: 45 },
+    { id: '5', name: 'Pedicure', category: 'Nails', price: 45, duration: 60 },
+    { id: '6', name: 'Full Makeup', category: 'Makeup', price: 65, duration: 90 },
+    { id: '7', name: 'Massage Therapy', category: 'Spa', price: 80, duration: 60 },
+    { id: '8', name: 'Waxing', category: 'Skincare', price: 40, duration: 30 }
   ]
 
   export const BookingHistory:Booking[] = [

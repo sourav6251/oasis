@@ -2,33 +2,33 @@ import type { Service, ServicePackage, ServiceCategory } from "@/types/Services"
 
 // Sample categories
 const hairCategory: ServiceCategory = {
-  id: 1,
+  _id: '1',
   name: 'Hair'
 };
 
 const skincareCategory: ServiceCategory = {
-  id: 2,
+  _id: '2',
   name: 'Skincare'
 };
 
 const nailsCategory: ServiceCategory = {
-  id: 3,
+  _id: '3',
   name: 'Nails'
 };
 
 const makeupCategory: ServiceCategory = {
-  id: 4,
+  _id: '4',
   name: 'Makeup'
 };
 
 const spaCategory: ServiceCategory = {
-  id: 5,
+  _id: '5',
   name: 'Spa'
 };
 
 export const ServiceData: Service[] = [
   {
-    id: 1,
+    _id: '1',
     name: 'Haircut & Styling',
     price: '₹800',
     duration: '45 min',
@@ -38,7 +38,7 @@ export const ServiceData: Service[] = [
     category: hairCategory
   },
   {
-    id: 2,
+    _id: '2',
     name: 'Hair Spa',
     price: '₹1200',
     duration: '60 min',
@@ -48,7 +48,7 @@ export const ServiceData: Service[] = [
     category: hairCategory
   },
   {
-    id: 3,
+    _id: '3',
     name: 'Hair Coloring',
     price: '₹1500+',
     duration: '90 min',
@@ -58,7 +58,7 @@ export const ServiceData: Service[] = [
     category: hairCategory
   },
   {
-    id: 4,
+    _id: '4',
     name: 'Facial Glow',
     price: '₹1500',
     duration: '75 min',
@@ -68,7 +68,7 @@ export const ServiceData: Service[] = [
     category: skincareCategory
   },
   {
-    id: 5,
+    _id: '5',
     name: 'Acne Treatment',
     price: '₹1800',
     duration: '90 min',
@@ -78,7 +78,7 @@ export const ServiceData: Service[] = [
     category: skincareCategory
   },
   {
-    id: 6,
+    _id: '6',
     name: 'Manicure & Pedicure',
     price: '₹1000',
     duration: '50 min',
@@ -88,7 +88,7 @@ export const ServiceData: Service[] = [
     category: nailsCategory
   },
   {
-    id: 7,
+    _id: '7',
     name: 'Gel Nails',
     price: '₹1200',
     duration: '60 min',
@@ -98,7 +98,7 @@ export const ServiceData: Service[] = [
     category: nailsCategory
   },
   {
-    id: 8,
+    _id: '8',
     name: 'Bridal Makeup',
     price: '₹8000',
     duration: '3 hrs',
@@ -108,7 +108,7 @@ export const ServiceData: Service[] = [
     category: makeupCategory
   },
   {
-    id: 9,
+    _id: '9',
     name: 'Evening Makeup',
     price: '₹2500',
     duration: '60 min',
@@ -118,7 +118,7 @@ export const ServiceData: Service[] = [
     category: makeupCategory
   },
   {
-    id: 10,
+    _id: '10',
     name: 'Full Body Massage',
     price: '₹2500',
     duration: '90 min',
@@ -128,7 +128,7 @@ export const ServiceData: Service[] = [
     category: spaCategory
   },
   {
-    id: 11,
+    _id: '11',
     name: 'Aromatherapy Session',
     price: '₹1800',
     duration: '60 min',
@@ -141,7 +141,7 @@ export const ServiceData: Service[] = [
 
 export const ServicePackageData: ServicePackage[] = [
   {
-    id: 1,
+    _id: '1',
     name: 'Bridal Glow Package',
     price: '₹12,000',
     originalPrice: '₹15,000',
@@ -155,7 +155,7 @@ export const ServicePackageData: ServicePackage[] = [
     popular: false
   },
   {
-    id: 2,
+    _id: '2',
     name: 'Relax & Refresh',
     price: '₹4,500',
     originalPrice: '₹5,800',
@@ -169,7 +169,7 @@ export const ServicePackageData: ServicePackage[] = [
     popular: true
   },
   {
-    id: 3,
+    _id: '3',
     name: 'Complete Beauty',
     price: '₹6,200',
     originalPrice: '₹7,500',

@@ -123,18 +123,13 @@ const handleVerifyOtp = async () => {
   success.value = ''
 
   try {
-    const response = await axiosInstance.post('/auth/verify-otp', {
+    const response = await authStore.verifyOtp({
       email: email.value,
       otp: otp.value
     })
 
-    success.value = response.data.message || 'Email verified successfully!'
+    success.value = response.message || 'Email verified successfully!'
     
-    // Update user verification status in store
-    if (authStore.user) {
-      authStore.user.isEmailVerified = true
-    }
-
     // Redirect to home after 1.5 seconds
     setTimeout(() => {
       router.push('/')

@@ -1,5 +1,5 @@
 export interface GalleryWork {
-  id: number;
+  _id: string;
   title: string;
   category: string;
   image: string;
@@ -9,7 +9,7 @@ export interface GalleryWork {
 }
 
 export interface GalleryCategory {
-  id: number;
+  _id: string;
   name: string;
   icon: string;
 }
@@ -18,4 +18,5 @@ export interface Filter {
   id: string;
   name: string;
   icon: string;
+  _id?: string;
 }

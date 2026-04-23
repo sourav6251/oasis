@@ -34,9 +34,9 @@ export const useServiceStore = defineStore('service', {
          * Get services filtered by category ID
          */
         getServicesByCategory: (state) => {
-            return (categoryId: number) => {
+            return (categoryId: string) => {
                 return state.services.filter(
-                    (service) => service.category.id === categoryId
+                    (service) => service.category._id === categoryId
                 );
             };
         },

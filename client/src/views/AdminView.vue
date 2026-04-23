@@ -42,7 +42,7 @@
 
       <!-- Categories List -->
       <div class="items-grid">
-        <div v-for="category in categories" :key="category.id" class="item-card category-card">
+        <div v-for="category in categories" :key="category._id" class="item-card category-card">
           <div class="item-content">
             <h3>{{ category.name }}</h3>
             <div class="item-actions">
@@ -50,7 +50,7 @@
                 <v-icon icon="mdi-pencil" size="18"></v-icon>
                 Edit
               </button>
-              <button class="btn-delete" @click="deleteCategory(category.id)">
+              <button class="btn-delete" @click="category._id && deleteCategory(category._id)">
                 <v-icon icon="mdi-delete" size="18"></v-icon>
                 Delete
               </button>
@@ -72,7 +72,7 @@
 
       <!-- Gallery Categories List -->
       <div class="items-grid">
-        <div v-for="category in galleryCategories" :key="category.id" class="item-card category-card">
+        <div v-for="category in galleryCategories" :key="category._id" class="item-card category-card">
           <div class="item-content">
             <div class="category-header">
               <v-icon :icon="category.icon" size="32"></v-icon>
@@ -83,7 +83,7 @@
                 <v-icon icon="mdi-pencil" size="18"></v-icon>
                 Edit
               </button>
-              <button class="btn-delete" @click="deleteGalleryCategory(category.id)">
+              <button class="btn-delete" @click="deleteGalleryCategory(category._id)">
                 <v-icon icon="mdi-delete" size="18"></v-icon>
                 Delete
               </button>
@@ -105,7 +105,7 @@
 
       <!-- Services List -->
       <div class="items-grid">
-        <div v-for="service in services" :key="service.id" class="item-card">
+        <div v-for="service in services" :key="service._id" class="item-card">
           <img :src="service.img" :alt="service.name" class="item-img" />
           <div class="item-content">
             <h3>{{ service.name }}</h3>
@@ -119,7 +119,7 @@
                 <v-icon icon="mdi-pencil" size="18"></v-icon>
                 Edit
               </button>
-              <button class="btn-delete" @click="deleteService(service.id)">
+              <button class="btn-delete" @click="deleteService(service._id)">
                 <v-icon icon="mdi-delete" size="18"></v-icon>
                 Delete
               </button>
@@ -141,7 +141,7 @@
 
       <!-- Gallery List -->
       <div class="items-grid">
-        <div v-for="work in galleryWorks" :key="work.id" class="item-card">
+        <div v-for="work in galleryWorks" :key="work._id" class="item-card">
           <img :src="work.image" :alt="work.title" class="item-img" />
           <div class="item-content">
             <h3>{{ work.title }}</h3>
@@ -156,7 +156,7 @@
                 <v-icon icon="mdi-pencil" size="18"></v-icon>
                 Edit
               </button>
-              <button class="btn-delete" @click="deleteGalleryWork(work.id)">
+              <button class="btn-delete" @click="deleteGalleryWork(work._id)">
                 <v-icon icon="mdi-delete" size="18"></v-icon>
                 Delete
               </button>
@@ -218,7 +218,7 @@
             <label>Category *</label>
             <select v-model="serviceForm.categoryId" required>
               <option value="">Select a category</option>
-              <option v-for="cat in categories" :key="cat.id" :value="cat.id">
+              <option v-for="cat in categories" :key="cat._id" :value="cat._id">
                 {{ cat.name }}
               </option>
             </select>
@@ -269,7 +269,7 @@
             <label>Category *</label>
             <select v-model="galleryForm.category" required>
               <option value="">Select a category</option>
-              <option v-for="cat in galleryCategories" :key="cat.id" :value="cat.name">
+              <option v-for="cat in galleryCategories" :key="cat._id" :value="cat.name">
                 {{ cat.name }}
               </option>
             </select>
@@ -329,7 +329,7 @@ const showServiceForm = ref(false);
 const editingService = ref<Service | null>(null);
 const serviceForm = ref({
   name: '',
-  categoryId: null as number | null,
+  categoryId: null as string | null,
   price: '',
   duration: '',
   description: '',
@@ -432,8 +432,8 @@ const saveCategory = async () => {
       name: categoryForm.value.name
     };
 
-    if (editingCategory.value) {
-      await apiStore.updateServiceCategory(editingCategory.value.id, categoryData);
+    if (editingCategory.value && editingCategory.value._id) {
+      await apiStore.updateServiceCategory(editingCategory.value._id, categoryData);
     } else {
       await apiStore.createServiceCategory(categoryData);
     }
@@ -445,7 +445,7 @@ const saveCategory = async () => {
   }
 };
 
-const deleteCategory = async (id: number) => {
+const deleteCategory = async (id: string) => {
   if (!confirm('Are you sure you want to delete this category? All services in this category will also be deleted.')) {
     return;
   }
@@ -465,7 +465,7 @@ const openServiceForm = (service?: Service) => {
     editingService.value = service;
     serviceForm.value = {
       name: service.name,
-      categoryId: service.category.id,
+      categoryId: service.category?._id || (service.category as any)?.id || '',
       price: service.price,
       duration: service.duration,
       description: service.description,
@@ -477,7 +477,7 @@ const openServiceForm = (service?: Service) => {
     editingService.value = null;
     serviceForm.value = {
       name: '',
-      categoryId: null,
+      categoryId: '',
       price: '',
       duration: '',
       description: '',
@@ -513,32 +513,37 @@ const onServiceImageChange = (event: Event) => {
 
 const saveService = async () => {
   try {
-    const category = categories.value.find(c => c.id === serviceForm.value.categoryId);
+    const category = categories.value.find(c => c._id === serviceForm.value.categoryId);
     if (!category) {
       alert('Please select a category');
       return;
     }
 
-    // Upload image if a new file was selected
+    const formData = new FormData();
+    formData.append('name', serviceForm.value.name);
+    formData.append('price', serviceForm.value.price.toString());
+    formData.append('duration', serviceForm.value.duration);
+    formData.append('description', serviceForm.value.description);
+    
+    // category object needs to be stringified for backend to parse
+    formData.append('category', JSON.stringify({
+      _id: category._id,
+      name: category.name
+    }));
+    
+    // features (array) needs to be stringified
+    formData.append('features', JSON.stringify(serviceForm.value.features));
+
     if (serviceImageFile.value) {
-      const response = await apiStore.uploadFile(serviceImageFile.value);
-      serviceForm.value.img = response.url;
+      formData.append('img', serviceImageFile.value); // Backend expects 'img' field for services
+    } else if (serviceForm.value.img) {
+      formData.append('img', serviceForm.value.img); // Keep existing URL if no new file
     }
 
-    const serviceData = {
-      name: serviceForm.value.name,
-      price: serviceForm.value.price,
-      duration: serviceForm.value.duration,
-      description: serviceForm.value.description,
-      img: serviceForm.value.img,
-      features: serviceForm.value.features,
-      category: category
-    };
-
     if (editingService.value) {
-      await apiStore.updateService(editingService.value.id, serviceData);
+      await apiStore.updateService(editingService.value._id, formData);
     } else {
-      await apiStore.createService(serviceData);
+      await apiStore.createService(formData);
     }
     await loadServices();
     closeServiceForm();
@@ -548,7 +553,7 @@ const saveService = async () => {
   }
 };
 
-const deleteService = async (id: number) => {
+const deleteService = async (id: string) => {
   if (!confirm('Are you sure you want to delete this service?')) {
     return;
   }
@@ -592,7 +597,7 @@ const saveGalleryCategory = async () => {
     };
 
     if (editingGalleryCategory.value) {
-      await apiStore.updateGalleryCategory(editingGalleryCategory.value.id, categoryData);
+      await apiStore.updateGalleryCategory(editingGalleryCategory.value._id, categoryData);
     } else {
       await apiStore.createGalleryCategory(categoryData);
     }
@@ -604,13 +609,14 @@ const saveGalleryCategory = async () => {
   }
 };
 
-const deleteGalleryCategory = async (id: number) => {
-  if (!confirm('Are you sure you want to delete this gallery category?')) {
+const deleteGalleryCategory = async (id: string) => {
+  if (!confirm('Are you sure you want to delete this gallery category? All items in this category will also be deleted.')) {
     return;
   }
   try {
     await apiStore.deleteGalleryCategory(id);
     await loadGalleryCategories();
+    await loadGalleryWorks();
   } catch (error) {
     alert('Failed to delete gallery category');
     console.error(error);
@@ -668,25 +674,24 @@ const onGalleryImageChange = (event: Event) => {
 
 const saveGalleryWork = async () => {
   try {
-    // Upload image if a new file was selected
+    const formData = new FormData();
+    formData.append('title', galleryForm.value.title);
+    formData.append('category', galleryForm.value.category);
+    formData.append('description', galleryForm.value.description);
+    formData.append('duration', galleryForm.value.duration);
+    formData.append('stylist', galleryForm.value.stylist);
+
     if (galleryImageFile.value) {
-      const response = await apiStore.uploadFile(galleryImageFile.value);
-      galleryForm.value.image = response.url;
+      formData.append('image', galleryImageFile.value);
+    } else if (!editingGalleryWork.value) {
+      alert('Image is required');
+      return;
     }
 
-    const workData = {
-      title: galleryForm.value.title,
-      category: galleryForm.value.category,
-      image: galleryForm.value.image,
-      description: galleryForm.value.description,
-      duration: galleryForm.value.duration,
-      stylist: galleryForm.value.stylist
-    };
-
     if (editingGalleryWork.value) {
-      await apiStore.updateGallery(editingGalleryWork.value.id, workData);
+      await apiStore.updateGallery(editingGalleryWork.value._id, formData);
     } else {
-      await apiStore.createGallery(workData);
+      await apiStore.createGallery(formData);
     }
     await loadGalleryWorks();
     closeGalleryForm();
@@ -696,7 +701,7 @@ const saveGalleryWork = async () => {
   }
 };
 
-const deleteGalleryWork = async (id: number) => {
+const deleteGalleryWork = async (id: string) => {
   if (!confirm('Are you sure you want to delete this gallery work?')) {
     return;
   }

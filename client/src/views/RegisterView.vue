@@ -129,6 +129,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
+import { toast } from 'vue-sonner'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -155,6 +156,7 @@ const handleRegister = async () => {
     })
 
     success.value = response.message || 'Registration successful!'
+    toast.success(success.value)
     
     // Redirect to OTP verification page
     setTimeout(() => {
@@ -162,6 +164,7 @@ const handleRegister = async () => {
     }, 1500)
   } catch (err: any) {
     error.value = err.response?.data?.message || 'Registration failed. Please try again.'
+    toast.error(error.value)
     console.error('Registration error:', err)
   } finally {
     loading.value = false

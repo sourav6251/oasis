@@ -21,6 +21,7 @@ export const useAuthStore = defineStore('auth', {
         userEmail: (state) => state.user?.email || '',
         userName: (state) => state.user?.fullName || '',
         userImage: (state) => state.user?.profileImageUrl || '',
+        userUsername: (state) => state.user?.username || '',
         isEmailVerified: (state) => state.user?.isEmailVerified || false
     },
 
@@ -32,21 +33,7 @@ export const useAuthStore = defineStore('auth', {
             this.loading = true
             try {
                 const response = await authApi.register(data)
-
-                // Set basic user info from registration response
-                // Don't fetch profile yet - user needs to verify email first
-                this.user = {
-                    userId: response.userId,
-                    email: response.email,
-                    fullName: response.fullName,
-                    isEmailVerified: response.emailVerified,
-                    isMobileVerified: false,
-                    userType: 'USER',
-                    createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString()
-                } as any
-                this.isAuthenticated = true
-
+                // Do not set isAuthenticated here. Wait for OTP verification.
                 return response
             } catch (error: any) {
                 throw error
@@ -62,21 +49,65 @@ export const useAuthStore = defineStore('auth', {
             this.loading = true
             try {
                 const response = await authApi.login(data)
+                
+                if (response.requiresOtp === false) {
+                    this.user = {
+                        userId: response._id || response.userId || '',
+                        email: response.email || '',
+                        fullName: response.fullName || '',
+                        username: response.username || '',
+                        isEmailVerified: response.isVerified || false,
+                        isMobileVerified: false,
+                        profileImageUrl: response.image || '',
+                        userType: response.role ? response.role.toUpperCase() : 'USER',
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
+                    } as any
+                    this.isAuthenticated = true
+                    
+                    if (response.token) {
+                        localStorage.setItem('authToken', response.token)
+                        document.cookie = `AccessToken=${response.token}; path=/; max-age=86400;`
+                    }
+                }
+                
+                return response
+            } catch (error: any) {
+                throw error
+            } finally {
+                this.loading = false
+            }
+        },
 
-                // Set user info from login response
-                // Don't fetch profile - use data from login response
+        /**
+         * Verify OTP
+         */
+        async verifyOtp(data: { email: string; otp: string }) {
+            this.loading = true
+            try {
+                const response = await authApi.verifyOtp(data)
+                
+                // Now set the user and authentication state
                 this.user = {
-                    userId: response.userId,
+                    userId: response._id,
                     email: response.email,
-                    fullName: response.fullName,
-                    isEmailVerified: response.emailVerified,
+                    fullName: response.fullName || '',
+                    username: response.username || '',
+                    isEmailVerified: response.isVerified,
                     isMobileVerified: false,
-                    userType: 'USER',
+                    profileImageUrl: response.image || '',
+                    userType: response.role.toUpperCase(),
                     createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString()
                 } as any
                 this.isAuthenticated = true
-
+                
+                // Save token in both localStorage and cookie
+                if (response.token) {
+                    localStorage.setItem('authToken', response.token)
+                    document.cookie = `AccessToken=${response.token}; path=/; max-age=86400;`
+                }
+                
                 return response
             } catch (error: any) {
                 throw error
@@ -105,6 +136,45 @@ export const useAuthStore = defineStore('auth', {
         },
 
         /**
+         * Upload profile photo
+         */
+        async uploadProfilePhoto(file: File) {
+            this.loading = true
+            try {
+                const formData = new FormData()
+                formData.append('photo', file)
+                const response = await authApi.uploadProfilePhoto(formData)
+                
+                // Update local user state
+                if (this.user) {
+                    this.user.profileImageUrl = response.image
+                }
+                
+                return response
+            } catch (error: any) {
+                throw error
+            } finally {
+                this.loading = false
+            }
+        },
+
+        /**
+         * Update user profile
+         */
+        async updateProfile(data: { email?: string; fullName?: string }) {
+            this.loading = true
+            try {
+                const updatedProfile = await authApi.updateProfile(data)
+                this.user = updatedProfile
+                return updatedProfile
+            } catch (error: any) {
+                throw error
+            } finally {
+                this.loading = false
+            }
+        },
+
+        /**
          * Logout user
          */
         async logout() {
@@ -113,9 +183,11 @@ export const useAuthStore = defineStore('auth', {
             } catch (error) {
                 console.error('Logout error:', error)
             } finally {
-                // Clear state regardless of API call result
+                // Clear state and token
                 this.isAuthenticated = false
                 this.user = null
+                localStorage.removeItem('authToken')
+                document.cookie = 'AccessToken=; path=/; max-age=0;'
             }
         },
 

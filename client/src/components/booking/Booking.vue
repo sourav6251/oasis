@@ -334,7 +334,7 @@ export default defineComponent({
       }
     };
     
-    const isServiceSelected = (serviceId: number): boolean => {
+    const isServiceSelected = (serviceId: string): boolean => {
       return selectedServices.value.some(service => service.id === serviceId);
     };
     

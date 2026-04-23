@@ -32,7 +32,7 @@
 
     <!-- ── FILTER TABS ────────────────────────────────── -->
     <section class="tabs-section">
-      <div class="container">
+      <div class="container tabs-container">
         <div
           class="tabs-wrap"
           v-motion :initial="{ opacity: 0, y: 20 }" :enter="{ opacity: 1, y: 0 }" :duration="700" :delay="100"
@@ -50,6 +50,28 @@
           </button>
           <div class="tab-slider" :style="sliderStyle"></div>
         </div>
+
+        <!-- Admin Actions -->
+        <div v-if="isAdmin" class="admin-actions">
+          <button 
+            class="btn-add-gallery"
+            @click="openAddModal"
+            v-motion :initial="{ opacity: 0, x: 20 }" :enter="{ opacity: 1, x: 0 }" :duration="700" :delay="200"
+          >
+            <v-icon icon="mdi-plus-circle-outline" size="20"></v-icon>
+            <span>Add Photo</span>
+          </button>
+
+          <button 
+            class="btn-add-category"
+            @click="openCategoryModal"
+            v-motion :initial="{ opacity: 0, x: 20 }" :enter="{ opacity: 1, x: 0 }" :duration="700" :delay="250"
+          >
+            <v-icon icon="mdi-folder-plus-outline" size="20"></v-icon>
+            <span>Add Category</span>
+          </button>
+        </div>
+
       </div>
     </section>
 
@@ -68,13 +90,29 @@
 
         <!-- Mosaic grid -->
         <div v-else-if="filteredWorks.length > 0" class="mosaic-grid">
+          <!-- Add New Card (Admin Only) -->
+          <div 
+            v-if="isAdmin"
+            class="mosaic-item mosaic-item--add"
+            @click="openAddModal"
+            v-motion :initial="{ opacity: 0, scale: 0.92 }" :visibleOnce="{ opacity: 1, scale: 1 }" :duration="800"
+          >
+            <div class="add-content">
+              <div class="add-icon">
+                <v-icon icon="mdi-plus" size="42" color="#eaa636"></v-icon>
+              </div>
+              <p>Add New Work</p>
+            </div>
+            <div class="mosaic-border"></div>
+          </div>
+
           <div
             v-for="(work, index) in filteredWorks"
-            :key="work.id"
+            :key="work._id"
             class="mosaic-item"
-            :class="getMosaicClass(index)"
+            :class="getMosaicClass(isAdmin ? index + 1 : index)"
             @click="openLightbox(work, index)"
-            v-motion :initial="{ opacity: 0, scale: 0.92 }" :visibleOnce="{ opacity: 1, scale: 1 }" :delay="index * 80" :duration="800"
+            v-motion :initial="{ opacity: 0, scale: 0.92 }" :visibleOnce="{ opacity: 1, scale: 1 }" :delay="(isAdmin ? index + 1 : index) * 80" :duration="800"
           >
             <!-- Image -->
             <img :src="work.image" :alt="work.title" loading="lazy" />
@@ -89,6 +127,15 @@
                 <h4>{{ work.title }}</h4>
                 <div class="mosaic-zoom">
                   <v-icon icon="mdi-magnify-plus" size="22" color="#1e1916"></v-icon>
+                </div>
+                <!-- Admin Actions -->
+                <div v-if="isAdmin" class="item-actions" @click.stop>
+                  <button class="action-btn action-btn--edit" @click="openEditModal(work)" title="Edit">
+                    <v-icon icon="mdi-pencil" size="16"></v-icon>
+                  </button>
+                  <button class="action-btn action-btn--delete" @click="deleteGalleryWork(work._id)" title="Delete">
+                    <v-icon icon="mdi-trash-can-outline" size="16"></v-icon>
+                  </button>
                 </div>
               </div>
             </div>
@@ -164,7 +211,135 @@
               <button class="btn-gold" style="margin-top:1.75rem;" @click="bookNow">
                 Book This Look
               </button>
+
+              <!-- Admin Actions in Lightbox -->
+              <div v-if="isAdmin" class="lb-admin-actions">
+                <button class="btn-outline-admin" @click="openEditModal(currentWork)">
+                  <v-icon icon="mdi-pencil" size="18"></v-icon> Edit Work
+                </button>
+                <button class="btn-outline-admin btn-outline-admin--delete" @click="deleteGalleryWork(currentWork._id)">
+                  <v-icon icon="mdi-delete" size="18"></v-icon> Delete
+                </button>
+              </div>
             </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
+    <!-- ── ADD WORK MODAL (ADMIN) ───────────────────────── -->
+    <Teleport to="body">
+      <Transition name="modal">
+        <div v-if="showAddModal" class="modal-overlay overflow-y-auto" @click.self="closeAddModal">
+          <div class="modal-card" v-motion :initial="{ opacity: 0, y: 30 }" :enter="{ opacity: 1, y: 0 }">
+            <div class="modal-header">
+              <h3>{{ isEditing ? 'Edit Gallery Work' : 'Add New Gallery Work' }}</h3>
+              <button class="btn-close" @click="closeAddModal">
+                <v-icon icon="mdi-close" size="20"></v-icon>
+              </button>
+            </div>
+            
+            <form @submit.prevent="saveNewWork" class="modal-form overflow-y-auto">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Title</label>
+                  <input v-model="newWorkForm.title" type="text" placeholder="e.g. Royal Bridal Glow" required />
+                </div>
+                
+                <div class="form-group">
+                  <label>Category</label>
+                  <select v-model="newWorkForm.category" required>
+                    <option value="" disabled>Select Category</option>
+                    <option v-for="cat in availableCategories" :key="cat" :value="cat">
+                      {{ cat }}
+                    </option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label>Duration</label>
+                  <input v-model="newWorkForm.duration" type="text" placeholder="e.g. 3 hrs" />
+                </div>
+
+                <div class="form-group">
+                  <label>Stylist</label>
+                  <input v-model="newWorkForm.stylist" type="text" placeholder="e.g. Priya Sharma" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Description</label>
+                <textarea v-model="newWorkForm.description" rows="3" placeholder="Describe the look..."></textarea>
+              </div>
+
+              <div class="form-group">
+                <label>Image</label>
+                <div class="image-upload-box" @click="triggerFileInput">
+                  <input 
+                    type="file" 
+                    ref="fileInput" 
+                    class="hidden" 
+                    accept="image/*" 
+                    @change="onImageChange" 
+                  />
+                  <div v-if="!newWorkImagePreview" class="upload-placeholder">
+                    <v-icon icon="mdi-cloud-upload-outline" size="32"></v-icon>
+                    <p>Click to upload image</p>
+                  </div>
+                  <img v-else :src="newWorkImagePreview" class="preview-img" />
+                </div>
+              </div>
+
+              <div class="modal-footer pt-2">
+                <button type="button" class="btn-cancel" @click="closeAddModal">Cancel</button>
+                <button type="submit" class="btn-save" :disabled="saving">
+                  <span v-if="saving">{{ isEditing ? 'Updating...' : 'Saving...' }}</span>
+                  <span v-else>{{ isEditing ? 'Update' : 'Save' }}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
+    <!-- ── ADD CATEGORY MODAL (ADMIN) ────────────────── -->
+    <Teleport to="body">
+      <Transition name="modal">
+        <div v-if="showCategoryModal" class="modal-overlay" @click.self="closeCategoryModal">
+          <div class="modal-card modal-card--small" v-motion :initial="{ opacity: 0, y: 30 }" :enter="{ opacity: 1, y: 0 }">
+            <div class="modal-header">
+              <h3>Add New Category</h3>
+              <button class="btn-close" @click="closeCategoryModal">
+                <v-icon icon="mdi-close" size="20"></v-icon>
+              </button>
+            </div>
+            
+            <form @submit.prevent="saveNewCategory" class="modal-form">
+              <div class="form-group">
+                <label>Category Name</label>
+                <input v-model="newCategoryForm.name" type="text" placeholder="e.g. Skin Care" required />
+              </div>
+              
+              <div class="form-group">
+                <label>Icon (MDI Name)</label>
+                <div class="icon-input-wrap">
+                  <input v-model="newCategoryForm.icon" type="text" placeholder="e.g. mdi-spa" required />
+                  <div class="icon-preview" v-if="newCategoryForm.icon">
+                    <v-icon :icon="newCategoryForm.icon" size="24" color="#eaa636"></v-icon>
+                  </div>
+                </div>
+                <p class="form-hint">Use any Material Design Icon name (e.g., mdi-face-woman)</p>
+              </div>
+
+              <div class="modal-footer pt-4">
+                <button type="button" class="btn-cancel" @click="closeCategoryModal">Cancel</button>
+                <button type="submit" class="btn-save" :disabled="savingCategory">
+                  <span v-if="savingCategory">Saving...</span>
+                  <span v-else>Save Category</span>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </Transition>
@@ -203,17 +378,29 @@
       </div>
     </section>
 
+    <!-- ── ADMIN FAB ──────────────────────────────────── -->
+    <div v-if="isAdmin" class="admin-fab-container">
+      <button class="admin-fab" @click="openAddModal" title="Add New Work">
+        <v-icon icon="mdi-plus" size="24"></v-icon>
+        <span class="fab-text">Add New Work</span>
+      </button>
+    </div>
+
   </div>
 </template>
 
 <script lang="ts">
 import apiStore from '@/api/apiStore';
+import serviceApi from '@/api/serviceApi';
+import { useAuthStore } from '@/stores/authStore';
 import type { Filter, GalleryWork, GalleryCategory } from '@/types/Gallery';
+import type { ServiceCategory } from '@/types/Services';
 import { defineComponent, ref, computed, onMounted, nextTick, watch, type ComponentPublicInstance } from 'vue';
 
 export default defineComponent({
   name: 'Gallery',
   setup() {
+    const authStore        = useAuthStore();
     const activeFilter     = ref<string>('all');
     const showLightbox     = ref<boolean>(false);
     const currentWorkIndex = ref<number>(0);
@@ -222,6 +409,7 @@ export default defineComponent({
     const loading          = ref<boolean>(true);
     const loadingMore      = ref<boolean>(false);
     const sentinelRef      = ref<HTMLElement | null>(null);
+    const fileInput        = ref<HTMLInputElement | null>(null);
     let   observer: IntersectionObserver | null = null;
 
     // Tab slider
@@ -237,7 +425,37 @@ export default defineComponent({
 
     const galleryWorks = ref<GalleryWork[]>([]);
 
+    // Admin State
+    const showCategoryModal = ref(false);
+    const savingCategory = ref(false);
+    const newCategoryForm = ref({
+      name: '',
+      icon: 'mdi-star'
+    });
+
+    const showAddModal = ref(false);
+    const saving = ref(false);
+    const isEditing = ref(false);
+    const editingId = ref<string | null>(null);
+    const newWorkImageFile = ref<File | null>(null);
+    const newWorkImagePreview = ref<string>('');
+    const newWorkForm = ref({
+      title: '',
+      category: '',
+      description: '',
+      duration: '',
+      stylist: ''
+    });
+
     /* ── COMPUTED ─────────────────────────────────────── */
+    const isAdmin = computed(() => authStore.user?.userType === 'ADMIN');
+
+    const availableCategories = computed(() => {
+      return filters.value
+        .filter(f => f.id !== 'all')
+        .map(f => f.name);
+    });
+
     const filteredWorks = computed(() => {
       const list =
         activeFilter.value === 'all'
@@ -263,7 +481,6 @@ export default defineComponent({
       width:      `${sliderWidth.value}px`,
       height:     `${sliderHeight.value}px`,
       top:        `${sliderTop.value}px`,
-      transition: 'all 0.4s cubic-bezier(0.4,0,0.2,1)',
     }));
 
     /* ── HELPERS ──────────────────────────────────────── */
@@ -345,19 +562,155 @@ export default defineComponent({
 
     const bookNow = () => alert('Redirecting to booking…');
 
+    /* ── ADMIN ACTIONS ────────────────────────────────── */
+    const openAddModal = () => {
+      isEditing.value = false;
+      editingId.value = null;
+      newWorkForm.value = {
+        title: '',
+        category: '',
+        description: '',
+        duration: '',
+        stylist: ''
+      };
+      newWorkImageFile.value = null;
+      newWorkImagePreview.value = '';
+      showAddModal.value = true;
+      document.body.style.overflow = 'hidden';
+    };
+
+    const openEditModal = (work: GalleryWork) => {
+      isEditing.value = true;
+      editingId.value = work._id;
+      newWorkForm.value = {
+        title: work.title,
+        category: work.category,
+        description: work.description,
+        duration: work.duration,
+        stylist: work.stylist
+      };
+      newWorkImageFile.value = null;
+      newWorkImagePreview.value = work.image;
+      showAddModal.value = true;
+      document.body.style.overflow = 'hidden';
+    };
+
+    const closeAddModal = () => {
+      showAddModal.value = false;
+      document.body.style.overflow = '';
+    };
+
+    const openCategoryModal = () => {
+      newCategoryForm.value = {
+        name: '',
+        icon: 'mdi-star'
+      };
+      showCategoryModal.value = true;
+      document.body.style.overflow = 'hidden';
+    };
+
+    const closeCategoryModal = () => {
+      showCategoryModal.value = false;
+      document.body.style.overflow = '';
+    };
+
+    const triggerFileInput = () => {
+      fileInput.value?.click();
+    };
+
+    const onImageChange = (event: Event) => {
+      const target = event.target as HTMLInputElement;
+      const file = target.files?.[0];
+      if (file) {
+        newWorkImageFile.value = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          newWorkImagePreview.value = e.target?.result as string;
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+
+    const saveNewCategory = async () => {
+      try {
+        savingCategory.value = true;
+        await serviceApi.createServiceCategory(newCategoryForm.value);
+        await loadGalleryCategories();
+        closeCategoryModal();
+        alert('Category added successfully!');
+      } catch (error) {
+        console.error('Failed to save category:', error);
+        alert('Failed to save category. Please try again.');
+      } finally {
+        savingCategory.value = false;
+      }
+    };
+
+    const saveNewWork = async () => {
+      if (!isEditing.value && !newWorkImageFile.value) {
+        alert('Please select an image');
+        return;
+      }
+
+      try {
+        saving.value = true;
+        const formData = new FormData();
+        formData.append('title', newWorkForm.value.title);
+        formData.append('category', newWorkForm.value.category);
+        formData.append('description', newWorkForm.value.description);
+        formData.append('duration', newWorkForm.value.duration);
+        formData.append('stylist', newWorkForm.value.stylist);
+        
+        if (newWorkImageFile.value) {
+          formData.append('image', newWorkImageFile.value);
+        }
+
+        if (isEditing.value && editingId.value) {
+          await apiStore.updateGallery(editingId.value, formData);
+          alert('Gallery work updated successfully!');
+        } else {
+          await apiStore.createGallery(formData);
+          alert('Gallery work added successfully!');
+        }
+        
+        await loadGalleryWorks();
+        closeAddModal();
+      } catch (error) {
+        console.error('Failed to save gallery work:', error);
+        alert('Failed to save gallery work. Please try again.');
+      } finally {
+        saving.value = false;
+      }
+    };
+
+    const deleteGalleryWork = async (id: string) => {
+      if (!confirm('Are you sure you want to delete this work?')) return;
+
+      try {
+        await apiStore.deleteGallery(id);
+        await loadGalleryWorks();
+        if (showLightbox.value) closeLightbox();
+        alert('Gallery work deleted successfully!');
+      } catch (error) {
+        console.error('Failed to delete gallery work:', error);
+        alert('Failed to delete gallery work.');
+      }
+    };
+
     /* ── DATA LOADERS ─────────────────────────────────── */
     const loadGalleryCategories = async () => {
       try {
-        const cats = await apiStore.getAllGalleryCategories();
+        const cats = await serviceApi.getAllServiceCategories();
         filters.value = [
           { id: 'all', name: 'All Works', icon: 'mdi-star' },
-          ...cats.map((c: GalleryCategory) => ({
+          ...cats.map((c: ServiceCategory) => ({
             id:   c.name.toLowerCase(),
             name: c.name,
-            icon: c.icon,
+            icon: c.icon || 'mdi-tag',
           })),
         ];
-      } catch {
+      } catch (error) {
+        console.error('Failed to load categories from Service API:', error);
         filters.value = [
           { id: 'all',      name: 'All Works', icon: 'mdi-star'           },
           { id: 'bridal',   name: 'Bridal',    icon: 'mdi-heart'          },
@@ -374,93 +727,93 @@ export default defineComponent({
         loading.value = true;
         galleryWorks.value = await apiStore.getAllGalleries();
       } catch {
-        galleryWorks.value = [
-          // ── BRIDAL ─────────────────────────────────────
-          { id: 1,  title: 'Royal Bridal Glow',      category: 'Bridal',
-            image: 'https://images.unsplash.com/photo-1595147389795-37094173bfd8?w=600&q=80',
-            description: 'An ethereal bridal look — dewy skin, champagne eyes and a classic red lip.',
-            duration: '3 hrs',    stylist: 'Priya Sharma' },
-          { id: 2,  title: 'Golden Hour Bride',       category: 'Bridal',
-            image: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80',
-            description: 'Warm golden tones, soft smoky eye and flawlessly highlighted cheekbones.',
-            duration: '2.5 hrs',  stylist: 'Ananya Roy' },
-          { id: 3,  title: 'Celestial Bridal',        category: 'Bridal',
-            image: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80',
-            description: 'Soft peach tones, pearl highlights and intricate eye art.',
-            duration: '3.5 hrs',  stylist: 'Sonal Gupta' },
-          { id: 4,  title: 'Classic Bengali Bride',   category: 'Bridal',
-            image: 'https://images.unsplash.com/photo-1532712938310-34cb3982ef74?w=600&q=80',
-            description: 'Traditional red & gold, bold eye and contoured nose for the ideal Bengali bride.',
-            duration: '4 hrs',    stylist: 'Priya Sharma' },
-          // ── MAKEUP ─────────────────────────────────────
-          { id: 5,  title: 'Party Glam Smoky',        category: 'Makeup',
-            image: 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=600&q=80',
-            description: 'Deep charcoal smoky eye with metallic foil lid — bold and camera-ready.',
-            duration: '60 min',   stylist: 'Ananya Roy' },
-          { id: 6,  title: 'Natural Dewy Glow',       category: 'Makeup',
-            image: 'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=600&q=80',
-            description: 'Glass-skin finish with peachy blush and a barely-there lip.',
-            duration: '45 min',   stylist: 'Sonal Gupta' },
-          { id: 7,  title: 'Festive Ethnic Glam',     category: 'Makeup',
-            image: 'https://images.unsplash.com/photo-1526510747491-58f928ec870f?w=600&q=80',
-            description: 'Vibrant kohl-rimmed eyes and terracotta lips for Indian festive beauty.',
-            duration: '75 min',   stylist: 'Priya Sharma' },
-          { id: 8,  title: 'Editorial Cut Crease',    category: 'Makeup',
-            image: 'https://images.unsplash.com/photo-1503236823255-94609f598e71?w=600&q=80',
-            description: 'Sharp cut-crease in cobalt blue with graphic liner — a bold editorial look.',
-            duration: '90 min',   stylist: 'Ananya Roy' },
-          // ── HAIR ───────────────────────────────────────
-          { id: 9,  title: 'Silk Balayage Waves',     category: 'Hair',
-            image: 'https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?w=600&q=80',
-            description: 'Honey-caramel balayage with voluminous beach waves.',
-            duration: '3 hrs',    stylist: 'Rinku Das' },
-          { id: 10, title: 'Sleek Keratin Blow',      category: 'Hair',
-            image: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600&q=80',
-            description: 'Post-keratin blowout: pin-straight, mirror-shine and frizz-free.',
-            duration: '2 hrs',    stylist: 'Rinku Das' },
-          { id: 11, title: 'Bridal Updo',             category: 'Hair',
-            image: 'https://images.unsplash.com/photo-1519824145371-296894a0daa9?w=600&q=80',
-            description: 'Intricately pinned updo with fresh flowers and embellished pins.',
-            duration: '90 min',   stylist: 'Sonal Gupta' },
-          { id: 12, title: 'Chic Bob Cut',            category: 'Hair',
-            image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&q=80',
-            description: 'Precision asymmetric bob that frames the face perfectly.',
-            duration: '60 min',   stylist: 'Rinku Das' },
-          // ── NAILS ──────────────────────────────────────
-          { id: 13, title: 'French Ombre Nails',      category: 'Nails',
-            image: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80',
-            description: 'Soft pink-to-white ombre gel nails with shimmer top coat.',
-            duration: '60 min',   stylist: 'Meera Bose' },
-          { id: 14, title: 'Floral Nail Art',         category: 'Nails',
-            image: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80',
-            description: 'Hand-painted micro florals on a nude base — intricate bespoke artistry.',
-            duration: '90 min',   stylist: 'Meera Bose' },
-          { id: 15, title: 'Glitter Gel Mani',        category: 'Nails',
-            image: 'https://images.unsplash.com/photo-1519415510236-718bdfcd89c8?w=600&q=80',
-            description: 'Chunky gold glitter encapsulated in a long-wearing gel.',
-            duration: '45 min',   stylist: 'Meera Bose' },
-          // ── WELLNESS ───────────────────────────────────
-          { id: 16, title: 'Aromatherapy Session',    category: 'Wellness',
-            image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80',
-            description: 'Full-body massage with carefully blended essential oils for total relaxation.',
-            duration: '60 min',   stylist: 'Tanya Mehta' },
-          { id: 17, title: 'Japanese Head Spa',       category: 'Wellness',
-            image: 'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=600&q=80',
-            description: 'Scalp exfoliation, oil treatment and pressure-point massage.',
-            duration: '45 min',   stylist: 'Tanya Mehta' },
-          { id: 18, title: 'Glow Facial',             category: 'Wellness',
-            image: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&q=80',
-            description: 'Brightening facial with vitamin-C serum, enzyme mask & LED therapy.',
-            duration: '75 min',   stylist: 'Sonal Gupta' },
-          { id: 19, title: 'Body Polish Ritual',      category: 'Wellness',
-            image: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=600&q=80',
-            description: 'Sugar-coffee full-body scrub followed by warm wrap and hydrating butter.',
-            duration: '90 min',   stylist: 'Tanya Mehta' },
-          { id: 20, title: 'Deep Tissue Massage',     category: 'Wellness',
-            image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80',
-            description: 'Targeted deep-tissue work to release chronic tension in the back & shoulders.',
-            duration: '45 min',   stylist: 'Tanya Mehta' },
-        ];
+        // galleryWorks.value = [
+        //   // ── BRIDAL ─────────────────────────────────────
+        //   { _id: '1',  title: 'Royal Bridal Glow',      category: 'Bridal',
+        //     image: 'https://images.unsplash.com/photo-1595147389795-37094173bfd8?w=600&q=80',
+        //     description: 'An ethereal bridal look — dewy skin, champagne eyes and a classic red lip.',
+        //     duration: '3 hrs',    stylist: 'Priya Sharma' },
+        //   { _id: '2',  title: 'Golden Hour Bride',       category: 'Bridal',
+        //     image: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80',
+        //     description: 'Warm golden tones, soft smoky eye and flawlessly highlighted cheekbones.',
+        //     duration: '2.5 hrs',  stylist: 'Ananya Roy' },
+        //   { _id: '3',  title: 'Celestial Bridal',        category: 'Bridal',
+        //     image: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80',
+        //     description: 'Soft peach tones, pearl highlights and intricate eye art.',
+        //     duration: '3.5 hrs',  stylist: 'Sonal Gupta' },
+        //   { _id: '4',  title: 'Classic Bengali Bride',   category: 'Bridal',
+        //     image: 'https://images.unsplash.com/photo-1532712938310-34cb3982ef74?w=600&q=80',
+        //     description: 'Traditional red & gold, bold eye and contoured nose for the ideal Bengali bride.',
+        //     duration: '4 hrs',    stylist: 'Priya Sharma' },
+        //   // ── MAKEUP ─────────────────────────────────────
+        //   { _id: '5',  title: 'Party Glam Smoky',        category: 'Makeup',
+        //     image: 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=600&q=80',
+        //     description: 'Deep charcoal smoky eye with metallic foil lid — bold and camera-ready.',
+        //     duration: '60 min',   stylist: 'Ananya Roy' },
+        //   { _id: '6',  title: 'Natural Dewy Glow',       category: 'Makeup',
+        //     image: 'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=600&q=80',
+        //     description: 'Glass-skin finish with peachy blush and a barely-there lip.',
+        //     duration: '45 min',   stylist: 'Sonal Gupta' },
+        //   { _id: '7',  title: 'Festive Ethnic Glam',     category: 'Makeup',
+        //     image: 'https://images.unsplash.com/photo-1526510747491-58f928ec870f?w=600&q=80',
+        //     description: 'Vibrant kohl-rimmed eyes and terracotta lips for Indian festive beauty.',
+        //     duration: '75 min',   stylist: 'Priya Sharma' },
+        //   { _id: '8',  title: 'Editorial Cut Crease',    category: 'Makeup',
+        //     image: 'https://images.unsplash.com/photo-1503236823255-94609f598e71?w=600&q=80',
+        //     description: 'Sharp cut-crease in cobalt blue with graphic liner — a bold editorial look.',
+        //     duration: '90 min',   stylist: 'Ananya Roy' },
+        //   // ── HAIR ───────────────────────────────────────
+        //   { _id: '9',  title: 'Silk Balayage Waves',     category: 'Hair',
+        //     image: 'https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?w=600&q=80',
+        //     description: 'Honey-caramel balayage with voluminous beach waves.',
+        //     duration: '3 hrs',    stylist: 'Rinku Das' },
+        //   { _id: '10', title: 'Sleek Keratin Blow',      category: 'Hair',
+        //     image: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600&q=80',
+        //     description: 'Post-keratin blowout: pin-straight, mirror-shine and frizz-free.',
+        //     duration: '2 hrs',    stylist: 'Rinku Das' },
+        //   { _id: '11', title: 'Bridal Updo',             category: 'Hair',
+        //     image: 'https://images.unsplash.com/photo-1519824145371-296894a0daa9?w=600&q=80',
+        //     description: 'Intricately pinned updo with fresh flowers and embellished pins.',
+        //     duration: '90 min',   stylist: 'Sonal Gupta' },
+        //   { _id: '12', title: 'Chic Bob Cut',            category: 'Hair',
+        //     image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&q=80',
+        //     description: 'Precision asymmetric bob that frames the face perfectly.',
+        //     duration: '60 min',   stylist: 'Rinku Das' },
+        //   // ── NAILS ──────────────────────────────────────
+        //   { _id: '13', title: 'French Ombre Nails',      category: 'Nails',
+        //     image: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80',
+        //     description: 'Soft pink-to-white ombre gel nails with shimmer top coat.',
+        //     duration: '60 min',   stylist: 'Meera Bose' },
+        //   { _id: '14', title: 'Floral Nail Art',         category: 'Nails',
+        //     image: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80',
+        //     description: 'Hand-painted micro florals on a nude base — intricate bespoke artistry.',
+        //     duration: '90 min',   stylist: 'Meera Bose' },
+        //   { _id: '15', title: 'Glitter Gel Mani',        category: 'Nails',
+        //     image: 'https://images.unsplash.com/photo-1519415510236-718bdfcd89c8?w=600&q=80',
+        //     description: 'Chunky gold glitter encapsulated in a long-wearing gel.',
+        //     duration: '45 min',   stylist: 'Meera Bose' },
+        //   // ── WELLNESS ───────────────────────────────────
+        //   { _id: '16', title: 'Aromatherapy Session',    category: 'Wellness',
+        //     image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80',
+        //     description: 'Full-body massage with carefully blended essential oils for total relaxation.',
+        //     duration: '60 min',   stylist: 'Tanya Mehta' },
+        //   { _id: '17', title: 'Japanese Head Spa',       category: 'Wellness',
+        //     image: 'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=600&q=80',
+        //     description: 'Scalp exfoliation, oil treatment and pressure-point massage.',
+        //     duration: '45 min',   stylist: 'Tanya Mehta' },
+        //   { _id: '18', title: 'Glow Facial',             category: 'Wellness',
+        //     image: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&q=80',
+        //     description: 'Brightening facial with vitamin-C serum, enzyme mask & LED therapy.',
+        //     duration: '75 min',   stylist: 'Sonal Gupta' },
+        //   { _id: '19', title: 'Body Polish Ritual',      category: 'Wellness',
+        //     image: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=600&q=80',
+        //     description: 'Sugar-coffee full-body scrub followed by warm wrap and hydrating butter.',
+        //     duration: '90 min',   stylist: 'Tanya Mehta' },
+        //   { _id: '20', title: 'Deep Tissue Massage',     category: 'Wellness',
+        //     image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80',
+        //     description: 'Targeted deep-tissue work to release chronic tension in the back & shoulders.',
+        //     duration: '45 min',   stylist: 'Tanya Mehta' },
+        // ];
       } finally {
         loading.value = false;
       }
@@ -492,6 +845,12 @@ export default defineComponent({
       getMosaicClass,
       openLightbox, closeLightbox, nextImage, prevImage,
       loadMore, bookNow,
+      // Admin
+      isAdmin, showAddModal, saving, newWorkForm, newWorkImagePreview, 
+      isEditing, availableCategories, openAddModal, openEditModal, closeAddModal, onImageChange, saveNewWork,
+      deleteGalleryWork,
+      showCategoryModal, savingCategory, newCategoryForm, openCategoryModal, closeCategoryModal, saveNewCategory,
+      fileInput, triggerFileInput
     };
   },
 });
@@ -625,6 +984,14 @@ h1, h2, h3 {
   z-index: 40;
   box-shadow: 0 4px 24px rgba(30,25,22,0.07);
 }
+.tabs-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  gap: 1.5rem;
+}
 .tabs-wrap {
   display: flex;
   align-items: center;
@@ -633,11 +1000,81 @@ h1, h2, h3 {
   border-radius: 50px;
   padding: 0.55rem;
   width: fit-content;
-  margin: 0 auto;
   position: relative;
   flex-wrap: wrap;
   justify-content: center;
 }
+.admin-fab-container {
+  position: fixed;
+  bottom: 2.5rem;
+  right: 2.5rem;
+  z-index: 1000;
+}
+
+.admin-fab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  background: #eaa636;
+  color: #1e1916;
+  border: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 8px 25px rgba(234, 166, 54, 0.4);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 0;
+}
+
+.admin-fab:hover {
+  width: 180px;
+  gap: 0.75rem;
+  padding: 0 1.5rem;
+  background: #1e1916;
+  color: #eaa636;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+}
+
+.fab-text {
+  font-size: 0.9rem;
+  font-weight: 700;
+  opacity: 0;
+  transform: translateX(10px);
+  transition: all 0.3s ease;
+  display: none;
+}
+
+.admin-fab:hover .fab-text {
+  opacity: 1;
+  transform: translateX(0);
+  display: inline;
+}
+
+.admin-fab .v-icon {
+  transition: transform 0.4s ease;
+}
+
+.admin-fab:hover .v-icon {
+  transform: rotate(90deg);
+}
+
+@media (max-width: 900px) {
+  .admin-actions {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-fab-container {
+    bottom: 1.5rem;
+    right: 1.5rem;
+  }
+}
+
 .tab-btn {
   background: transparent; border: none;
   display: flex; align-items: center; gap: 0.4rem;
@@ -658,6 +1095,8 @@ h1, h2, h3 {
   box-shadow: 0 4px 16px rgba(234,166,54,0.35);
   transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
 }
+
+
 
 /* ── MOSAIC GRID ─────────────────────────────────────── */
 .grid-section {
@@ -681,12 +1120,59 @@ h1, h2, h3 {
 }
 @media (max-width: 1024px) {
   .mosaic-grid { grid-template-columns: repeat(2, 1fr); }
-  .mosaic-item--large { grid-column: span 2; grid-row: span 2; }
-  .mosaic-item--tall  { grid-row: span 2; }
 }
 @media (max-width: 640px) {
   .mosaic-grid { grid-template-columns: 1fr; grid-auto-rows: 260px; }
   .mosaic-item--large, .mosaic-item--tall { grid-column: span 1; grid-row: span 1; }
+}
+
+.mosaic-item--add {
+  background: #fffdf7 !important;
+  border: 2px dashed rgba(234, 166, 54, 0.4) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s ease;
+}
+
+.mosaic-item--add:hover {
+  border-style: solid !important;
+  background: #fff9f0 !important;
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(234, 166, 54, 0.15);
+}
+
+.mosaic-item--add .add-content {
+  text-align: center;
+}
+
+.mosaic-item--add .add-icon {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: #1e1916;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  transition: all 0.4s ease;
+}
+
+.mosaic-item--add:hover .add-icon {
+  background: #eaa636;
+  transform: scale(1.1) rotate(90deg);
+}
+
+.mosaic-item--add:hover .add-icon .v-icon {
+  color: #1e1916 !important;
+}
+
+.mosaic-item--add p {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #1e1916;
+  margin: 0;
 }
 
 .mosaic-item--large { grid-column: span 2; grid-row: span 2; }
@@ -907,4 +1393,389 @@ h1, h2, h3 {
 .cta-content h2 { font-size: clamp(2rem, 5vw, 3rem); color: #fff; margin-bottom: 1.1rem; margin-top: 0.5rem; }
 .cta-content p { color: rgba(255,255,255,0.72); font-size: 1.05rem; max-width: 540px; margin: 0 auto 2.25rem; line-height: 1.8; }
 .cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+/* ── MODAL ───────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(30, 25, 22, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1.5rem;
+}
+
+.modal-card {
+  background: #fffdf7;
+  width: 100%;
+  max-width: 600px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+  padding: 1.5rem;
+  background: #1e1916;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  color: #eaa636;
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.btn-close {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.btn-close:hover {
+  color: #fff;
+}
+
+.modal-form {
+  padding: 2rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 600px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.1rem;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1e1916;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 0.5rem 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #eaa636;
+  box-shadow: 0 0 0 3px rgba(234, 166, 54, 0.1);
+}
+
+.image-upload-box {
+  border: 2px dashed #e0e0e0;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+}
+
+.image-upload-box:hover {
+  border-color: #eaa636;
+  background: #fff9f0;
+}
+
+.upload-placeholder {
+  color: #888;
+}
+
+.upload-placeholder p {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.preview-img {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.modal-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.btn-cancel {
+  padding: 0.2rem 1.5rem;
+  background: transparent;
+  border: 1px solid #e0e0e0;
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-cancel:hover {
+  background: #f5f5f5;
+}
+
+.btn-save {
+  padding: 0.2rem 2rem;
+  background: #eaa636;
+  color: #1e1916;
+  border: none;
+  border-radius: 50px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(234, 166, 54, 0.3);
+}
+
+.btn-save:hover:not(:disabled) {
+  background: #d9952b;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(234, 166, 54, 0.4);
+}
+
+.btn-save:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+
+
+/* Transitions */
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.4s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+
+.modal-enter-active .modal-card,
+.modal-leave-active .modal-card {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-enter-from .modal-card,
+.modal-leave-to .modal-card {
+  transform: scale(0.9) translateY(20px);
+}
+
+/* ── ADMIN ACTIONS ─────────────────────────────────── */
+.admin-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.btn-add-gallery,
+.btn-add-category {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-add-gallery {
+  background: #eaa636;
+  color: #1e1916;
+  border: none;
+  box-shadow: 0 4px 15px rgba(234, 166, 54, 0.25);
+}
+
+.btn-add-category {
+  background: rgba(30, 25, 22, 0.05);
+  color: #1e1916;
+  border: 1.5px solid #1e1916;
+}
+
+.btn-add-gallery:hover {
+  background: #d9952b;
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 6px 20px rgba(234, 166, 54, 0.35);
+}
+
+.btn-add-category:hover {
+  background: #1e1916;
+  color: #eaa636;
+  transform: translateY(-3px) scale(1.02);
+}
+
+/* ── CATEGORY MODAL ────────────────────────────────── */
+.modal-card--small {
+  max-width: 440px;
+}
+
+.icon-input-wrap {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.icon-input-wrap input {
+  flex: 1;
+}
+
+.icon-preview {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.form-hint {
+  font-size: 0.75rem;
+  color: #888;
+  margin-top: 0.4rem;
+  font-style: italic;
+}
+
+
+
+@media (max-width: 768px) {
+  .admin-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  .btn-add-gallery, .btn-add-category {
+    width: 100%;
+    justify-content: center;
+  }
+}
+/* ── ACTION BUTTONS ─────────────────────────────────── */
+.item-actions {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  z-index: 10;
+}
+
+.action-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.action-btn--edit {
+  background: #fff;
+  color: #1e1916;
+}
+
+.action-btn--edit:hover {
+  background: #eaa636;
+  color: #1e1916;
+  transform: scale(1.1);
+}
+
+.action-btn--delete {
+  background: rgba(220, 53, 69, 0.9);
+  color: #fff;
+}
+
+.action-btn--delete:hover {
+  background: #dc3545;
+  transform: scale(1.1);
+}
+
+.lb-admin-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px dashed rgba(30, 25, 22, 0.1);
+}
+
+.btn-outline-admin {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: 1px solid #1e1916;
+  border-radius: 50px;
+  color: #1e1916;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-admin:hover {
+  background: #1e1916;
+  color: #eaa636;
+}
+
+.btn-outline-admin--delete {
+  border-color: #dc3545;
+  color: #dc3545;
+}
+
+.btn-outline-admin--delete:hover {
+  background: #dc3545;
+  color: #fff;
+}
 </style>
