@@ -29,7 +29,7 @@
       <div class="max-w-[1140px] mx-auto px-4 md:px-6 lg:px-8 relative z-10">
         <div class="flex flex-wrap -mx-4 items-center">
           <!-- Left: Image Section -->
-          <div class="w-full lg:w-1/2 px-4 mb-16 lg:mb-0">
+          <div class="w-full min-[700px]:w-1/2 px-4 mb-16 min-[700px]:mb-0">
             <div class="relative group">
               <!-- Decorative background shape -->
               <div 
@@ -79,8 +79,8 @@
           </div>
 
           <!-- Right: Content Section -->
-          <div class="w-full lg:w-1/2 px-4">
-            <div class="lg:pl-10">
+          <div class="w-full min-[700px]:w-1/2 px-4">
+            <div class="min-[700px]:pl-10">
               <div v-motion :initial="{ opacity: 0, y: 20 }" :visibleOnce="{ opacity: 1, y: 0 }" :duration="800">
                 <div class="flex items-center gap-3 mb-4">
                   <span class="w-12 h-[2px] bg-[#eaa636]"></span>

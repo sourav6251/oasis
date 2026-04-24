@@ -114,6 +114,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
+import { toast } from 'vue-sonner'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -128,13 +129,20 @@ const handleLogin = async () => {
   error.value = ''
 
   try {
-    await authStore.login({
+    const response = await authStore.login({
       email: email.value,
       password: password.value
     })
 
-    // Redirect to home page after successful login
-    router.push('/')
+    if (response.requiresOtp !== false) {
+      toast.success(response.message || 'OTP sent to your email. Please verify to complete login.')
+      // Redirect to OTP verification page after successful login
+      router.push({ name: 'verify-otp', query: { email: email.value } })
+    } else {
+      toast.success(response.message || 'Logged in successfully.')
+      // Redirect to home or dashboard
+      router.push('/')
+    }
   } catch (err: any) {
     error.value = err.response?.data?.message || 'Login failed. Please try again.'
     console.error('Login error:', err)

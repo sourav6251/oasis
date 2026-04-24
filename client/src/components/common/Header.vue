@@ -27,7 +27,7 @@
           </template>
           
           <!-- More Dropdown -->
-          <div class="dropdown">
+          <!-- <div class="dropdown">
             <button class="dropdown-trigger">
               More <v-icon icon="mdi-chevron-down" size="14" class="dropdown-icon"></v-icon>
             </button>
@@ -43,7 +43,7 @@
                 </router-link>
               </template>
             </div>
-          </div>
+          </div> -->
         </div>
       </nav>
 
@@ -94,11 +94,12 @@
     </div>
 
     <!-- Mobile Drawer -->
-    <div
-      class="drawer-overlay"
-      :class="{ 'is-visible': drawer }"
-      @click="drawer = false"
-    >
+    <Teleport to="body">
+      <div
+        class="drawer-overlay"
+        :class="{ 'is-visible': drawer }"
+        @click="drawer = false"
+      >
       <div
         class="drawer-content"
         :class="{ 'is-open': drawer }"
@@ -135,7 +136,7 @@
               Login
             </button>
             <div v-else class="drawer-user-info">
-              <div class="drawer-profile-card">
+              <div class="drawer-profile-card" @click="profileSidebar = true; drawer = false" style="cursor: pointer;">
                 <div class="avatar-wrap">
                    <img v-if="authStore.userImage" :src="authStore.userImage" class="avatar-img" />
                    <div v-else class="avatar-placeholder big">{{ getInitials(authStore.userName) }}</div>
@@ -153,13 +154,15 @@
         </div>
       </div>
     </div>
+    </Teleport>
 
     <!-- Profile Sidebar -->
-    <div
-      class="sidebar-overlay"
-      :class="{ 'is-visible': profileSidebar }"
-      @click="profileSidebar = false"
-    >
+    <Teleport to="body">
+      <div
+        class="sidebar-overlay"
+        :class="{ 'is-visible': profileSidebar }"
+        @click="profileSidebar = false"
+      >
       <div
         class="sidebar-content"
         :class="{ 'is-open': profileSidebar }"
@@ -193,10 +196,10 @@
             <span>My Profile</span>
           </router-link>
 
-          <router-link to="/booking" @click="profileSidebar = false" class="menu-item">
+          <!-- <router-link to="/booking" @click="profileSidebar = false" class="menu-item">
             <v-icon icon="mdi-calendar-check-outline" size="20" class="menu-icon"></v-icon>
             <span>My Bookings</span>
-          </router-link>
+          </router-link> -->
 
           <div class="menu-divider"></div>
 
@@ -207,6 +210,7 @@
         </div>
       </div>
     </div>
+    </Teleport>
   </header>
 </template>
 
@@ -228,14 +232,14 @@ export default defineComponent({
 
     const allLinksRaw = [
       { name: "Home",        link: "/" },
-      { name: "About Us",   link: "/about" },
       { name: "Services",   link: "/service" },
       { name: "Gallery",    link: "/gallery" },
       { name: "Reviews",    link: "/review" },
-      { name: "Booking",    link: "/booking" },
+      // { name: "Booking",    link: "/booking" },
       { name: "Contact",    link: "/contact" },
       { name: "Beauty Tips", link: "/beauty-tips" },
-      { name: "Policies",   link: "/policies" }
+      // { name: "Policies",   link: "/policies" },
+      { name: "About Us",   link: "/about" },
     ];
 
     const mainLinks      = allLinksRaw.slice(0, 7);   // Home → Contact
@@ -299,7 +303,7 @@ export default defineComponent({
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&family=Playfair+Display:wght@600;700;800&display=swap');
 
-:host {
+:global(:root) {
   --gold: #eaa636;
   --gold-hover: #d4952b;
   --dark: #1e1916;

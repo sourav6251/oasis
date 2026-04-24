@@ -49,6 +49,27 @@
           >
             {{ category }}
           </button>
+          
+          <!-- Admin Manage Categories Button -->
+          <button 
+            v-if="isAdmin" 
+            class="manage-cats-btn" 
+            @click="openCategoryManager"
+            title="Manage Categories"
+          >
+            <v-icon icon="mdi-cog" size="20"></v-icon>
+          </button>
+
+          <!-- Admin Manage Packages Button -->
+          <button 
+            v-if="isAdmin" 
+            class="manage-cats-btn" 
+            @click="openAddPackageDialog"
+            title="Manage Packages"
+          >
+            <v-icon icon="mdi-package-variant-plus" size="20"></v-icon>
+          </button>
+
           <div class="tab-slider" :style="tabSliderStyle"></div>
         </div>
       </div>
@@ -59,7 +80,29 @@
       class="grid-section"
       style="background: linear-gradient(160deg,#fff8ee 0%,#fdf3e3 30%,#fffcf5 70%,#fff6e8 100%);"
     >
-      <div class="container">
+      <div class="container" style="position: relative;">
+        <!-- Admin Floating Action Button with Menu -->
+        <v-menu v-if="isAdmin" location="top end" offset="15">
+          <template v-slot:activator="{ props }">
+            <button 
+              class="admin-fab"
+              v-bind="props"
+              v-motion :initial="{ scale: 0, rotate: -45 }" :enter="{ scale: 1, rotate: 0 }" :duration="600"
+              title="Admin Actions"
+            >
+              <v-icon icon="mdi-plus" color="white" size="28"></v-icon>
+            </button>
+          </template>
+          
+          <v-list class="admin-fab-menu" elevation="10">
+            <v-list-item @click="openAddDialog" prepend-icon="mdi-plus-box-outline">
+              <v-list-item-title>New Service</v-list-item-title>
+            </v-list-item>
+            <v-list-item @click="openAddPackageDialog" prepend-icon="mdi-package-variant-plus">
+              <v-list-item-title>New Package</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
 
         <!-- Loading -->
         <div v-if="loading" class="loading-state">
@@ -71,7 +114,7 @@
         <div v-else-if="currentServices.length > 0" class="services-grid">
           <div
             v-for="(service, index) in currentServices"
-            :key="service.id"
+            :key="service._id"
             class="svc-card"
             :class="{ 'svc-card--offset': index % 2 !== 0 }"
             v-motion :initial="{ opacity: 0, y: 70 }" :visibleOnce="{ opacity: 1, y: 0 }" :delay="100 + index * 120" :duration="900"
@@ -85,11 +128,22 @@
               <div class="svc-img__hover-overlay"></div>
               <!-- Icon badge -->
               <div class="svc-icon-badge">
-                <v-icon :icon="getCategoryIcon(service.category.name)" color="white" size="18"></v-icon>
-              </div>
-              <!-- Badge -->
-              <span class="svc-badge">{{ service.category.name }}</span>
+              <v-icon :icon="getCategoryIcon(typeof service.category === 'object' ? service.category.name : service.category)" color="white" size="18"></v-icon>
             </div>
+            <!-- Badge -->
+            <span class="svc-badge">{{ typeof service.category === 'object' ? service.category.name : service.category }}</span>
+
+              <!-- Admin Actions Overlay -->
+              <div v-if="isAdmin" class="svc-admin-actions">
+                <button class="action-btn edit" @click.stop="openEditDialog(service)" title="Edit Service">
+                  <v-icon icon="mdi-pencil" size="18"></v-icon>
+                </button>
+                <button class="action-btn delete" @click.stop="confirmDelete(service)" title="Delete Service">
+                  <v-icon icon="mdi-delete" size="18"></v-icon>
+                </button>
+              </div>
+            </div>
+
 
             <!-- Content -->
             <div class="svc-content">
@@ -118,8 +172,221 @@
       </div>
     </section>
 
+    <!-- ── ADMIN DIALOG ────────────────────────────── -->
+    <v-dialog v-model="showAddDialog" max-width="600px" persistent>
+      <div class="admin-modal">
+        <div class="modal-header">
+          <h2>{{ isEditing ? 'Update' : 'Add' }} <span class="gold">Service</span></h2>
+          <button class="close-btn" @click="showAddDialog = false">
+            <v-icon icon="mdi-close"></v-icon>
+          </button>
+        </div>
+
+
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Service Name*</label>
+            <input v-model="newService.name" type="text" placeholder="e.g. Bridal Glow Makeup" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Category*</label>
+              <select v-model="newService.category">
+                <option v-for="cat in categoryObjects" :key="cat._id" :value="cat._id">
+                  {{ cat.name }}
+                </option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Price*</label>
+              <input v-model="newService.price" type="text" placeholder="e.g. ₹2,500" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Duration</label>
+              <input v-model="newService.duration" type="text" placeholder="e.g. 60 mins" />
+            </div>
+            <div class="form-group">
+              <label>Service Image</label>
+              <div class="image-upload-wrapper">
+                <div v-if="imagePreview" class="preview-container">
+                  <img :src="imagePreview" alt="Preview" />
+                  <button class="remove-img" @click="clearImage">
+                    <v-icon icon="mdi-close" size="14"></v-icon>
+                  </button>
+                </div>
+                <div v-else class="upload-placeholder" @click="fileInput?.click()">
+                  <v-icon icon="mdi-camera-plus-outline" size="32" color="#eaa636"></v-icon>
+                  <span>Upload Photo</span>
+                </div>
+                <input 
+                  type="file" 
+                  ref="fileInput" 
+                  accept="image/*" 
+                  @change="onFileChange" 
+                  style="display: none" 
+                />
+              </div>
+            </div>
+          </div>
+
+
+          <div class="form-group">
+            <label>Description</label>
+            <textarea v-model="newService.description" rows="3" placeholder="Describe the service..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Features</label>
+            <div v-for="(feat, idx) in newService.features" :key="idx" class="feature-input">
+              <input v-model="newService.features[idx]" type="text" placeholder="Feature..." />
+              <button class="remove-feat" @click="removeFeature(idx)">
+                <v-icon icon="mdi-minus-circle-outline" size="18"></v-icon>
+              </button>
+            </div>
+            <button class="add-feat-btn" @click="addFeature">
+              <v-icon icon="mdi-plus" size="16"></v-icon> Add Feature
+            </button>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-cancel" @click="showAddDialog = false">Cancel</button>
+          <button class="btn-submit" :disabled="addLoading" @click="handleSubmit">
+            <template v-if="addLoading">
+              <div class="mini-spinner"></div> {{ isEditing ? 'Updating...' : 'Creating...' }}
+            </template>
+            <template v-else>{{ isEditing ? 'Update Service' : 'Create Service' }}</template>
+          </button>
+
+        </div>
+      </div>
+    </v-dialog>
+
+    <!-- ── CATEGORY MANAGER DIALOG ─────────────────── -->
+    <v-dialog v-model="showCategoryDialog" max-width="500px">
+      <div class="admin-modal">
+        <div class="modal-header">
+          <h2>Manage <span class="gold">Categories</span></h2>
+          <button class="close-btn" @click="showCategoryDialog = false">
+            <v-icon icon="mdi-close"></v-icon>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <!-- List existing categories -->
+          <div class="category-list mb-6">
+            <div v-for="cat in categoryObjects" :key="cat._id" class="category-item">
+              <div class="cat-info">
+                <v-icon :icon="cat.icon || 'mdi-spa'" size="20" class="mr-2"></v-icon>
+                <span>{{ cat.name }}</span>
+              </div>
+              <div class="cat-actions">
+                <button @click="editCategory(cat)" class="action-btn edit">
+                  <v-icon icon="mdi-pencil" size="16"></v-icon>
+                </button>
+                <button @click="confirmDeleteCategory(cat)" class="action-btn delete">
+                  <v-icon icon="mdi-delete" size="16"></v-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <v-divider class="my-4"></v-divider>
+
+          <!-- Add/Edit form -->
+          <div class="category-form mt-4">
+            <h3>{{ isEditingCategory ? 'Edit' : 'Add New' }} Category</h3>
+            <div class="form-group mt-3">
+              <label>Category Name*</label>
+              <input v-model="categoryForm.name" type="text" placeholder="e.g. Facial" />
+            </div>
+            <div class="form-group">
+              <label>Icon (MDI Name)</label>
+              <input v-model="categoryForm.icon" type="text" placeholder="e.g. mdi-face-woman" />
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <textarea v-model="categoryForm.description" rows="2" placeholder="Brief description..."></textarea>
+            </div>
+            <div class="form-actions mt-3">
+              <button v-if="isEditingCategory" class="btn-cancel mr-2" @click="resetCategoryForm">Cancel Edit</button>
+              <button class="btn-submit" :disabled="categoryLoading" @click="handleCategorySubmit">
+                {{ categoryLoading ? 'Saving...' : (isEditingCategory ? 'Update' : 'Add Category') }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </v-dialog>
+
+    <!-- ── PACKAGE MANAGER DIALOG ──────────────────── -->
+    <v-dialog v-model="showPackageDialog" max-width="600px" persistent>
+      <div class="admin-modal">
+        <div class="modal-header">
+          <h2>{{ isEditingPackage ? 'Update' : 'Add' }} <span class="gold">Package</span></h2>
+          <button class="close-btn" @click="showPackageDialog = false">
+            <v-icon icon="mdi-close"></v-icon>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Package Name*</label>
+            <input v-model="packageForm.name" type="text" placeholder="e.g. Bridal Ritual Bundle" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Current Price*</label>
+              <input v-model="packageForm.price" type="text" placeholder="e.g. ₹4,999" />
+            </div>
+            <div class="form-group">
+              <label>Original Price (Optional)</label>
+              <input v-model="packageForm.originalPrice" type="text" placeholder="e.g. ₹6,500" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <v-switch
+              v-model="packageForm.popular"
+              label="Mark as Most Popular"
+              color="#eaa636"
+              hide-details
+            ></v-switch>
+          </div>
+
+          <div class="form-group">
+            <label>Features</label>
+            <div v-for="(feat, idx) in packageForm.features" :key="idx" class="feature-input">
+              <input v-model="packageForm.features[idx]" type="text" placeholder="Included service/benefit..." />
+              <button class="remove-feat" @click="removePackageFeature(idx)">
+                <v-icon icon="mdi-minus-circle-outline" size="18"></v-icon>
+              </button>
+            </div>
+            <button class="add-feat-btn" @click="addPackageFeature">
+              <v-icon icon="mdi-plus" size="16"></v-icon> Add Feature
+            </button>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-cancel" @click="showPackageDialog = false">Cancel</button>
+          <button class="btn-submit" :disabled="packageLoading" @click="handlePackageSubmit">
+            <template v-if="packageLoading">
+              <div class="mini-spinner"></div> {{ isEditingPackage ? 'Updating...' : 'Creating...' }}
+            </template>
+            <template v-else>{{ isEditingPackage ? 'Save Package' : 'Create Package' }}</template>
+          </button>
+        </div>
+      </div>
+    </v-dialog>
+
     <!-- ── PACKAGES ────────────────────────────────── -->
-    <section class="packages-section">
+    <section class="packages-section" v-if="packages.length > 0 || isAdmin">
       <!-- decorative background -->
       <div class="packages-bg-deco" aria-hidden="true"></div>
 
@@ -127,17 +394,22 @@
         <!-- Header -->
         <div class="section-header" v-motion :initial="{ opacity: 0, y: 40 }" :visibleOnce="{ opacity: 1, y: 0 }" :duration="900">
           <span class="eyebrow">Special Packages</span>
-          <h2>Save Big with Our <span class="gold">Bundled Rituals</span></h2>
+          <div class="header-with-action">
+            <h2>Save Big with Our <span class="gold">Bundled Rituals</span></h2>
+            <button v-if="isAdmin" class="manage-cats-btn" @click="openAddPackageDialog" title="Add Package">
+              <v-icon icon="mdi-plus" size="20"></v-icon>
+            </button>
+          </div>
           <div class="header-divider">
             <span></span><span class="dot"></span><span></span>
           </div>
         </div>
 
         <!-- Package cards -->
-        <div class="packages-grid">
+        <div class="packages-grid" v-if="packages.length > 0">
           <div
             v-for="(pkg, index) in packages"
-            :key="pkg.id"
+            :key="pkg._id"
             class="pkg-card"
             :class="{ 'pkg-card--popular': pkg.popular }"
             v-motion :initial="{ opacity: 0, y: 60 }" :visibleOnce="{ opacity: 1, y: 0 }" :delay="200 + index * 150" :duration="900"
@@ -150,6 +422,16 @@
             <span class="pkg-card__num" aria-hidden="true">{{ String(index + 1).padStart(2,'0') }}</span>
 
             <div v-if="pkg.popular" class="pkg-popular-tag">⭐ Most Popular</div>
+
+            <!-- Admin Actions Overlay -->
+            <div v-if="isAdmin" class="svc-admin-actions">
+              <button class="action-btn edit" @click.stop="openEditPackageDialog(pkg)" title="Edit Package">
+                <v-icon icon="mdi-pencil" size="18"></v-icon>
+              </button>
+              <button class="action-btn delete" @click.stop="confirmDeletePackage(pkg)" title="Delete Package">
+                <v-icon icon="mdi-delete" size="18"></v-icon>
+              </button>
+            </div>
 
             <!-- Icon -->
             <div class="pkg-icon">
@@ -171,6 +453,12 @@
 
             <button class="pkg-btn" @click="bookPackage(pkg)">Book Package</button>
           </div>
+        </div>
+
+        <!-- Admin Empty State -->
+        <div v-else-if="isAdmin" class="empty-state">
+          <v-icon icon="mdi-package-variant" size="52" color="#eaa636"></v-icon>
+          <p>No packages created yet. Click the + button to add one.</p>
         </div>
       </div>
     </section>
@@ -213,8 +501,10 @@
 
 <script lang="ts">
 import apiStore from '@/api/apiStore';
+import { useAuthStore } from '@/stores/authStore';
+import { toast } from 'vue-sonner';
 import type { Service, ServicePackage } from '@/types/Services';
-import { ref, computed, onMounted, nextTick } from 'vue';
+import { ref, computed, onMounted, nextTick, reactive } from 'vue';
 import type { Ref } from 'vue';
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -228,12 +518,59 @@ const CATEGORY_ICONS: Record<string, string> = {
 
 export default {
   setup() {
+    const authStore = useAuthStore();
+    const isAdmin   = computed(() => authStore.user?.userType === 'ADMIN');
+
     const activeCategory: Ref<string> = ref('All');
     const loading: Ref<boolean>       = ref(true);
     const categories: Ref<string[]>   = ref(['All']);
+    const categoryObjects: Ref<any[]> = ref([]);
     const services: Ref<Service[]>    = ref([]);
     const packages: Ref<ServicePackage[]> = ref([]);
     const servicesSectionRef = ref<HTMLElement | null>(null);
+
+    // Admin Dialog State
+    const showAddDialog = ref(false);
+    const isEditing    = ref(false);
+    const editingId     = ref<string | null>(null);
+    const addLoading    = ref(false);
+    const selectedFile  = ref<File | null>(null);
+    const imagePreview  = ref<string | null>(null);
+    const fileInput     = ref<HTMLInputElement | null>(null);
+
+    const newService    = reactive({
+      name: '',
+      category: '',
+      price: '',
+      duration: '',
+      description: '',
+      features: ['', '']
+    });
+
+    // Category Manager State
+    const showCategoryDialog = ref(false);
+    const isEditingCategory = ref(false);
+    const editingCategoryId = ref<string | null>(null);
+    const categoryLoading = ref(false);
+    const categoryForm = reactive({
+      name: '',
+      icon: '',
+      description: ''
+    });
+
+    // Package Manager State
+    const showPackageDialog = ref(false);
+    const isEditingPackage = ref(false);
+    const editingPackageId = ref<string | null>(null);
+    const packageLoading = ref(false);
+    const packageForm = reactive({
+      name: '',
+      price: '',
+      originalPrice: '',
+      popular: false,
+      features: ['', '']
+    });
+
 
     // Tab slider
     const tabButtons       = ref<(HTMLElement | null)[]>([]);
@@ -244,7 +581,10 @@ export default {
 
     const currentServices = computed(() => {
       if (activeCategory.value === 'All') return services.value;
-      return services.value.filter(s => s.category.name === activeCategory.value);
+      return services.value.filter(s => {
+        const catName = typeof s.category === 'object' ? s.category.name : s.category;
+        return catName === activeCategory.value;
+      });
     });
 
     const tabSliderStyle = computed(() => ({
@@ -261,6 +601,7 @@ export default {
     const loadCategories = async () => {
       try {
         const fetched = await apiStore.getAllServiceCategories();
+        categoryObjects.value = fetched;
         categories.value = ['All', ...fetched.map((c: any) => c.name)];
       } catch {
         categories.value = ['All', 'Hair', 'Skin', 'Nails', 'Makeup', 'Wellness'];
@@ -272,73 +613,8 @@ export default {
         loading.value = true;
         services.value = await apiStore.getAllServices();
       } catch {
-        services.value = [
-          // ── HAIR ───────────────────────────────────────────────
-          { id: 1, name: 'Luxury Haircut & Style',        price: '₹999',    duration: '60 min',
-            img: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&q=80',
-            description: 'A personalised cut and blowout tailored to your face shape and lifestyle.',
-            features: ['Consultation included','Scalp massage','Blow-dry & finish','Style products'],
-            category: { id: 1, name: 'Hair' } },
-          { id: 2, name: 'Keratin Smoothing Treatment',   price: '₹3,499',  duration: '120 min',
-            img: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600&q=80',
-            description: 'Eliminate frizz and add long-lasting shine with professional keratin.',
-            features: ['Lasts 3–5 months','Frizz-free finish','Deep conditioning','Heat protection'],
-            category: { id: 1, name: 'Hair' } },
-          { id: 3, name: 'Balayage Colouring',            price: '₹4,999',  duration: '150 min',
-            img: 'https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?w=600&q=80',
-            description: 'Hand-painted highlights for a natural, sun-kissed look.',
-            features: ['Custom colour blend','Toner included','Glossing finish','Aftercare advice'],
-            category: { id: 1, name: 'Hair' } },
-          // ── SKIN ───────────────────────────────────────────────
-          { id: 4, name: 'Deep Cleansing Facial',         price: '₹1,499',  duration: '75 min',
-            img: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&q=80',
-            description: 'Thorough cleanse, exfoliation and extraction for radiant skin.',
-            features: ['Skin analysis','Steam & extraction','Hydrating mask','SPF moisturiser'],
-            category: { id: 2, name: 'Skin' } },
-          { id: 5, name: 'Anti-Ageing Glow Treatment',    price: '₹2,999',  duration: '90 min',
-            img: 'https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?w=600&q=80',
-            description: 'Targets fine lines with vitamin-C serums, collagen masks & LED therapy.',
-            features: ['LED light therapy','Collagen infusion','Eye treatment','Firming massage'],
-            category: { id: 2, name: 'Skin' } },
-          // ── NAILS ──────────────────────────────────────────────
-          { id: 6, name: 'Gel Manicure',                  price: '₹699',    duration: '45 min',
-            img: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80',
-            description: 'Long-lasting gel polish with cuticle care and hand massage.',
-            features: ['Shape & buff','Cuticle treatment','Gel colour of choice','Chip-free 3 weeks'],
-            category: { id: 3, name: 'Nails' } },
-          { id: 7, name: 'Luxury Spa Pedicure',           price: '₹999',    duration: '60 min',
-            img: 'https://images.unsplash.com/photo-1519415510236-718bdfcd89c8?w=600&q=80',
-            description: 'Foot soak, scrub, callus removal and gel polish for pampered feet.',
-            features: ['Foot soak','Callus removal','Paraffin wax','Gel polish'],
-            category: { id: 3, name: 'Nails' } },
-          // ── MAKEUP ─────────────────────────────────────────────
-          { id: 8, name: 'Bridal Makeup',                 price: '₹7,999',  duration: '120 min',
-            img: 'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=600&q=80',
-            description: 'Flawless, long-wear bridal look using HD airbrush and luxury brands.',
-            features: ['Trial session','HD airbrush','Lashes included','Touch-up kit'],
-            category: { id: 4, name: 'Makeup' } },
-          { id: 9, name: 'Party Glam Makeup',             price: '₹2,499',  duration: '60 min',
-            img: 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=600&q=80',
-            description: 'Glamorous, camera-ready evening look tailored to your outfit.',
-            features: ['Skin-prep included','Setting spray','Lashes optional','Lasts 10+ hours'],
-            category: { id: 4, name: 'Makeup' } },
-          // ── WELLNESS ───────────────────────────────────────────
-          { id: 10, name: 'Aromatherapy Massage',         price: '₹1,799',  duration: '60 min',
-            img: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80',
-            description: 'Full-body relaxation massage with warm essential oils.',
-            features: ['Oil consultation','Hot towel finish','Stress relief','Mood-lifting'],
-            category: { id: 5, name: 'Wellness' } },
-          { id: 11, name: 'Japanese Head Spa',            price: '₹1,299',  duration: '45 min',
-            img: 'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=600&q=80',
-            description: 'Deep scalp cleanse, oil treatment and pressure-point massage.',
-            features: ['Scalp analysis','Treatment oils','Pressure massage','Scalp detox'],
-            category: { id: 5, name: 'Wellness' } },
-          { id: 12, name: 'Body Polishing Ritual',        price: '₹2,199',  duration: '75 min',
-            img: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=600&q=80',
-            description: 'Full-body sugar scrub followed by a nourishing wrap for glowing skin.',
-            features: ['Exfoliation','Nourishing body wrap','Hydrating butter','Soft glow'],
-            category: { id: 5, name: 'Wellness' } },
-        ];
+        services.value = [];
+        console.error("Failed to load services");
       } finally {
         loading.value = false;
       }
@@ -348,21 +624,15 @@ export default {
       try {
         packages.value = await apiStore.getAllServicePackages();
       } catch {
-        packages.value = [
-          { id: 1, name: 'Glow Starter',       price: '₹2,499',  originalPrice: '₹3,200',  popular: false,
-            features: ['Deep Cleansing Facial','Gel Manicure','Eyebrow Shaping','Hair Wash & Blow-dry'] },
-          { id: 2, name: 'Bridal Bliss',        price: '₹12,999', originalPrice: '₹18,000', popular: true,
-            features: ['Bridal HD Makeup (trial + event)','Keratin Smoothing Treatment','Luxury Spa Pedicure','Gel Manicure','Anti-Ageing Facial','Aromatherapy Massage'] },
-          { id: 3, name: 'Relaxation Retreat',  price: '₹4,199',  originalPrice: '₹5,500',  popular: false,
-            features: ['Aromatherapy Massage (60 min)','Japanese Head Spa','Body Polishing Ritual','Anti-Ageing Glow Facial'] },
-        ];
+        packages.value = [];
+        console.error("Failed to load packages");
       }
     };
 
     /* ── TAB SLIDER ────────────────────────────────── */
     const setTabButtonRef = (el: any, index: number) => {
       if (el instanceof HTMLElement)                  tabButtons.value[index] = el;
-      else if (el && '$el' in el)                     tabButtons.value[index] = el.$el as HTMLElement;
+      else if (el && typeof el === 'object' && '$el' in el) tabButtons.value[index] = el.$el as HTMLElement;
       else                                            tabButtons.value[index] = null;
     };
 
@@ -392,6 +662,257 @@ export default {
       servicesSectionRef.value?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
 
+    /* ── ADMIN METHODS ─────────────────────────────── */
+    const onFileChange = (e: any) => {
+      const file = e.target.files[0];
+      if (file) {
+        selectedFile.value = file;
+        const reader = new FileReader();
+        reader.onload = (event: any) => {
+          imagePreview.value = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+
+    const clearImage = () => {
+      selectedFile.value = null;
+      imagePreview.value = null;
+      if (fileInput.value) fileInput.value.value = '';
+    };
+
+    const openAddDialog = () => {
+      isEditing.value = false;
+      editingId.value = null;
+      newService.name = '';
+      newService.category = categoryObjects.value[0]?._id || '';
+      newService.price = '';
+      newService.duration = '';
+      newService.description = '';
+      newService.features = ['', ''];
+      clearImage();
+      showAddDialog.value = true;
+    };
+
+    const openEditDialog = (service: Service) => {
+      isEditing.value = true;
+      editingId.value = service._id;
+      newService.name = service.name;
+      
+      let catId = '';
+      if (typeof service.category === 'object' && service.category !== null) {
+        const foundCat = categoryObjects.value.find(c => c._id === service.category._id || c.name === service.category.name);
+        catId = foundCat ? foundCat._id : (service.category._id || '');
+      } else {
+        const foundCat = categoryObjects.value.find(c => c.name === service.category || c._id === service.category);
+        catId = foundCat ? foundCat._id : '';
+      }
+      newService.category = catId;
+      
+      newService.price = service.price;
+      newService.duration = service.duration;
+      newService.description = service.description;
+      newService.features = [...service.features];
+      imagePreview.value = service.img;
+      showAddDialog.value = true;
+    };
+
+
+    const confirmDelete = async (service: Service) => {
+      if (confirm(`Are you sure you want to delete "${service.name}"?`)) {
+        try {
+          await apiStore.deleteService(service._id);
+          toast.success('Service deleted successfully');
+          await loadServices();
+        } catch (error: any) {
+          toast.error('Failed to delete service');
+        }
+      }
+    };
+
+
+    const addFeature = () => {
+      newService.features.push('');
+    };
+
+    const removeFeature = (index: number) => {
+      if (newService.features.length > 1) {
+        newService.features.splice(index, 1);
+      }
+    };
+
+    const handleSubmit = async () => {
+      if (!newService.name || !newService.category || !newService.price) {
+        toast.error('Please fill in all required fields');
+        return;
+      }
+
+      if (!isEditing.value && !selectedFile.value) {
+        toast.error('Please select an image for the service');
+        return;
+      }
+
+      try {
+        addLoading.value = true;
+        
+        const formData = new FormData();
+        formData.append('name', newService.name);
+        formData.append('price', newService.price);
+        formData.append('duration', newService.duration);
+        formData.append('description', newService.description);
+        
+        // Find category object
+        const catObj = categoryObjects.value.find(c => c._id === newService.category);
+        formData.append('category', JSON.stringify({ name: catObj?.name || 'Hair', _id: newService.category }));
+        
+        const cleanedFeatures = newService.features.filter(f => f.trim() !== '');
+        formData.append('features', JSON.stringify(cleanedFeatures));
+
+        if (selectedFile.value) {
+          formData.append('img', selectedFile.value);
+        }
+
+        if (isEditing.value && editingId.value) {
+          await apiStore.updateService(editingId.value, formData);
+          toast.success('Service updated successfully');
+        } else {
+          await apiStore.createService(formData);
+          toast.success('Service created successfully');
+        }
+
+        showAddDialog.value = false;
+        await loadServices();
+      } catch (error: any) {
+        toast.error(error.response?.data?.message || 'Failed to save service');
+      } finally {
+        addLoading.value = false;
+      }
+    };
+
+    /* ── CATEGORY MANAGER METHODS ──────────────────── */
+    const openCategoryManager = () => {
+      resetCategoryForm();
+      showCategoryDialog.value = true;
+    };
+
+    const resetCategoryForm = () => {
+      isEditingCategory.value = false;
+      editingCategoryId.value = null;
+      categoryForm.name = '';
+      categoryForm.icon = '';
+      categoryForm.description = '';
+    };
+
+    const editCategory = (cat: any) => {
+      isEditingCategory.value = true;
+      editingCategoryId.value = cat._id;
+      categoryForm.name = cat.name;
+      categoryForm.icon = cat.icon || '';
+      categoryForm.description = cat.description || '';
+    };
+
+    const confirmDeleteCategory = async (cat: any) => {
+      if (confirm(`Are you sure you want to delete "${cat.name}"? This might leave services without a category.`)) {
+        try {
+          await apiStore.deleteServiceCategory(cat._id);
+          toast.success('Category deleted successfully');
+          await loadCategories();
+          // Reset active category if deleted
+          if (activeCategory.value === cat.name) {
+            setActiveCategory('All', 0);
+          }
+        } catch (error: any) {
+          toast.error(error.response?.data?.message || 'Failed to delete category');
+        }
+      }
+    };
+
+    const handleCategorySubmit = async () => {
+      if (!categoryForm.name) {
+        toast.error('Category name is required');
+        return;
+      }
+
+      try {
+        categoryLoading.value = true;
+        if (isEditingCategory.value && editingCategoryId.value) {
+          await apiStore.updateServiceCategory(editingCategoryId.value, { ...categoryForm });
+          toast.success('Category updated successfully');
+        } else {
+          await apiStore.createServiceCategory({ ...categoryForm });
+          toast.success('Category created successfully');
+        }
+        await loadCategories();
+        resetCategoryForm();
+      } catch (error: any) {
+        toast.error(error.response?.data?.message || 'Failed to save category');
+      } finally {
+        categoryLoading.value = false;
+      }
+    };
+
+    /* ── PACKAGE MANAGEMENT ──────────────────────── */
+    const openAddPackageDialog = () => {
+      isEditingPackage.value = false;
+      editingPackageId.value = null;
+      packageForm.name = '';
+      packageForm.price = '';
+      packageForm.originalPrice = '';
+      packageForm.popular = false;
+      packageForm.features = ['', ''];
+      showPackageDialog.value = true;
+    };
+
+    const openEditPackageDialog = (pkg: ServicePackage) => {
+      isEditingPackage.value = true;
+      editingPackageId.value = pkg._id;
+      packageForm.name = pkg.name;
+      packageForm.price = pkg.price;
+      packageForm.originalPrice = pkg.originalPrice || '';
+      packageForm.popular = pkg.popular || false;
+      packageForm.features = [...pkg.features];
+      showPackageDialog.value = true;
+    };
+
+    const addPackageFeature = () => packageForm.features.push('');
+    const removePackageFeature = (idx: number) => packageForm.features.splice(idx, 1);
+
+    const handlePackageSubmit = async () => {
+      if (!packageForm.name || !packageForm.price) {
+        toast.error('Name and price are required');
+        return;
+      }
+      try {
+        packageLoading.value = true;
+        if (isEditingPackage.value && editingPackageId.value) {
+          await apiStore.updateServicePackage(editingPackageId.value, { ...packageForm });
+          toast.success('Package updated successfully');
+        } else {
+          await apiStore.createServicePackage({ ...packageForm });
+          toast.success('Package created successfully');
+        }
+        await loadPackages();
+        showPackageDialog.value = false;
+      } catch (error: any) {
+        toast.error(error.response?.data?.message || 'Failed to save package');
+      } finally {
+        packageLoading.value = false;
+      }
+    };
+
+    const confirmDeletePackage = async (pkg: ServicePackage) => {
+      if (confirm(`Are you sure you want to delete package "${pkg.name}"?`)) {
+        try {
+          await apiStore.deleteServicePackage(pkg._id);
+          toast.success('Package deleted successfully');
+          await loadPackages();
+        } catch (error: any) {
+          toast.error(error.response?.data?.message || 'Failed to delete package');
+        }
+      }
+    };
+
+
     onMounted(async () => {
       await loadCategories();
       await loadServices();
@@ -404,7 +925,16 @@ export default {
       packages, loading, tabSliderStyle, servicesSectionRef,
       getCategoryIcon, setTabButtonRef, setActiveCategory,
       bookNow, bookService, bookPackage, scrollToServices,
+      isAdmin, showAddDialog, newService, addLoading, categoryObjects,
+      isEditing, imagePreview, fileInput,
+      confirmDelete, addFeature, removeFeature, handleSubmit,
+      openAddDialog, openEditDialog, onFileChange, clearImage,
+      showCategoryDialog, isEditingCategory, categoryLoading, categoryForm,
+      openCategoryManager, resetCategoryForm, editCategory, confirmDeleteCategory, handleCategorySubmit,
+      showPackageDialog, isEditingPackage, packageLoading, packageForm,
+      openAddPackageDialog, openEditPackageDialog, addPackageFeature, removePackageFeature, handlePackageSubmit, confirmDeletePackage
     };
+
   },
 };
 </script>
@@ -483,7 +1013,7 @@ h1, h2 {
   font-size: 0.9rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  padding: 0.85rem 2rem;
+  padding: 0.3rem 1rem;
   border: none;
   border-radius: 50px;
   cursor: pointer;
@@ -970,7 +1500,7 @@ h1, h2 {
 
 .pkg-btn {
   width: 100%;
-  padding: 0.9rem;
+  padding: 0.4rem;
   border-radius: 50px;
   border: 2px solid #eaa636;
   background: transparent;
@@ -1036,7 +1566,332 @@ h1, h2 {
   flex-wrap: wrap;
 }
 
-/* ── RESPONSIVENESS ──────────────────────────────────── */
+  /* ── ADMIN UI ────────────────────────────────────────── */
+  .admin-fab {
+    position: fixed;
+    bottom: 2.5rem;
+    right: 2.5rem;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #eaa636, #c5831e);
+    border: none;
+    box-shadow: 0 10px 35px rgba(234, 166, 54, 0.45);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .admin-fab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 15px 45px rgba(234, 166, 54, 0.6);
+  }
+
+  .admin-fab-menu {
+    border-radius: 12px;
+    background: #1e1916 !important;
+    border: 1px solid rgba(234, 166, 54, 0.3);
+    padding: 4px;
+  }
+
+  .admin-fab-menu :deep(.v-list-item) {
+    color: #fff !important;
+    border-radius: 8px;
+    margin-bottom: 2px;
+  }
+
+  .admin-fab-menu :deep(.v-list-item:hover) {
+    background: rgba(234, 166, 54, 0.1) !important;
+    color: #eaa636 !important;
+  }
+
+  .admin-fab-menu :deep(.v-list-item__prepend .v-icon) {
+    color: #eaa636 !important;
+    opacity: 1;
+  }
+
+  .admin-modal {
+    background: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  }
+
+  .modal-header {
+    padding: 0.5rem 1rem;
+    background: #1e1916;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(234, 166, 54, 0.2);
+  }
+
+  .modal-header h2 {
+    color: #fff;
+    font-size: 1.5rem;
+    margin: 0;
+  }
+
+  .close-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+
+  .close-btn:hover { color: #eaa636; }
+
+  .modal-body {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .form-group label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #1e1916;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 0.8rem 1rem;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: #eaa636;
+    box-shadow: 0 0 0 3px rgba(234, 166, 54, 0.15);
+  }
+
+  .feature-input {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .feature-input input { flex: 1; }
+
+  .remove-feat {
+    background: transparent;
+    border: none;
+    color: #ff5252;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+  }
+
+  .remove-feat:hover { opacity: 1; }
+
+  .add-feat-btn {
+    background: transparent;
+    border: 1px dashed #eaa636;
+    color: #eaa636;
+    padding: 0.6rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s;
+  }
+
+  .add-feat-btn:hover { background: rgba(234, 166, 54, 0.05); }
+
+  .modal-footer {
+    padding: 0.5rem 2rem;
+    background: #fcfcfc;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    border-top: 1px solid #eee;
+  }
+
+  .btn-cancel {
+    padding: 0.3rem 0.8rem;
+    border-radius: 50px;
+    border: 1px solid #e0e0e0;
+    background: #fff;
+    color: #545454;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .btn-cancel:hover { background: #f5f5f5; }
+
+  .btn-submit {
+    padding: 0.3rem 0.8rem;
+    border-radius: 50px;
+    border: none;
+    background: #eaa636;
+    color: #1e1916;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .btn-submit:hover:not(:disabled) {
+    background: #d4952d;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(234, 166, 54, 0.3);
+  }
+
+  .btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .mini-spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(30, 25, 22, 0.3);
+    border-left-color: #1e1916;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  .image-upload-wrapper {
+    width: 100%;
+  }
+
+  .preview-container {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #f5f5f5;
+  }
+
+  .preview-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .remove-img {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .remove-img:hover { background: rgba(255, 82, 82, 0.9); }
+
+  .upload-placeholder {
+    width: 100%;
+    height: 180px;
+    border: 2px dashed rgba(234, 166, 54, 0.3);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    background: rgba(234, 166, 54, 0.03);
+    transition: all 0.3s;
+  }
+
+  .upload-placeholder:hover {
+    background: rgba(234, 166, 54, 0.08);
+    border-color: #eaa636;
+  }
+
+  .upload-placeholder span {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #eaa636;
+  }
+
+  .svc-admin-actions {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    display: flex;
+    gap: 0.5rem;
+    z-index: 10;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+  }
+
+  .svc-card:hover .svc-admin-actions {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .action-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: all 0.3s;
+  }
+
+  .action-btn.edit { background: #fff; color: #1e1916; }
+  .action-btn.edit:hover { background: #eaa636; color: #fff; }
+
+  .action-btn.delete { background: #fff; color: #ff5252; }
+  .action-btn.delete:hover { background: #ff5252; color: #fff; }
+
+
+  /* ── RESPONSIVENESS ──────────────────────────────────── */
+
 @media (max-width: 640px) {
   .hero-content h1 { font-size: 2.2rem; }
   .hero-content  { text-align: center; }
@@ -1044,5 +1899,90 @@ h1, h2 {
   .tabs-wrap    { flex-wrap: wrap; justify-content: center; }
   .services-grid { grid-template-columns: 1fr; }
   .svc-card--offset { margin-top: 0; }
+}
+/* Admin Actions */
+.manage-cats-btn {
+  background: #fdf3e3;
+  color: #eaa636;
+  border: 1px solid rgba(234,166,54,0.3);
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-left: 1rem;
+}
+.manage-cats-btn:hover {
+  background: #eaa636;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(234,166,54,0.2);
+}
+
+.category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.category-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1rem;
+  background: #fdfcf7;
+  border: 1px solid rgba(30,25,22,0.05);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+.category-item:hover {
+  background: #fff;
+  border-color: rgba(234,166,54,0.3);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+}
+.cat-info {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  color: #1e1916;
+}
+.cat-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.category-form h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  color: #1e1916;
+  margin-bottom: 1rem;
+}
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.mb-6 { margin-bottom: 1.5rem; }
+.mt-4 { margin-top: 1rem; }
+.mt-3 { margin-top: 0.75rem; }
+.mr-2 { margin-right: 0.5rem; }
+.my-4 { margin-top: 1rem; margin-bottom: 1rem; }
+
+.header-with-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.pkg-card {
+  position: relative;
+}
+
+.pkg-card:hover .svc-admin-actions {
+  opacity: 1;
+  transform: translateY(0);
 }
 </style>

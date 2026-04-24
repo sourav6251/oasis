@@ -123,8 +123,20 @@
           </button>
         </div>
 
+        <!-- Loading / Error -->
+        <div v-if="loadingReviews" class="loading-state">
+          <v-spinner color="#eaa636" size="48"></v-spinner>
+          <p>Gathering testimonials...</p>
+        </div>
+
+        <div v-else-if="fetchError" class="error-state">
+          <v-icon icon="mdi-alert-circle-outline" size="48" color="#e57373"></v-icon>
+          <p>{{ fetchError }}</p>
+          <button class="btn-gold mt-4" @click="fetchReviews">Retry</button>
+        </div>
+
         <!-- Grid -->
-        <div class="reviews-grid">
+        <div v-else class="reviews-grid">
           <div
             v-for="(review, index) in visibleReviews"
             :key="review.name + index"
@@ -150,8 +162,20 @@
             <!-- Text -->
             <p class="review-card__text">"{{ review.text }}"</p>
 
+            <!-- Images gallery -->
+            <div v-if="review.images && review.images.length" class="review-card__gallery">
+              <div v-for="(img, i) in review.images.slice(0, 3)" :key="i" class="gallery-item">
+                <img :src="img" alt="Review photo" />
+                <div v-if="i === 2 && review.images.length > 3" class="gallery-more">
+                  +{{ review.images.length - 3 }}
+                </div>
+              </div>
+            </div>
+
             <!-- Service tag -->
-            <span class="review-card__tag">{{ review.service }}</span>
+            <div class="review-card__tags">
+              <span v-for="s in review.services" :key="s" class="review-card__tag">{{ s }}</span>
+            </div>
 
             <!-- Footer -->
             <div class="review-card__footer">
@@ -172,10 +196,9 @@
         </div>
 
         <!-- Empty -->
-        <div v-if="!filteredReviews.length" class="empty-state">
-          <v-icon icon="mdi-comment-remove-outline" size="52" color="#eaa636"></v-icon>
-          <p>No reviews found for this filter combination.</p>
-          <button class="btn-gold" @click="resetFilters">Clear Filters</button>
+        <div v-if="!filteredReviews.length" class="empty-state-minimal" v-motion :initial="{ opacity:0, y:20 }" :visibleOnce="{ opacity:1, y:0 }">
+          <img src="/no_reviews.png" alt="No reviews yet - Be the first to share your experience" class="empty-state-img" />
+          <div class="empty-state-overlay" @click="resetFilters" title="Click to reset filters"></div>
         </div>
       </div>
     </section>
@@ -208,10 +231,19 @@
           </div>
 
           <!-- Right column: form -->
-          <form class="form-card__form" @submit.prevent="submitReview">
+          <div v-if="!isLoggedIn" class="form-card__form login-prompt">
+            <v-icon icon="mdi-lock-outline" size="48" color="#eaa636" class="mb-4"></v-icon>
+            <h3>Please Log In</h3>
+            <p>You must be a registered user to share your experience with us.</p>
+            <router-link to="/login" class="btn-gold mt-4">
+              Log In to Review
+            </router-link>
+          </div>
+
+          <form v-else class="form-card__form" @submit.prevent="submitReview">
             <!-- Rating -->
             <div class="form-group">
-              <label class="form-label">Your Rating *</label>
+              <label class="form-label">Overall Service Rating *</label>
               <div class="star-picker">
                 <v-icon
                   v-for="n in 5"
@@ -228,15 +260,15 @@
               </div>
             </div>
 
-            <!-- Name + email -->
+            <!-- Name + email (Read Only) -->
             <div class="form-row">
               <div class="form-group">
                 <label class="form-label">Full Name *</label>
                 <input
                   v-model="form.name"
                   type="text"
-                  class="form-input"
-                  placeholder="Priya Sharma"
+                  class="form-input form-input--readonly"
+                  readonly
                   required
                 />
               </div>
@@ -245,19 +277,31 @@
                 <input
                   v-model="form.email"
                   type="email"
-                  class="form-input"
-                  placeholder="priya@example.com"
+                  class="form-input form-input--readonly"
+                  readonly
                 />
               </div>
             </div>
 
-            <!-- Service -->
+            <!-- Services (Multi-select) -->
             <div class="form-group">
-              <label class="form-label">Service Received *</label>
-              <select v-model="form.service" class="form-input form-select" required>
-                <option value="" disabled selected>Select a service…</option>
-                <option v-for="s in services" :key="s" :value="s">{{ s }}</option>
-              </select>
+              <label class="form-label">Services Received * (Select one or more)</label>
+              <div class="services-selector-container">
+                <div class="services-checkbox-grid">
+                  <label v-for="cat in availableCategories" :key="cat" class="service-checkbox-item" :class="{ selected: form.services.includes(cat) }">
+                    <input 
+                      type="checkbox" 
+                      :value="cat" 
+                      v-model="form.services"
+                      class="hidden-checkbox"
+                    />
+                    <div class="checkbox-ui">
+                      <v-icon :icon="form.services.includes(cat) ? 'mdi-check-circle' : 'mdi-plus-circle-outline'" size="16"></v-icon>
+                      <span>{{ cat }}</span>
+                    </div>
+                  </label>
+                </div>
+              </div>
             </div>
 
             <!-- Review text -->
@@ -274,10 +318,38 @@
               <span class="form-char">{{ form.review.length }}/500</span>
             </div>
 
+            <!-- Images -->
+            <div class="form-group">
+              <label class="form-label">Add Images (Optional)</label>
+              <div class="file-upload-wrap">
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  @change="handleImageUpload"
+                  class="form-input file-input"
+                  id="review-images"
+                />
+                <label for="review-images" class="file-upload-label">
+                  <v-icon icon="mdi-camera-plus" size="20"></v-icon>
+                  <span>Choose Images</span>
+                </label>
+              </div>
+              <div class="image-previews" v-if="imagePreviews.length">
+                <div class="preview-wrap" v-for="(img, idx) in imagePreviews" :key="idx">
+                  <img :src="img" class="preview-img" alt="Preview" />
+                  <button type="button" @click="removeImage(idx)" class="remove-btn">
+                    <v-icon icon="mdi-close" size="12"></v-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+
             <!-- Submit -->
-            <button type="submit" class="btn-gold form-submit">
-              <v-icon icon="mdi-send" size="18"></v-icon>
-              Submit Review
+            <button type="submit" class="btn-gold form-submit" :disabled="submitting">
+              <v-icon v-if="!submitting" icon="mdi-send" size="18"></v-icon>
+              <v-icon v-else icon="mdi-loading" class="mdi-spin" size="18"></v-icon>
+              {{ submitting ? 'Submitting...' : 'Submit Review' }}
             </button>
 
             <!-- Success msg -->
@@ -325,22 +397,48 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, nextTick, watch, onMounted, type ComponentPublicInstance } from 'vue';
-import { reviews, type Review } from '@/sampleData/BlogData';
+import { defineComponent, ref, reactive, computed, nextTick, watch, onMounted, type ComponentPublicInstance } from 'vue';
+import * as reviewApi from '@/api/reviewApi';
+import serviceApi from '@/api/serviceApi';
+import type { Service, ServiceCategory } from '@/types/Services';
+import { useAuthStore } from '@/stores/authStore';
 
 export default defineComponent({
-  name: 'ClientReviews',
-
+  name: 'ReviewComponent',
   setup() {
-    /* ── DATA ─────────────────────────────────────────── */
-    const reviewData = ref<Review[]>([...reviews]);
+    const authStore = useAuthStore();
+    const isLoggedIn = computed(() => authStore.isLoggedIn);
+    const currentUser = computed(() => authStore.currentUser);
 
-    const stats = [
-      { value: '4.9',  label: 'Average Rating',    icon: 'mdi-star'           },
-      { value: '500+', label: 'Happy Clients',      icon: 'mdi-account-group'  },
-      { value: '98%',  label: 'Would Recommend',    icon: 'mdi-thumb-up'       },
-      { value: '250+', label: '5-Star Reviews',     icon: 'mdi-certificate'    },
-    ];
+    /* ── DATA ─────────────────────────────────────────── */
+    const reviewData = ref<reviewApi.ReviewData[]>([]);
+    const loadingReviews = ref(false);
+    const fetchError = ref<string | null>(null);
+
+    const stats = computed(() => {
+      const total = reviewData.value.length;
+      if (total === 0) {
+        return [
+          { value: '5.0',  label: 'Average Rating',    icon: 'mdi-star'           },
+          { value: '100+', label: 'Happy Clients',      icon: 'mdi-account-group'  },
+          { value: '100%', label: 'Would Recommend',    icon: 'mdi-thumb-up'       },
+          { value: '0',    label: '5-Star Reviews',     icon: 'mdi-certificate'    },
+        ];
+      }
+
+      const sum = reviewData.value.reduce((acc, r) => acc + r.rating, 0);
+      const avg = (sum / total).toFixed(1);
+      const fiveStars = reviewData.value.filter(r => r.rating === 5).length;
+      const recommendCount = reviewData.value.filter(r => r.rating >= 4).length;
+      const recommendPercent = Math.round((recommendCount / total) * 100);
+
+      return [
+        { value: avg,           label: 'Average Rating',    icon: 'mdi-star'           },
+        { value: `${total}+`,   label: 'Happy Clients',      icon: 'mdi-account-group'  },
+        { value: `${recommendPercent}%`, label: 'Would Recommend',    icon: 'mdi-thumb-up'       },
+        { value: fiveStars.toString(), label: '5-Star Reviews',     icon: 'mdi-certificate'    },
+      ];
+    });
 
     const perks = [
       'Takes under 2 minutes',
@@ -349,15 +447,10 @@ export default defineComponent({
       'We personally respond to every review',
     ];
 
-    const services = [
-      'Bridal Makeup', 'Party Makeup', 'Hair Styling', 'Hair Coloring',
-      'Hair Spa', 'Keratin Treatment', 'Facial', 'Manicure',
-      'Pedicure', 'Nail Art', 'Full Body Spa', 'Aromatherapy Spa',
-      'Waxing', 'Mehndi', 'Makeover', 'Hair Cut',
-    ];
+    const availableCategories = ref<string[]>([]);
 
     /* ── FILTER ───────────────────────────────────────── */
-    const filterOptions = ['All', 'Bridal', 'Hair', 'Makeup', 'Nails', 'Spa'];
+    const filterOptions = ref<string[]>(['All']);
     const activeFilter  = ref<string>('All');
     const starFilter    = ref<number | null>(null);
     const visibleCount  = ref<number>(6);
@@ -365,20 +458,22 @@ export default defineComponent({
     const sentinelRef   = ref<HTMLElement | null>(null);
     let   observer: IntersectionObserver | null = null;
 
-    const serviceCategory = (service: string) => {
-      const s = service.toLowerCase();
-      if (s.includes('bridal') || s.includes('mehndi') || s.includes('makeover')) return 'Bridal';
-      if (s.includes('hair')) return 'Hair';
-      if (s.includes('makeup') || s.includes('facial')) return 'Makeup';
-      if (s.includes('mani') || s.includes('pedi') || s.includes('nail')) return 'Nails';
-      if (s.includes('spa') || s.includes('aroma') || s.includes('wax') || s.includes('keratin')) return 'Spa';
-      return 'Other';
+    const serviceCategory = (serviceName: string) => {
+      // If the serviceName is actually one of our categories, return it as is
+      if (availableCategories.value.includes(serviceName)) return serviceName;
+      
+      // Otherwise fallback to searching in services (for older data)
+      const service = allServicesData.value.find(s => s.name === serviceName);
+      return service?.category?.name || 'Other';
     };
+    
+    const allServicesData = ref<Service[]>([]);
 
     const filteredReviews = computed(() => {
       let list = reviewData.value;
-      if (activeFilter.value !== 'All')
-        list = list.filter(r => serviceCategory(r.service) === activeFilter.value);
+      if (activeFilter.value !== 'All') {
+        list = list.filter(r => r.services.some(s => serviceCategory(s) === activeFilter.value));
+      }
       if (starFilter.value !== null)
         list = list.filter(r => r.rating === starFilter.value);
       return list;
@@ -453,21 +548,96 @@ export default defineComponent({
     const hoverRating = ref<number>(0);
     const submitted   = ref<boolean>(false);
 
-    const form = ref({
-      name: '', email: '', rating: 0, service: '', review: '',
+    const submitting = ref<boolean>(false);
+    const imagePreviews = ref<string[]>([]);
+
+    const form = reactive({
+      name: '', email: '', rating: 0, services: [] as string[], review: '', images: [] as File[]
     });
+
+    // Watch for user login to prepopulate
+    watch(currentUser, (user) => {
+      if (user) {
+        form.name = user.fullName || '';
+        form.email = user.email || '';
+      }
+    }, { immediate: true });
+
+    const handleImageUpload = (event: Event) => {
+      const target = event.target as HTMLInputElement;
+      if (target.files) {
+        Array.from(target.files).forEach(file => {
+          form.images.push(file);
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            if (e.target?.result) {
+              imagePreviews.value.push(e.target.result as string);
+            }
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+      // reset input
+      target.value = '';
+    };
+
+    const removeImage = (index: number) => {
+      form.images.splice(index, 1);
+      imagePreviews.value.splice(index, 1);
+    };
 
     const ratingLabel = computed(() => {
       const labels: Record<number, string> = {
         1: 'Poor', 2: 'Fair', 3: 'Good', 4: 'Very Good', 5: 'Excellent',
       };
-      return labels[form.value.rating] || '';
+      return labels[form.rating] || '';
     });
 
-    const submitReview = () => {
-      submitted.value = true;
-      form.value = { name: '', email: '', rating: 0, service: '', review: '' };
-      setTimeout(() => (submitted.value = false), 5000);
+    const submitReview = async () => {
+      if (!isLoggedIn.value) return;
+      if (form.rating === 0) return;
+      
+      if (form.services.length === 0) {
+        alert('Please select at least one service received.');
+        return;
+      }
+      
+      submitting.value = true;
+      try {
+        const formData = new FormData();
+        formData.append('rating', form.rating.toString());
+        
+        form.services.forEach(s => {
+          formData.append('services', s);
+        });
+        
+        formData.append('review', form.review);
+        
+        form.images.forEach((img) => {
+          formData.append('images', img);
+        });
+
+        const newReview = await reviewApi.createReview(formData);
+        
+        // Update local data
+        reviewData.value.unshift(newReview);
+        
+        submitted.value = true;
+        
+        // Reset form
+        form.rating = 0;
+        form.services = [];
+        form.review = '';
+        form.images = [];
+        
+        imagePreviews.value = [];
+        setTimeout(() => (submitted.value = false), 5000);
+      } catch (error: any) {
+        console.error('Failed to submit review:', error);
+        alert(error.response?.data?.message || 'Failed to submit review. Please try again.');
+      } finally {
+        submitting.value = false;
+      }
     };
 
     /* ── HELPERS ──────────────────────────────────────── */
@@ -483,7 +653,37 @@ export default defineComponent({
     };
 
     /* ── INIT ────────────────────────────────────────────── */
-    onMounted(() => {
+    const fetchReviews = async () => {
+      loadingReviews.value = true;
+      fetchError.value = null;
+      try {
+        const data = await reviewApi.getReviews();
+        reviewData.value = data;
+      } catch (error: any) {
+        console.error('Failed to fetch reviews:', error);
+        fetchError.value = 'Could not load reviews. Please try again later.';
+      } finally {
+        loadingReviews.value = false;
+      }
+    };
+
+    const fetchServiceData = async () => {
+      try {
+        const [categories, servicesList] = await Promise.all([
+          serviceApi.getAllServiceCategories(),
+          serviceApi.getAllServices()
+        ]);
+        
+        filterOptions.value = ['All', ...categories.map(c => c.name)];
+        availableCategories.value = categories.map(c => c.name);
+        allServicesData.value = servicesList;
+      } catch (error) {
+        console.error('Failed to fetch service data:', error);
+      }
+    };
+
+    onMounted(async () => {
+      await Promise.all([fetchReviews(), fetchServiceData()]);
       setTimeout(() => { updateSlider(0); setupObserver(); }, 200);
     });
 
@@ -495,11 +695,14 @@ export default defineComponent({
     });
 
     return {
-      stats, perks, services, filterOptions, activeFilter, starFilter,
+      isLoggedIn, currentUser,
+      stats, perks, availableCategories, filterOptions, activeFilter, starFilter,
       filteredReviews, visibleReviews, visibleCount, loadingMore, sentinelRef,
-      hoverRating, form, ratingLabel, submitted,
+      hoverRating, form, ratingLabel, submitted, submitting,
+      imagePreviews, handleImageUpload, removeImage,
       sliderStyle, setFilterRef, setFilter, resetFilters,
       submitReview, formatDate, cardClass,
+      loadingReviews, fetchError, fetchReviews
     };
   },
 });
@@ -614,7 +817,8 @@ h1, h2, h3 { font-family: 'Playfair Display', serif; color: #1e1916; line-height
 /* ── REVIEWS SECTION ─────────────────────────────────── */
 .reviews-section {
   padding: 5.5rem 0 4rem;
-  background: linear-gradient(180deg,#fdf3e3 0%,#fff8ee 40%,#fffcf7 75%,#fdf5eb 100%);
+  background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), 
+              url('/no_reviews.png') center/cover no-repeat fixed;
 }
 .section-head { text-align: center; margin-bottom: 2.5rem; }
 .section-head h2 { font-size: clamp(1.8rem,4vw,2.6rem); margin-bottom: .25rem; }
@@ -778,6 +982,59 @@ h1, h2, h3 { font-family: 'Playfair Display', serif; color: #1e1916; line-height
 .review-card__name { font-weight: 700; font-size: .9rem; color: #1e1916; }
 .review-card__date { font-size: .75rem; color: #a09080; margin-top: .1rem; }
 
+/* Review Gallery */
+.review-card__gallery {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.gallery-item {
+  position: relative;
+  width: 54px;
+  height: 54px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(234, 166, 54, 0.15);
+  cursor: pointer;
+}
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+.gallery-item:hover img { transform: scale(1.1); }
+.gallery-more {
+  position: absolute;
+  inset: 0;
+  background: rgba(30,25,22,0.65);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+/* Loading & Error States */
+.loading-state, .error-state {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  background: rgba(234, 166, 54, 0.04);
+  border-radius: 20px;
+  border: 1px dashed rgba(234, 166, 54, 0.2);
+}
+.loading-state p, .error-state p {
+  margin-top: 1rem;
+  font-weight: 600;
+  color: #5a4a2a;
+}
+
 /* Infinite scroll */
 .scroll-sentinel { height: 1px; }
 .loading-more { display: flex; justify-content: center; padding: 2rem 0; }
@@ -786,7 +1043,35 @@ h1, h2, h3 { font-family: 'Playfair Display', serif; color: #1e1916; line-height
   border: 3px solid #fdf5eb; border-left-color: #eaa636;
   border-radius: 50%; animation: spin 0.9s linear infinite;
 }
-.empty-state p { margin: 1rem 0 1.5rem; font-size: 1rem; }
+/* Minimalist Empty State */
+.empty-state-minimal {
+  grid-column: 1 / -1;
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  margin: 3rem auto;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.12);
+  cursor: pointer;
+}
+
+.empty-state-img {
+  width: 100%;
+  display: block;
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.empty-state-minimal:hover .empty-state-img {
+  transform: scale(1.03);
+}
+
+.empty-state-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.2));
+  z-index: 1;
+}
 
 /* ── FORM SECTION ────────────────────────────────────── */
 .form-section {
@@ -858,6 +1143,95 @@ h1, h2, h3 { font-family: 'Playfair Display', serif; color: #1e1916; line-height
 /* Success transition */
 .fade-enter-active, .fade-leave-active { transition: opacity .4s ease; }
 .fade-enter-from, .fade-leave-to { opacity: 0; }
+
+/* Login Prompt */
+.login-prompt {
+  align-items: center; justify-content: center; text-align: center;
+  padding: 5rem 2.5rem; background: #fffcf8;
+}
+.login-prompt h3 { font-size: 1.6rem; color: #1e1916; margin-bottom: 0.5rem; }
+.login-prompt p { color: #545454; margin-bottom: 1.5rem; line-height: 1.6; }
+
+/* Image Upload */
+.file-upload-wrap { position: relative; }
+.file-input { display: none; }
+.file-upload-label {
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  padding: 0.8rem 1rem; border: 1.5px dashed #eaa636; border-radius: 10px;
+  color: #eaa636; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
+  background: rgba(234, 166, 54, 0.05);
+}
+.file-upload-label:hover { background: rgba(234, 166, 54, 0.1); }
+.image-previews { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1rem; }
+.preview-wrap { position: relative; width: 70px; height: 70px; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+.preview-img { width: 100%; height: 100%; object-fit: cover; }
+.remove-btn {
+  position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.6);
+  color: #fff; width: 20px; height: 20px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; border: none; cursor: pointer;
+  transition: background 0.2s;
+}
+.remove-btn:hover { background: #d32f2f; }
+.form-input--readonly { background: #f5f5f5; cursor: not-allowed; color: #777; }
+
+/* Service Selector Styles */
+.services-selector-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.25rem;
+  background: #fdfdfd;
+  border: 1.5px solid #e8dfd0;
+  border-radius: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+
+
+.services-checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+
+.service-checkbox-item {
+  cursor: pointer;
+}
+
+.hidden-checkbox {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.checkbox-ui {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.8rem;
+  background: #fff;
+  border: 1px solid #e8dfd0;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #545454;
+  transition: all 0.25s ease;
+}
+
+.service-checkbox-item:hover .checkbox-ui {
+  border-color: #eaa636;
+  background: rgba(234, 166, 54, 0.05);
+}
+
+.service-checkbox-item.selected .checkbox-ui {
+  background: #eaa636;
+  border-color: #eaa636;
+  color: #1e1916;
+  box-shadow: 0 4px 12px rgba(234, 166, 54, 0.25);
+}
 
 /* ── CTA ─────────────────────────────────────────────── */
 .cta-section { position: relative; min-height: 460px; display: flex; align-items: center; overflow: hidden; }

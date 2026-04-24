@@ -1,10 +1,13 @@
 export interface ServiceCategory {
-  id: number;
+  _id?: string;
   name: string;
+  description?: string;
+  icon?: string;
 }
 
+
 export interface Service {
-  id: number;
+  _id: string;
   name: string;
   price: string;
   duration: string;
@@ -15,7 +18,7 @@ export interface Service {
 }
 
 export interface ServicePackage {
-  id: number;
+  _id: string;
   name: string;
   price: string;
   originalPrice?: string;

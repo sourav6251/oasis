@@ -46,7 +46,7 @@ class ApiStore {
      * Get booking by ID
      * GET /api/bookings/{id}
      */
-    getBookingById = async (id: number) => {
+    getBookingById = async (id: string) => {
         try {
             const response = await axiosInstance.get(`/bookings/${id}`);
             return response.data;
@@ -80,7 +80,7 @@ class ApiStore {
      */
     getAllServices = async () => {
         try {
-            const response = await axiosInstance.get("/api/services");
+            const response = await axiosInstance.get("/services");
             return response.data;
         } catch (error) {
             console.error("Error fetching services:", error);
@@ -92,9 +92,9 @@ class ApiStore {
      * Get service by ID
      * GET /api/services/{id}
      */
-    getServiceById = async (id: number) => {
+    getServiceById = async (id: string) => {
         try {
-            const response = await axiosInstance.get(`/api/services/${id}`);
+            const response = await axiosInstance.get(`/services/${id}`);
             return response.data;
         } catch (error) {
             console.error(`Error fetching service ${id}:`, error);
@@ -106,9 +106,11 @@ class ApiStore {
      * Create new service
      * POST /api/services
      */
-    createService = async (service: any) => {
+    createService = async (serviceData: FormData) => {
         try {
-            const response = await axiosInstance.post("/api/services", service);
+            const response = await axiosInstance.post("/services", serviceData, {
+                headers: { "Content-Type": "multipart/form-data" }
+            });
             return response.data;
         } catch (error) {
             console.error("Error creating service:", error);
@@ -120,9 +122,11 @@ class ApiStore {
      * Update service
      * PUT /api/services/{id}
      */
-    updateService = async (id: number, service: any) => {
+    updateService = async (id: string, serviceData: FormData) => {
         try {
-            const response = await axiosInstance.put(`/api/services/${id}`, service);
+            const response = await axiosInstance.put(`/services/${id}`, serviceData, {
+                headers: { "Content-Type": "multipart/form-data" }
+            });
             return response.data;
         } catch (error) {
             console.error(`Error updating service ${id}:`, error);
@@ -134,9 +138,9 @@ class ApiStore {
      * Delete service
      * DELETE /api/services/{id}
      */
-    deleteService = async (id: number) => {
+    deleteService = async (id: string) => {
         try {
-            const response = await axiosInstance.delete(`/api/services/${id}`);
+            const response = await axiosInstance.delete(`/services/${id}`);
             return response.data;
         } catch (error) {
             console.error(`Error deleting service ${id}:`, error);
@@ -148,9 +152,9 @@ class ApiStore {
      * Get services by category
      * GET /api/services/category/{categoryId}
      */
-    getServicesByCategory = async (categoryId: number) => {
+    getServicesByCategory = async (categoryId: string) => {
         try {
-            const response = await axiosInstance.get(`/api/services/category/${categoryId}`);
+            const response = await axiosInstance.get(`/services/category/${categoryId}`);
             return response.data;
         } catch (error) {
             console.error(`Error fetching services for category ${categoryId}:`, error);
@@ -164,7 +168,7 @@ class ApiStore {
      */
     getAllServicePackages = async () => {
         try {
-            const response = await axiosInstance.get("/service-packages");
+            const response = await axiosInstance.get("/services/packages");
             return response.data;
         } catch (error) {
             console.error("Error fetching service packages:", error);
@@ -178,10 +182,38 @@ class ApiStore {
      */
     createServicePackage = async (servicePackage: any) => {
         try {
-            const response = await axiosInstance.post("/service-packages", servicePackage);
+            const response = await axiosInstance.post(`/services/packages`, servicePackage);
             return response.data;
         } catch (error) {
             console.error("Error creating service package:", error);
+            throw error;
+        }
+    }
+
+    /**
+     * Update service package
+     * PUT /api/services/packages/{id}
+     */
+    updateServicePackage = async (id: string, servicePackage: any) => {
+        try {
+            const response = await axiosInstance.put(`/services/packages/${id}`, servicePackage);
+            return response.data;
+        } catch (error) {
+            console.error(`Error updating service package ${id}:`, error);
+            throw error;
+        }
+    }
+
+    /**
+     * Delete service package
+     * DELETE /api/services/packages/{id}
+     */
+    deleteServicePackage = async (id: string) => {
+        try {
+            const response = await axiosInstance.delete(`/services/packages/${id}`);
+            return response.data;
+        } catch (error) {
+            console.error(`Error deleting service package ${id}:`, error);
             throw error;
         }
     }
@@ -196,7 +228,7 @@ class ApiStore {
      */
     getAllServiceCategories = async () => {
         try {
-            const response = await axiosInstance.get("/api/service-categories");
+            const response = await axiosInstance.get("/services/categories");
             return response.data;
         } catch (error) {
             console.error("Error fetching service categories:", error);
@@ -208,9 +240,9 @@ class ApiStore {
      * Get service category by ID
      * GET /api/service-categories/{id}
      */
-    getServiceCategoryById = async (id: number) => {
+    getServiceCategoryById = async (id: string) => {
         try {
-            const response = await axiosInstance.get(`/api/service-categories/${id}`);
+            const response = await axiosInstance.get(`/services/categories/${id}`);
             return response.data;
         } catch (error) {
             console.error(`Error fetching service category ${id}:`, error);
@@ -224,7 +256,7 @@ class ApiStore {
      */
     createServiceCategory = async (category: any) => {
         try {
-            const response = await axiosInstance.post("/api/service-categories", category);
+            const response = await axiosInstance.post("/services/categories", category);
             return response.data;
         } catch (error) {
             console.error("Error creating service category:", error);
@@ -236,9 +268,9 @@ class ApiStore {
      * Update service category
      * PUT /api/service-categories/{id}
      */
-    updateServiceCategory = async (id: number, category: any) => {
+    updateServiceCategory = async (id: string, category: any) => {
         try {
-            const response = await axiosInstance.put(`/api/service-categories/${id}`, category);
+            const response = await axiosInstance.put(`/services/categories/${id}`, category);
             return response.data;
         } catch (error) {
             console.error(`Error updating service category ${id}:`, error);
@@ -250,9 +282,9 @@ class ApiStore {
      * Delete service category
      * DELETE /api/service-categories/{id}
      */
-    deleteServiceCategory = async (id: number) => {
+    deleteServiceCategory = async (id: string) => {
         try {
-            const response = await axiosInstance.delete(`/service-categories/${id}`);
+            const response = await axiosInstance.delete(`/services/categories/${id}`);
             return response.data;
         } catch (error) {
             console.error(`Error deleting service category ${id}:`, error);
@@ -270,7 +302,7 @@ class ApiStore {
      */
     getAllGalleries = async () => {
         try {
-            const response = await axiosInstance.get("/api/gallery");
+            const response = await axiosInstance.get("/gallery");
             return response.data;
         } catch (error) {
             console.error("Error fetching galleries:", error);
@@ -282,9 +314,9 @@ class ApiStore {
      * Get gallery by ID
      * GET /api/galleries/{id}
      */
-    getGalleryById = async (id: number) => {
+    getGalleryById = async (id: string) => {
         try {
-            const response = await axiosInstance.get(`/api/gallery/${id}`);
+            const response = await axiosInstance.get(`/gallery/${id}`);
             return response.data;
         } catch (error) {
             console.error(`Error fetching gallery ${id}:`, error);
@@ -296,9 +328,11 @@ class ApiStore {
      * Create gallery
      * POST /api/galleries
      */
-    createGallery = async (gallery: any) => {
+    createGallery = async (galleryData: FormData) => {
         try {
-            const response = await axiosInstance.post("/api/gallery", gallery);
+            const response = await axiosInstance.post("/gallery", galleryData, {
+                headers: { "Content-Type": "multipart/form-data" }
+            });
             return response.data;
         } catch (error) {
             console.error("Error creating gallery:", error);
@@ -308,11 +342,13 @@ class ApiStore {
 
     /**
      * Update gallery
-     * PUT /api/galleries/{id}
+     * PUT /api/gallery/{id}
      */
-    updateGallery = async (id: number, gallery: any) => {
+    updateGallery = async (id: string, galleryData: FormData) => {
         try {
-            const response = await axiosInstance.put(`/api/gallery/${id}`, gallery);
+            const response = await axiosInstance.put(`/gallery/${id}`, galleryData, {
+                headers: { "Content-Type": "multipart/form-data" }
+            });
             return response.data;
         } catch (error) {
             console.error(`Error updating gallery ${id}:`, error);
@@ -324,9 +360,9 @@ class ApiStore {
      * Delete gallery
      * DELETE /api/galleries/{id}
      */
-    deleteGallery = async (id: number) => {
+    deleteGallery = async (id: string) => {
         try {
-            const response = await axiosInstance.delete(`/api/gallery/${id}`);
+            const response = await axiosInstance.delete(`/gallery/${id}`);
             return response.data;
         } catch (error) {
             console.error(`Error deleting gallery ${id}:`, error);
@@ -344,7 +380,7 @@ class ApiStore {
      */
     getAllGalleryCategories = async () => {
         try {
-            const response = await axiosInstance.get("/api/gallery-categories");
+            const response = await axiosInstance.get("/gallery-categories");
             return response.data;
         } catch (error) {
             console.error("Error fetching gallery categories:", error);
@@ -356,9 +392,9 @@ class ApiStore {
      * Get gallery category by ID
      * GET /api/gallery-categories/{id}
      */
-    getGalleryCategoryById = async (id: number) => {
+    getGalleryCategoryById = async (id: string) => {
         try {
-            const response = await axiosInstance.get(`/api/gallery-categories/${id}`);
+            const response = await axiosInstance.get(`/gallery-categories/${id}`);
             return response.data;
         } catch (error) {
             console.error(`Error fetching gallery category ${id}:`, error);
@@ -372,7 +408,7 @@ class ApiStore {
      */
     createGalleryCategory = async (category: any) => {
         try {
-            const response = await axiosInstance.post("/api/gallery-categories", category);
+            const response = await axiosInstance.post("/gallery-categories", category);
             return response.data;
         } catch (error) {
             console.error("Error creating gallery category:", error);
@@ -384,9 +420,9 @@ class ApiStore {
      * Update gallery category
      * PUT /api/gallery-categories/{id}
      */
-    updateGalleryCategory = async (id: number, category: any) => {
+    updateGalleryCategory = async (id: string, category: any) => {
         try {
-            const response = await axiosInstance.put(`/api/gallery-categories/${id}`, category);
+            const response = await axiosInstance.put(`/gallery-categories/${id}`, category);
             return response.data;
         } catch (error) {
             console.error(`Error updating gallery category ${id}:`, error);
@@ -398,9 +434,9 @@ class ApiStore {
      * Delete gallery category
      * DELETE /api/gallery-categories/{id}
      */
-    deleteGalleryCategory = async (id: number) => {
+    deleteGalleryCategory = async (id: string) => {
         try {
-            const response = await axiosInstance.delete(`/api/gallery-categories/${id}`);
+            const response = await axiosInstance.delete(`/gallery-categories/${id}`);
             return response.data;
         } catch (error) {
             console.error(`Error deleting gallery category ${id}:`, error);
@@ -430,7 +466,7 @@ class ApiStore {
      * Get blog by ID
      * GET /api/blogs/{id}
      */
-    getBlogById = async (id: number) => {
+    getBlogById = async (id: string) => {
         try {
             const response = await axiosInstance.get(`/blogs/${id}`);
             return response.data;
@@ -444,9 +480,9 @@ class ApiStore {
      * Create blog
      * POST /api/blogs
      */
-    createBlog = async (blog: any) => {
+    createBlog = async (blogFormData: FormData) => {
         try {
-            const response = await axiosInstance.post("/blogs", blog);
+            const response = await axiosInstance.post("/blogs", blogFormData);
             return response.data;
         } catch (error) {
             console.error("Error creating blog:", error);
@@ -499,7 +535,7 @@ class ApiStore {
             const formData = new FormData();
             formData.append("file", file);
 
-            const response = await axiosInstance.post("/api/upload", formData, {
+            const response = await axiosInstance.post("/upload", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },

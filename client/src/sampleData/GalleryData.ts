@@ -2,7 +2,7 @@ import type { GalleryWork } from "@/types/Gallery";
 
 export const GalleryData:GalleryWork[]=[
     {
-      id: 1,
+      _id: '1',
       title: 'Elegant Bridal Makeover',
       category: 'Bridal',
       image: 'https://images.unsplash.com/photo-1511895426328-dc8714191300?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
@@ -11,7 +11,7 @@ export const GalleryData:GalleryWork[]=[
       stylist: 'Sarah Johnson'
     },
     {
-      id: 2,
+      _id: '2',
       title: 'Vibrant Hair Coloring',
       category: 'Hair',
       image: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
@@ -20,7 +20,7 @@ export const GalleryData:GalleryWork[]=[
       stylist: 'Mike Chen'
     },
     {
-      id: 3,
+      _id: '3',
       title: 'Classic French Manicure',
       category: 'Nails',
       image: 'https://images.unsplash.com/photo-1607779044265-60d8017d3c48?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
@@ -29,7 +29,7 @@ export const GalleryData:GalleryWork[]=[
       stylist: 'Emma Davis'
     },
     {
-      id: 4,
+      _id: '4',
       title: 'Evening Glam Makeup',
       category: 'Makeup',
       image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
@@ -38,7 +38,7 @@ export const GalleryData:GalleryWork[]=[
       stylist: 'Lisa Rodriguez'
     },
     {
-      id: 5,
+      _id: '5',
       title: 'Hydrating Facial Treatment',
       category: 'Skincare',
       image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
@@ -47,61 +47,61 @@ export const GalleryData:GalleryWork[]=[
       stylist: 'Dr. Maria Gonzalez'
     },
     {
-      id: 6,
-      title: 'Bohemian Braids',
-      category: 'Hair',
-      image: 'https://images.unsplash.com/photo-1559622214-f8a9850965bb?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-      description: 'Beautiful bohemian-style braids with floral accessories for a festival look.',
-      duration: '1.5 hours',
-      stylist: 'Jessica Brown'
-    },
-    {
-      id: 7,
-      title: 'Natural Day Makeup',
+      _id: '6',
+      title: 'Modern Bridal Transformation',
       category: 'Makeup',
-      image: 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-      description: 'Fresh, natural makeup look enhancing natural features with minimal products.',
-      duration: '45 minutes',
-      stylist: 'Amanda Wilson'
-    },
-    {
-      id: 8,
-      title: 'Gel Nail Art',
-      category: 'Nails',
-      image: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-      description: 'Creative gel nail art with floral patterns and glitter accents.',
-      duration: '1 hour',
-      stylist: 'Sophia Lee'
-    },
-    {
-      id: 9,
-      title: 'Anti-Aging Facial',
-      category: 'Skincare',
-      image: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-      description: 'Advanced anti-aging facial with retinol and vitamin C for youthful glow.',
-      duration: '90 minutes',
-      stylist: 'Dr. Maria Gonzalez'
-    },
-    {
-      id: 10,
-      title: 'Traditional Bridal Look',
-      category: 'Bridal',
-      image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-      description: 'Traditional bridal makeup and hairstyle with intricate jewelry and accessories.',
-      duration: '4 hours',
-      stylist: 'Sarah Johnson'
-    },
-    {
-      id: 11,
-      title: 'Bold Haircut Transformation',
-      category: 'Hair',
-      image: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-      description: 'Dramatic haircut transformation from long to chic bob with textured layers.',
+      image: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      description: 'A contemporary bridal look with a focus on glowing skin and soft, romantic eyes.',
       duration: '2 hours',
-      stylist: 'Mike Chen'
+      stylist: 'Priya Sharma'
     },
     {
-      id: 12,
+      _id: '7',
+      title: 'Ash Blonde Balayage',
+      category: 'Hair',
+      image: 'https://images.unsplash.com/photo-1562322140-8baeececf3df?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      description: 'Beautiful hand-painted highlights creating a natural, sun-kissed blonde finish.',
+      duration: '3 hours',
+      stylist: 'Rahul Verma'
+    },
+    {
+      _id: '8',
+      title: 'Traditional Henna Art',
+      category: 'Mehndi',
+      image: 'https://images.unsplash.com/photo-1583417319070-4a69db38a482?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      description: 'Intricate Rajasthani mehndi design for the hands and arms.',
+      duration: '1.5 hours',
+      stylist: 'Deepika S.'
+    },
+    {
+      _id: '9',
+      title: 'Hydra-Facial Glow',
+      category: 'Skincare',
+      image: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      description: 'Post-treatment results showing improved skin texture and instant radiance.',
+      duration: '45 mins',
+      stylist: 'Dr. Anjali'
+    },
+    {
+      _id: '10',
+      title: 'Royal Engagement Look',
+      category: 'Makeup',
+      image: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      description: 'A dramatic, bold look perfect for evening engagement ceremonies.',
+      duration: '1.5 hours',
+      stylist: 'Priya Sharma'
+    },
+    {
+      _id: '11',
+      title: 'Silk Press & Treatment',
+      category: 'Hair',
+      image: 'https://images.unsplash.com/photo-1580618672591-eb180b1a973f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      description: 'Transformation from natural texture to sleek, healthy straight hair.',
+      duration: '2 hours',
+      stylist: 'Rahul Verma'
+    },
+    {
+      _id: '12',
       title: 'Acne Treatment Results',
       category: 'Skincare',
       image: 'https://images.unsplash.com/photo-1559599101-f09722fb4948?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
@@ -110,7 +110,7 @@ export const GalleryData:GalleryWork[]=[
       stylist: 'Dr. Maria Gonzalez'
     },
     {
-      id: 13,
+      _id: '13',
       title: 'Creative Nail Design',
       category: 'Nails',
       image: 'https://images.unsplash.com/photo-1607779044265-60d8017d3c48?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
@@ -119,7 +119,7 @@ export const GalleryData:GalleryWork[]=[
       stylist: 'Sophia Lee'
     },
     {
-      id: 14,
+      _id: '14',
       title: 'Editorial Makeup',
       category: 'Makeup',
       image: 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
@@ -128,7 +128,7 @@ export const GalleryData:GalleryWork[]=[
       stylist: 'Lisa Rodriguez'
     },
     {
-      id: 15,
+      _id: '15',
       title: 'Modern Bridal Updo',
       category: 'Bridal',
       image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
