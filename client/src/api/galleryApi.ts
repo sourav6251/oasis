@@ -18,28 +18,28 @@ class GalleryApi {
     /**
      * Get a single gallery category by ID
      */
-    getGalleryCategoryById = async (id: number): Promise<GalleryCategory> => {
+    getGalleryCategoryById = async (id: string): Promise<GalleryCategory> => {
         return apiStore.getGalleryCategoryById(id);
     };
 
     /**
      * Create a new gallery category
      */
-    createGalleryCategory = async (data: Omit<GalleryCategory, "id">): Promise<GalleryCategory> => {
+    createGalleryCategory = async (data: Omit<GalleryCategory, "_id">): Promise<GalleryCategory> => {
         return apiStore.createGalleryCategory(data);
     };
 
     /**
      * Update an existing gallery category
      */
-    updateGalleryCategory = async (id: number, data: Omit<GalleryCategory, "id">): Promise<GalleryCategory> => {
+    updateGalleryCategory = async (id: string, data: Omit<GalleryCategory, "_id">): Promise<GalleryCategory> => {
         return apiStore.updateGalleryCategory(id, data);
     };
 
     /**
      * Delete a gallery category
      */
-    deleteGalleryCategory = async (id: number): Promise<void> => {
+    deleteGalleryCategory = async (id: string): Promise<void> => {
         return apiStore.deleteGalleryCategory(id);
     };
 
@@ -55,28 +55,28 @@ class GalleryApi {
     /**
      * Get a single gallery work by ID
      */
-    getGalleryWorkById = async (id: number): Promise<GalleryWork> => {
+    getGalleryWorkById = async (id: string): Promise<GalleryWork> => {
         return apiStore.getGalleryById(id);
     };
 
     /**
      * Create a new gallery work
      */
-    createGalleryWork = async (data: Omit<GalleryWork, "id">): Promise<GalleryWork> => {
+    createGalleryWork = async (data: FormData): Promise<GalleryWork> => {
         return apiStore.createGallery(data);
     };
 
     /**
      * Update an existing gallery work
      */
-    updateGalleryWork = async (id: number, data: Omit<GalleryWork, "id">): Promise<GalleryWork> => {
+    updateGalleryWork = async (id: string, data: FormData): Promise<GalleryWork> => {
         return apiStore.updateGallery(id, data);
     };
 
     /**
      * Delete a gallery work
      */
-    deleteGalleryWork = async (id: number): Promise<void> => {
+    deleteGalleryWork = async (id: string): Promise<void> => {
         return apiStore.deleteGallery(id);
     };
 
