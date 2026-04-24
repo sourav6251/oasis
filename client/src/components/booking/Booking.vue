@@ -88,7 +88,7 @@
 
               <!-- Service List -->
               <div v-else-if="filteredServices.length > 0" class="service-list">
-                <div v-for="service in filteredServices" :key="service.id" v-motion :initial="{ opacity: 0, y: 20 }" :enter="{ opacity: 1, y: 0 }" :delay="100 * service.id" :duration="300"
+                <div v-for="service in filteredServices" :key="service.id" v-motion :initial="{ opacity: 0, y: 20 }" :enter="{ opacity: 1, y: 0 }" :duration="300"
                      :class="['service-item', { 'selected': isServiceSelected(service.id) }]"
                      @click="toggleService(service)">
                   <div class="service-info">

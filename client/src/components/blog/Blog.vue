@@ -221,7 +221,7 @@
 
     <!-- Empty State -->
     <div v-else class="pt-20 flex flex-col items-center justify-center text-center px-4">
-      <img src="../../assets/empty_blog.svg" class="w-48 h-48 mb-6 opacity-60" alt="No blogs yet" onerror="this.style.display='none'" />
+      <img src="../../assets/empty_blog.png" class="w-48 h-48 mb-6 opacity-60 rounded-xl" alt="No blogs yet" onerror="this.style.display='none'" />
       <h3 class="playfair-d text-2xl font-bold text-[var(--color-dark)] mb-2">No blogs yet</h3>
       <p class="poppins-light text-gray-500 mb-6">Be the first to share your beauty story!</p>
       <v-btn

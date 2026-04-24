@@ -18,14 +18,14 @@ class ServiceApi {
     /**
      * Get a single service category by ID
      */
-    getServiceCategoryById = async (id: number): Promise<ServiceCategory> => {
+    getServiceCategoryById = async (id: string): Promise<ServiceCategory> => {
         return apiStore.getServiceCategoryById(id);
     };
 
     /**
      * Create a new service category
      */
-    createServiceCategory = async (data: Omit<ServiceCategory, "id">): Promise<ServiceCategory> => {
+    createServiceCategory = async (data: Omit<ServiceCategory, "_id">): Promise<ServiceCategory> => {
         return apiStore.createServiceCategory(data);
     };
 
@@ -33,8 +33,8 @@ class ServiceApi {
      * Update an existing service category
      */
     updateServiceCategory = async (
-        id: number,
-        data: Omit<ServiceCategory, "id">
+        id: string,
+        data: Omit<ServiceCategory, "_id">
     ): Promise<ServiceCategory> => {
         return apiStore.updateServiceCategory(id, data);
     };
@@ -42,7 +42,7 @@ class ServiceApi {
     /**
      * Delete a service category
      */
-    deleteServiceCategory = async (id: number): Promise<void> => {
+    deleteServiceCategory = async (id: string): Promise<void> => {
         return apiStore.deleteServiceCategory(id);
     };
 
@@ -58,35 +58,35 @@ class ServiceApi {
     /**
      * Get a single service by ID
      */
-    getServiceById = async (id: number): Promise<Service> => {
+    getServiceById = async (id: string): Promise<Service> => {
         return apiStore.getServiceById(id);
     };
 
     /**
      * Get services filtered by category ID
      */
-    getServicesByCategory = async (categoryId: number): Promise<Service[]> => {
+    getServicesByCategory = async (categoryId: string): Promise<Service[]> => {
         return apiStore.getServicesByCategory(categoryId);
     };
 
     /**
      * Create a new service
      */
-    createService = async (data: Omit<Service, "id">): Promise<Service> => {
+    createService = async (data: FormData): Promise<Service> => {
         return apiStore.createService(data);
     };
 
     /**
      * Update an existing service
      */
-    updateService = async (id: number, data: Omit<Service, "id">): Promise<Service> => {
+    updateService = async (id: string, data: FormData): Promise<Service> => {
         return apiStore.updateService(id, data);
     };
 
     /**
      * Delete a service
      */
-    deleteService = async (id: number): Promise<void> => {
+    deleteService = async (id: string): Promise<void> => {
         return apiStore.deleteService(id);
     };
 
@@ -102,7 +102,7 @@ class ServiceApi {
     /**
      * Create a new service package
      */
-    createServicePackage = async (data: Omit<ServicePackage, "id">): Promise<ServicePackage> => {
+    createServicePackage = async (data: Omit<ServicePackage, "_id">): Promise<ServicePackage> => {
         return apiStore.createServicePackage(data);
     };
 
