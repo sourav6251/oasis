@@ -1,5 +1,4 @@
 import express from 'express';
-import multer from 'multer';
 import {
   getAllBlogs,
   getBlogById,
@@ -7,14 +6,14 @@ import {
   deleteBlog,
 } from '../controllers/blogController.js';
 import { protect } from '../middleware/authMiddleware.js';
+import { uploadImageArray, handleUploadErrors } from '../utils/upload.js';
 
 const router = express.Router();
-// Accept up to 10 images per blog post
-const upload = multer({ storage: multer.memoryStorage() });
+// Accept up to 10 images per blog post (size/type limited in utils/upload.js)
 
 router.route('/')
   .get(getAllBlogs)
-  .post(protect, upload.array('images', 10), createBlog);
+  .post(protect, uploadImageArray('images', 10), handleUploadErrors, createBlog);
 
 router.route('/:id')
   .get(getBlogById)

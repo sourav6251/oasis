@@ -1,5 +1,6 @@
 import Blog from '../models/Blog.js';
 import { uploadImage, deleteImage } from '../utils/imageKit.js';
+import { sanitizeRichText } from '../utils/sanitize.js';
 import Subscriber from '../models/Subscriber.js';
 import sendEmail from '../utils/sendEmail.js';
 
@@ -11,7 +12,7 @@ export const getAllBlogs = async (req, res) => {
     const blogs = await Blog.find({}).sort({ publishDate: -1 });
     res.json(blogs);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -24,7 +25,7 @@ export const getBlogById = async (req, res) => {
     if (!blog) return res.status(404).json({ message: 'Blog not found' });
     res.json(blog);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -46,9 +47,10 @@ export const createBlog = async (req, res) => {
     // Upload all images to ImageKit
     const uploadedImages = await Promise.all(
       req.files.map(async (file) => {
+        // Never use client-supplied originalname in file identifiers (SEC-14)
         const uploadResponse = await uploadImage(
           file.buffer,
-          `blog_${Date.now()}_${file.originalname}`
+          `blog_${Date.now()}_${req.user._id}`
         );
         return { url: uploadResponse.url, fileId: uploadResponse.fileId };
       })
@@ -56,7 +58,8 @@ export const createBlog = async (req, res) => {
 
     const blog = new Blog({
       title,
-      content,
+      // Stored XSS defense-in-depth: sanitize rich text before persisting (SEC-03)
+      content: sanitizeRichText(content),
       images: uploadedImages,
       writer: req.user._id,
       writerName: req.user.fullName || req.user.email,
@@ -144,21 +147,9 @@ export const deleteBlog = async (req, res) => {
       imageDeletePromises.push(deleteImage(blog.imageFileId, blog.image));
     }
 
-    // 3. Any ImageKit image URLs embedded in blog content
-    if (blog.content && typeof blog.content === 'string') {
-      const imgRegex = /https:\/\/ik\.imagekit\.io\/[^\s"'<>)]+/g;
-      const matches = blog.content.match(imgRegex);
-      if (matches && matches.length > 0) {
-        const knownUrls = new Set(
-          (blog.images || []).map((img) => img.url).concat([blog.image])
-        );
-        for (const matchUrl of matches) {
-          if (!knownUrls.has(matchUrl)) {
-            imageDeletePromises.push(deleteImage(null, matchUrl));
-          }
-        }
-      }
-    }
+    // NOTE: the former "scan content for ImageKit URLs and delete them" step
+    // was removed (SEC-02): it let users delete files they do not own by
+    // embedding arbitrary URLs in blog content. Deletion is fileId-only now.
 
     // Wait for all image deletions to settle
     if (imageDeletePromises.length > 0) {
@@ -168,6 +159,6 @@ export const deleteBlog = async (req, res) => {
     await blog.deleteOne();
     res.json({ message: 'Blog and related images removed successfully' });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };

@@ -17,11 +17,20 @@ const protect = async (req, res, next) => {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      req.user = await User.findById(decoded.id).select('-password');
+      const user = await User.findById(decoded.id).select('-password');
+      if (!user) {
+        return res.status(401).json({ message: 'Not authorized, user no longer exists' });
+      }
 
+      // Reject tokens issued before a logout / credential change (SEC-07)
+      if ((decoded.tokenVersion || 0) !== (user.tokenVersion || 0)) {
+        return res.status(401).json({ message: 'Session expired. Please log in again.' });
+      }
+
+      req.user = user;
       next();
     } catch (error) {
-      console.error(error);
+      console.error('Auth middleware error:', error.message);
       res.status(401).json({ message: 'Not authorized, token failed' });
     }
   } else {

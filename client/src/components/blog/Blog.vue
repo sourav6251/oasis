@@ -130,7 +130,7 @@
                 </h2>
 
                 <!-- Content -->
-                <div class="mt-4 poppins-regular text-[var(--color-dark)] leading-relaxed blog-content-view" v-html="oneBlog?.content">
+                <div class="mt-4 poppins-regular text-[var(--color-dark)] leading-relaxed blog-content-view" v-html="sanitize(oneBlog?.content)">
                 </div>
               </div>
             </div>
@@ -525,6 +525,7 @@ import { toast } from 'vue-sonner'
 import { MotionDirective as motion } from '@vueuse/motion'
 import { Calendar, User as UserIcon, Plus, Image as ImageIcon, X, Trash2 } from 'lucide-vue-next'
 import { defineComponent, onMounted, onUnmounted, ref, reactive } from 'vue'
+import DOMPurify from 'dompurify'
 
 export default defineComponent({
   name: 'Blog',
@@ -535,6 +536,9 @@ export default defineComponent({
     const oneBlog = ref<BlogData | undefined>()
     const loading = ref(true)
     const { isMobile } = useDevice()
+
+    // Defense-in-depth against stored XSS (SEC-03): never render raw user HTML
+    const sanitize = (html?: string) => (html ? DOMPurify.sanitize(html) : '')
     const authStore = useAuthStore()
 
     // Delete state & handlers

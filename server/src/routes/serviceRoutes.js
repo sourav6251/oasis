@@ -1,5 +1,4 @@
 import express from 'express';
-import multer from 'multer';
 import {
   getServices,
   getCategories,
@@ -15,17 +14,17 @@ import {
   deleteCategory,
 } from '../controllers/serviceController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
+import { uploadSingleImage, handleUploadErrors } from '../utils/upload.js';
 
 const router = express.Router();
-const upload = multer({ storage: multer.memoryStorage() });
 
 // Service routes
 router.route('/')
   .get(getServices)
-  .post(protect, admin, upload.single('img'), createService);
+  .post(protect, admin, uploadSingleImage('img'), handleUploadErrors, createService);
 
 router.route('/:id')
-  .put(protect, admin, upload.single('img'), updateService)
+  .put(protect, admin, uploadSingleImage('img'), handleUploadErrors, updateService)
   .delete(protect, admin, deleteService);
 
 // Category routes

@@ -1,5 +1,6 @@
 import Review from '../models/Review.js';
 import { uploadImage } from '../utils/imageKit.js';
+import { stripHtml } from '../utils/sanitize.js';
 
 // @desc    Get all reviews
 // @route   GET /api/reviews
@@ -23,7 +24,7 @@ export const getReviews = async (req, res) => {
 
     res.json(formattedReviews);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -39,7 +40,8 @@ export const createReview = async (req, res) => {
 
     if (req.files && req.files.length > 0) {
       for (const file of req.files) {
-        const uploadResponse = await uploadImage(file.buffer, `review_${Date.now()}_${file.originalname}`);
+        // Never use client-supplied originalname in file identifiers (SEC-14)
+        const uploadResponse = await uploadImage(file.buffer, `review_${Date.now()}_${userId}`);
         uploadedImages.push({
           url: uploadResponse.url,
           fileId: uploadResponse.fileId
@@ -51,7 +53,8 @@ export const createReview = async (req, res) => {
       user: userId,
       rating,
       services: Array.isArray(services) ? services : [services],
-      review,
+      // Strip any HTML/script payloads from free-text reviews (SEC-03)
+      review: stripHtml(review),
       images: uploadedImages
     });
 

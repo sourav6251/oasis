@@ -1,62 +1,53 @@
-import ImageKit from "imagekit";
+import ImageKit from "@imagekit/nodejs";
 import dotenv from "dotenv";
 
 dotenv.config();
 
 const imagekit = new ImageKit({
-  publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
   privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
-  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT
 });
 
 /**
  * Upload an image to ImageKit
  * @param {Buffer} fileBuffer - The image file buffer
- * @param {string} fileName - The name of the file
+ * @param {string} fileName - A server-generated name (never client-supplied)
  * @returns {Promise<{url: string, fileId: string}>} - The URL and fileId of the uploaded image
  */
 const uploadImage = async (fileBuffer, fileName) => {
   try {
-    const response = await imagekit.upload({
+    const response = await imagekit.files.upload({
       file: fileBuffer,
-      fileName: fileName,
-      folder: "/profile_photos"
+      fileName: String(fileName).replace(/[^a-zA-Z0-9._-]/g, '_'),
+      folder: "/profile_photos",
+      useUniqueFileName: true,
     });
     return { url: response.url, fileId: response.fileId };
   } catch (error) {
-    console.error("ImageKit upload error:", error);
+    console.error("ImageKit upload error:", error.message);
     throw new Error("Failed to upload image to ImageKit");
   }
 };
 
 /**
- * Delete an image from ImageKit
+ * Delete an image from ImageKit.
+ *
+ * SECURITY (SEC-02): deletion is only ever performed by explicit fileId —
+ * recorded in our own database for the document being modified. URL-based
+ * lookups (list-by-name derived from user content) were removed because they
+ * allowed any authenticated user to delete files they do not own.
  * @param {string} fileId - The ID of the file to delete
- * @param {string} [url] - Optional image URL to resolve fileId if not provided
  * @returns {Promise<void>}
  */
-const deleteImage = async (fileId, url = null) => {
+const deleteImage = async (fileId) => {
   try {
-    if (fileId) {
-      await imagekit.deleteFile(fileId);
-      console.log(`Image with ID ${fileId} deleted successfully from ImageKit.`);
-      return;
+    if (!fileId || typeof fileId !== 'string') {
+      return; // nothing safe to delete
     }
-    if (url && typeof url === 'string') {
-      const parts = url.split('?')[0].split('/');
-      const fileName = parts[parts.length - 1];
-      if (fileName) {
-        const files = await imagekit.listFiles({ name: fileName, limit: 1 });
-        if (files && files.length > 0 && files[0].fileId) {
-          await imagekit.deleteFile(files[0].fileId);
-          console.log(`Image ${fileName} (ID ${files[0].fileId}) deleted successfully from ImageKit.`);
-        }
-      }
-    }
+    await imagekit.files.delete(fileId);
+    console.log(`Image with ID ${fileId} deleted successfully from ImageKit.`);
   } catch (error) {
-    console.error("ImageKit delete error:", error);
+    console.error("ImageKit delete error:", error.message);
   }
 };
 
 export { uploadImage, deleteImage };
-

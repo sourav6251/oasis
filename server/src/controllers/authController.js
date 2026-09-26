@@ -18,7 +18,16 @@ const hashOtp = async (otp) => {
 // @access  Public
 const registerUser = async (req, res) => {
   try {
-    const { email, password, fullName, role } = req.body;
+    // NOTE: `role` is intentionally NOT read from the request body (SEC-01).
+    // Privileged roles can only be assigned server-side (create_admin script).
+    const { email, password, fullName } = req.body;
+
+    if (!email || !password || !fullName) {
+      return res.status(400).json({ message: 'Email, password and full name are required' });
+    }
+    if (typeof password !== 'string' || password.length < 8) {
+      return res.status(400).json({ message: 'Password must be at least 8 characters long' });
+    }
 
     const userExists = await User.findOne({ email });
 
@@ -26,14 +35,14 @@ const registerUser = async (req, res) => {
       if (userExists.isVerified) {
         return res.status(400).json({ message: 'User already exists' });
       } else {
-        // User exists but is not verified. Resend OTP and update password if needed.
+        // User exists but is not verified. Resend OTP only — never overwrite
+        // the existing password or role (SEC-01/SEC-06).
         const otp = generateOtp();
         const hashedOtp = await hashOtp(otp);
         
-        userExists.password = password;
         userExists.otp = hashedOtp;
         userExists.otpExpires = new Date(Date.now() + 10 * 60 * 1000);
-        userExists.role = role || 'user';
+        userExists.otpAttempts = 0;
         await userExists.save();
 
         try {
@@ -64,9 +73,9 @@ const registerUser = async (req, res) => {
       email,
       password,
       fullName,
-      role: role || 'user',
       otp: hashedOtp,
       otpExpires,
+      otpAttempts: 0,
       isVerified: false,
     });
 
@@ -91,7 +100,7 @@ const registerUser = async (req, res) => {
     }
   } catch (error) {
     console.error('Registration error:', error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -117,7 +126,7 @@ const loginUser = async (req, res) => {
           image: user.image || '',
           isVerified: user.isVerified,
 
-          token: generateToken(user._id),
+          token: generateToken(user._id, user.tokenVersion),
           requiresOtp: false
         });
       }
@@ -152,7 +161,7 @@ const loginUser = async (req, res) => {
     }
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -178,8 +187,17 @@ const verifyOtp = async (req, res) => {
       return res.status(400).json({ message: 'OTP has expired' });
     }
 
+    // Cap verification attempts to prevent brute-forcing the 6-digit code (SEC-06)
+    if ((user.otpAttempts || 0) >= 5) {
+      user.otp = undefined;
+      user.otpExpires = undefined;
+      user.otpAttempts = 0;
+      await user.save();
+      return res.status(400).json({ message: 'Too many incorrect attempts. Please request a new OTP.' });
+    }
+
     // Check if OTP is correct
-    const isMatch = await bcrypt.compare(otp, user.otp);
+    const isMatch = await bcrypt.compare(String(otp), user.otp);
 
     if (isMatch) {
       // Mark as verified if not already
@@ -187,6 +205,7 @@ const verifyOtp = async (req, res) => {
       // Clear OTP
       user.otp = undefined;
       user.otpExpires = undefined;
+      user.otpAttempts = 0;
       await user.save();
 
       res.status(200).json({
@@ -199,14 +218,30 @@ const verifyOtp = async (req, res) => {
         image: user.image || '',
         isVerified: user.isVerified,
 
-        token: generateToken(user._id),
+        token: generateToken(user._id, user.tokenVersion),
       });
     } else {
+      user.otpAttempts = (user.otpAttempts || 0) + 1;
+      await user.save();
       res.status(400).json({ message: 'Invalid OTP' });
     }
   } catch (error) {
     console.error('Verify OTP error:', error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// @desc    Logout (revokes all issued tokens by bumping tokenVersion)
+// @route   POST /api/auth/logout
+// @access  Private
+const logoutUser = async (req, res) => {
+  try {
+    await User.findByIdAndUpdate(req.user._id, { $inc: { tokenVersion: 1 } });
+    res.clearCookie('AccessToken');
+    res.status(200).json({ message: 'Logged out successfully' });
+  } catch (error) {
+    console.error('Logout error:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -244,7 +279,7 @@ const uploadProfilePhoto = async (req, res) => {
     });
   } catch (error) {
     console.error('Profile photo upload error:', error);
-    res.status(500).json({ message: 'Failed to upload profile photo: ' + error.message });
+    res.status(500).json({ message: 'Failed to upload profile photo.' });
   }
 };
 
@@ -273,7 +308,7 @@ const getUserProfile = async (req, res) => {
       res.status(404).json({ message: 'User not found' });
     }
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -293,9 +328,24 @@ const updateUserProfile = async (req, res) => {
         if (emailExists) {
           return res.status(400).json({ message: 'Email is already in use' });
         }
+        // Email change requires re-verification and revokes existing sessions (SEC-07)
+        const otp = generateOtp();
+        const hashedOtp = await hashOtp(otp);
         user.email = email;
-        // If email changes, you might want to set isVerified to false
-        // user.isVerified = false; 
+        user.isVerified = false;
+        user.otp = hashedOtp;
+        user.otpExpires = new Date(Date.now() + 10 * 60 * 1000);
+        user.otpAttempts = 0;
+        user.tokenVersion = (user.tokenVersion || 0) + 1;
+        try {
+          await sendEmail({
+            email: user.email,
+            subject: 'Oasis - Verify your new email',
+            message: `Your OTP is: ${otp}. It will expire in 10 minutes.`,
+          });
+        } catch (error) {
+          console.error('Email send failed:', error);
+        }
       }
 
       if (fullName) {
@@ -321,12 +371,13 @@ const updateUserProfile = async (req, res) => {
     }
   } catch (error) {
     console.error('Update profile error:', error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
 export {
   registerUser,
+  logoutUser,
   loginUser,
   verifyOtp,
   uploadProfilePhoto,

@@ -24,6 +24,7 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
+      minlength: [8, 'Password must be at least 8 characters long'],
     },
     isVerified: {
       type: Boolean,
@@ -47,6 +48,15 @@ const userSchema = new mongoose.Schema(
     },
     otpExpires: {
       type: Date,
+    },
+    otpAttempts: {
+      type: Number,
+      default: 0,
+    },
+    // Incremented on logout / credential change to invalidate issued JWTs (SEC-07)
+    tokenVersion: {
+      type: Number,
+      default: 0,
     },
   },
   { timestamps: true }

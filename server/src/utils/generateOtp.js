@@ -1,6 +1,8 @@
-// Generate a 6 digit random OTP
+import crypto from 'crypto';
+
+// Generate a cryptographically secure 6-digit OTP (SEC-06)
 const generateOtp = () => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+  return crypto.randomInt(100000, 1000000).toString();
 };
 
 export default generateOtp;

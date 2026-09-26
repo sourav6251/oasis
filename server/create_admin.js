@@ -9,7 +9,15 @@ const createAdmin = async () => {
     await mongoose.connect(process.env.MONGO_URI);
     console.log('Connected to MongoDB');
 
-    const adminEmail = 'admin@oasis.com';
+    // Credentials must come from the environment — never hardcode them (SEC-05)
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const adminPassword = process.env.ADMIN_BOOTSTRAP_PASSWORD;
+
+    if (!adminEmail || !adminPassword || adminPassword.length < 12) {
+      throw new Error(
+        'Refusing to run: set ADMIN_EMAIL and ADMIN_BOOTSTRAP_PASSWORD (min 12 chars) in the environment.'
+      );
+    }
     const adminExists = await User.findOne({ email: adminEmail });
 
     if (adminExists) {
@@ -20,8 +28,8 @@ const createAdmin = async () => {
     } else {
       await User.create({
         email: adminEmail,
-        password: 'adminpassword123',
-        fullName: 'Admin User',
+        password: adminPassword,
+        fullName: process.env.ADMIN_FULL_NAME || 'Admin User',
         role: 'admin',
         isVerified: true,
       });
