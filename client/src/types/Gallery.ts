@@ -6,6 +6,7 @@ export interface GalleryWork {
   description: string;
   duration: string;
   stylist: string;
+  isTeachWork?: boolean;
 }
 
 export interface GalleryCategory {

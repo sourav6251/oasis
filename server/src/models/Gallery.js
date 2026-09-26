@@ -24,6 +24,10 @@ const gallerySchema = new mongoose.Schema({
   },
   stylist: {
     type: String,
+  },
+  isTeachWork: {
+    type: Boolean,
+    default: false
   }
 }, { timestamps: true });
 

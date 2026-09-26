@@ -154,7 +154,7 @@
         <!-- CTA buttons overlaid on the image -->
         <div class="promise-actions">
           <button class="cta-book-btn" @click="bookNow">Book Your Experience</button>
-          <button class="cta-explore-btn" @click="exploreServices">Explore Services</button>
+          <RouterLink to="/service" class="cta-explore-btn" >Explore Services</RouterLink>
         </div>
       </div>
     </div>
@@ -171,7 +171,7 @@ import { ref } from 'vue';
 // Features rendered statically in template with inline SVGs
 
 const bookNow = () => {
-  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  window.open('https://wa.me/9531500843', '_blank');
 };
 
 const exploreServices = () => {
@@ -577,6 +577,7 @@ const exploreServices = () => {
 }
 
 .cta-explore-btn {
+  text-decoration: none;
   background: transparent;
   color: rgba(255, 255, 255, 0.75);
   font-family: 'Inter', sans-serif;
@@ -588,6 +589,7 @@ const exploreServices = () => {
   cursor: pointer;
   transition: color 0.3s ease, border-color 0.3s ease;
   white-space: nowrap;
+  
 }
 
 .cta-explore-btn:hover {

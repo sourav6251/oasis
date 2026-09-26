@@ -55,12 +55,12 @@ const router = createRouter({
       name: 'services',
       component: ServicesView,
     },
-    {
-      path: '/booking',
-      name: 'booking',
-      component: BookingView,
-      meta: { requiresAuth: true }
-    },
+    // {
+    //   path: '/booking',
+    //   name: 'booking',
+    //   component: BookingView,
+    //   meta: { requiresAuth: true }
+    // },
     {
       path: '/gallery',
       name: 'Gallery',
@@ -70,6 +70,11 @@ const router = createRouter({
       path: '/beauty-tips',
       name: 'Beauty',
       component: BeautyView,
+    },
+    {
+      path: '/teach',
+      name: 'Teach',
+      component: () => import('@/views/TeachView.vue'),
     },
     {
       path: '/contact',
@@ -91,6 +96,10 @@ const router = createRouter({
       name: 'Admin',
       component: AdminView,
       // meta: { requiresAuth: true, requiresAdmin: true }
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      redirect: '/',
     },
   ],
 })

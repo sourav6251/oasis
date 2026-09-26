@@ -192,16 +192,24 @@
               </div>
 
               <!-- Submit -->
-              <button type="submit" class="btn-gold form-submit">
-                <v-icon icon="mdi-send" size="18"></v-icon>
-                Send Message
+              <button type="submit" class="btn-gold form-submit" :disabled="submitting">
+                <v-icon :icon="submitting ? 'mdi-loading' : 'mdi-send'" size="18"></v-icon>
+                {{ submitting ? 'Sending...' : 'Send Message' }}
               </button>
 
               <!-- Success -->
               <Transition name="fade">
                 <div v-if="submitted" class="f-success">
                   <v-icon icon="mdi-check-circle" size="20" color="#2e7d32"></v-icon>
-                  Message sent! We'll get back to you within 24 hours.
+                  Message sent and saved! We'll get back to you within 24 hours.
+                </div>
+              </Transition>
+
+              <!-- Error -->
+              <Transition name="fade">
+                <div v-if="errorMessage" class="f-error" style="color: #d32f2f; margin-top: 1rem; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem;">
+                  <v-icon icon="mdi-alert-circle-outline" size="20" color="#d32f2f"></v-icon>
+                  {{ errorMessage }}
                 </div>
               </Transition>
 
@@ -279,7 +287,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, computed, watch } from 'vue';
+import axiosInstance from '@/api/apiInstance';
+import { useAuthStore } from '@/stores/authStore';
 
 export default defineComponent({
   name: 'ContactPage',
@@ -325,17 +335,56 @@ export default defineComponent({
       'Other',
     ];
 
-    /* ── FORM ─────────────────────────────────────────── */
-    const form = ref({ name: '', email: '', phone: '', subject: '', message: '' });
-    const submitted = ref(false);
+    /* ── AUTH AUTOFILL & FORM ─────────────────────────── */
+    const authStore = useAuthStore();
+    const currentUser = computed(() => authStore.currentUser);
 
-    const submitForm = () => {
-      submitted.value = true;
-      form.value = { name: '', email: '', phone: '', subject: '', message: '' };
-      setTimeout(() => (submitted.value = false), 5000);
+    const form = ref({
+      name: authStore.user?.fullName || '',
+      email: authStore.user?.email || '',
+      phone: authStore.user?.mobileNumber || '',
+      subject: '',
+      message: ''
+    });
+
+    // Autofill when user logs in or profile loads
+    watch(currentUser, (user) => {
+      if (user) {
+        if (!form.value.name) form.value.name = user.fullName || '';
+        if (!form.value.email) form.value.email = user.email || '';
+        if (!form.value.phone && user.mobileNumber) form.value.phone = user.mobileNumber;
+      }
+    }, { immediate: true });
+
+    const submitted = ref(false);
+    const submitting = ref(false);
+    const errorMessage = ref('');
+
+    const submitForm = async () => {
+      submitting.value = true;
+      errorMessage.value = '';
+      try {
+        await axiosInstance.post('/contact', form.value);
+        submitted.value = true;
+        // Reset subject and message, retain user details if logged in
+        form.value = {
+          name: authStore.user?.fullName || '',
+          email: authStore.user?.email || '',
+          phone: authStore.user?.mobileNumber || '',
+          subject: '',
+          message: ''
+        };
+        setTimeout(() => (submitted.value = false), 6000);
+      } catch (error: any) {
+        console.error('Contact submission error:', error);
+        errorMessage.value = error.response?.data?.message || 'Failed to send message. Please try again.';
+        setTimeout(() => (errorMessage.value = ''), 6000);
+      } finally {
+        submitting.value = false;
+      }
     };
 
-    return { infoItems, hours, socials, subjects, form, submitted, submitForm };
+    return { infoItems, hours, socials, subjects, form, submitted, submitting, errorMessage, submitForm };
   },
 });
 </script>

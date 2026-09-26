@@ -77,7 +77,7 @@
           </div>
           
           <div class="user-meta">
-            <span class="user-name">{{ authStore.userName || 'User' }}</span>
+            <span class="user-name text-nowrap">{{ authStore.userName || 'User' }}</span>
             <span class="user-role">Member</span>
           </div>
         </button>
@@ -234,6 +234,7 @@ export default defineComponent({
       { name: "Home",        link: "/" },
       { name: "Services",   link: "/service" },
       { name: "Gallery",    link: "/gallery" },
+      { name: "Teach Works", link: "/teach" },
       { name: "Reviews",    link: "/review" },
       // { name: "Booking",    link: "/booking" },
       { name: "Contact",    link: "/contact" },
@@ -242,8 +243,8 @@ export default defineComponent({
       { name: "About Us",   link: "/about" },
     ];
 
-    const mainLinks      = allLinksRaw.slice(0, 7);   // Home → Contact
-    const secondaryLinks = allLinksRaw.slice(7);       // Beauty Tips, Policies
+    const mainLinks      = allLinksRaw.slice(0, 8);   // Home → Contact
+    const secondaryLinks = allLinksRaw.slice(8);       // Beauty Tips, Policies
     const allLinks       = allLinksRaw;
 
     const login = () => {

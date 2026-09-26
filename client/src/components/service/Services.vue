@@ -150,7 +150,7 @@
               <h3>{{ service.name }}</h3>
               <div class="svc-meta">
                 <span><v-icon icon="mdi-clock-outline" size="15"></v-icon> {{ service.duration }}</span>
-                <span class="svc-price"><v-icon icon="mdi-tag-outline" size="15"></v-icon> {{ service.price }}</span>
+                <!-- <span class="svc-price"><v-icon icon="mdi-tag-outline" size="15"></v-icon> {{ service.price }}</span> -->
               </div>
               <p>{{ service.description }}</p>
               <ul class="svc-features">
@@ -386,12 +386,11 @@
     </v-dialog>
 
     <!-- ── PACKAGES ────────────────────────────────── -->
-    <section class="packages-section" v-if="packages.length > 0 || isAdmin">
-      <!-- decorative background -->
+    <!-- <section class="packages-section" v-if="packages.length > 0 || isAdmin">
+      
       <div class="packages-bg-deco" aria-hidden="true"></div>
 
       <div class="container">
-        <!-- Header -->
         <div class="section-header" v-motion :initial="{ opacity: 0, y: 40 }" :visibleOnce="{ opacity: 1, y: 0 }" :duration="900">
           <span class="eyebrow">Special Packages</span>
           <div class="header-with-action">
@@ -405,7 +404,6 @@
           </div>
         </div>
 
-        <!-- Package cards -->
         <div class="packages-grid" v-if="packages.length > 0">
           <div
             v-for="(pkg, index) in packages"
@@ -414,16 +412,12 @@
             :class="{ 'pkg-card--popular': pkg.popular }"
             v-motion :initial="{ opacity: 0, y: 60 }" :visibleOnce="{ opacity: 1, y: 0 }" :delay="200 + index * 150" :duration="900"
           >
-            <!-- Hover glow -->
             <div class="pkg-card__glow" aria-hidden="true"></div>
-            <!-- Top accent -->
             <div class="pkg-card__top-line" aria-hidden="true"></div>
-            <!-- Decorative number -->
             <span class="pkg-card__num" aria-hidden="true">{{ String(index + 1).padStart(2,'0') }}</span>
 
             <div v-if="pkg.popular" class="pkg-popular-tag">⭐ Most Popular</div>
 
-            <!-- Admin Actions Overlay -->
             <div v-if="isAdmin" class="svc-admin-actions">
               <button class="action-btn edit" @click.stop="openEditPackageDialog(pkg)" title="Edit Package">
                 <v-icon icon="mdi-pencil" size="18"></v-icon>
@@ -433,7 +427,6 @@
               </button>
             </div>
 
-            <!-- Icon -->
             <div class="pkg-icon">
               <v-icon icon="mdi-diamond-stone" color="white" size="24"></v-icon>
             </div>
@@ -455,13 +448,12 @@
           </div>
         </div>
 
-        <!-- Admin Empty State -->
         <div v-else-if="isAdmin" class="empty-state">
           <v-icon icon="mdi-package-variant" size="52" color="#eaa636"></v-icon>
           <p>No packages created yet. Click the + button to add one.</p>
         </div>
       </div>
-    </section>
+    </section> -->
 
     <!-- ── CTA BANNER ─────────────────────────────── -->
     <section class="cta-section">
@@ -655,8 +647,13 @@ export default {
     };
 
     /* ── ACTIONS ───────────────────────────────────── */
-    const bookNow     = () => alert('Redirecting to booking…');
-    const bookService = (s: Service)       => alert(`Booking: ${s.name}`);
+     const bookNow     = () => {
+      window.open('https://wa.me/919531500843', '_blank');
+    };
+    const bookService = (s: Service) => {
+      const text = encodeURIComponent(`Hello, I would like to book: ${s.name}`);
+      window.open(`https://wa.me/919531500843?text=${text}`, '_blank');
+    };
     const bookPackage = (p: ServicePackage) => alert(`Booking package: ${p.name}`);
     const scrollToServices = () => {
       servicesSectionRef.value?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1182,7 +1179,7 @@ h1, h2 {
   .services-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  .svc-card--offset { margin-top: 2.5rem; }
+  /* .svc-card--offset { margin-top: 2.5rem; } */
 }
 @media (min-width: 1024px) {
   .services-grid {
@@ -1898,7 +1895,7 @@ h1, h2 {
   .hero-btns    { justify-content: center; }
   .tabs-wrap    { flex-wrap: wrap; justify-content: center; }
   .services-grid { grid-template-columns: 1fr; }
-  .svc-card--offset { margin-top: 0; }
+  /* .svc-card--offset { margin-top: 0; } */
 }
 /* Admin Actions */
 .manage-cats-btn {

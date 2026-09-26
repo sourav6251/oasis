@@ -107,10 +107,10 @@
 
 <script setup lang="ts">
 const socials = [
-  { icon: 'mdi-facebook', link: 'https://www.facebook.com/oasismakeover?mibextid=ZbWKwL' },
-  { icon: 'mdi-youtube', link: 'https://youtube.com/@Oasismakeover?si=HIspPYpV68fnXtZo' },
-  { icon: 'mdi-instagram', link: '#' }, // Added for layout balance
-  { icon: 'mdi-whatsapp', link: 'https://wa.me/919531500843' }
+  { icon: 'mdi-facebook', link: 'https://www.facebook.com/share/18DMSkX6ty/' },
+  // { icon: 'mdi-youtube', link: 'https://youtube.com/@Oasismakeover?si=HIspPYpV68fnXtZo' },
+  { icon: 'mdi-instagram', link: 'https://www.instagram.com/oasis_makeover?stkn=MTZqYzl6c2RodXRz' }, // Added for layout balance
+  { icon: 'mdi-whatsapp', link: 'https://wa.me/9531500843' }
 ];
 
 const contactInfo = [
@@ -125,7 +125,8 @@ const navigationLinks = [
   { name: 'Services', path: '/service' },
   { name: 'Packages', path: '/packages' },
   { name: 'Gallery', path: '/gallery' },
-  { name: 'Booking', path: '/booking' },
+  { name: 'Teach Works', path: '/teach' },
+  // { name: 'Booking', path: '/booking' },
   { name: 'Contact', path: '/contact' },
   { name: 'About Us', path: '/about' },
   { name: 'Reviews', path: '/review' }

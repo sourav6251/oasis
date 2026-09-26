@@ -32,17 +32,29 @@ const uploadImage = async (fileBuffer, fileName) => {
 /**
  * Delete an image from ImageKit
  * @param {string} fileId - The ID of the file to delete
+ * @param {string} [url] - Optional image URL to resolve fileId if not provided
  * @returns {Promise<void>}
  */
-const deleteImage = async (fileId) => {
+const deleteImage = async (fileId, url = null) => {
   try {
-    if (!fileId) return;
-    await imagekit.deleteFile(fileId);
-    console.log(`Image with ID ${fileId} deleted successfully from ImageKit.`);
+    if (fileId) {
+      await imagekit.deleteFile(fileId);
+      console.log(`Image with ID ${fileId} deleted successfully from ImageKit.`);
+      return;
+    }
+    if (url && typeof url === 'string') {
+      const parts = url.split('?')[0].split('/');
+      const fileName = parts[parts.length - 1];
+      if (fileName) {
+        const files = await imagekit.listFiles({ name: fileName, limit: 1 });
+        if (files && files.length > 0 && files[0].fileId) {
+          await imagekit.deleteFile(files[0].fileId);
+          console.log(`Image ${fileName} (ID ${files[0].fileId}) deleted successfully from ImageKit.`);
+        }
+      }
+    }
   } catch (error) {
     console.error("ImageKit delete error:", error);
-    // We don't necessarily want to throw here if deletion fails, 
-    // but maybe log it so we know we have a orphan file.
   }
 };
 

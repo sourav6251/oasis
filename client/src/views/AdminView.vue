@@ -288,6 +288,10 @@
             <label>Description *</label>
             <textarea v-model="galleryForm.description" required rows="3"></textarea>
           </div>
+          <div class="form-group" style="display: flex; align-items: center; gap: 8px; flex-direction: row;">
+            <input type="checkbox" v-model="galleryForm.isTeachWork" id="isTeachWorkAdmin" style="width: auto; margin: 0;" />
+            <label for="isTeachWorkAdmin" style="margin: 0; font-weight: normal;">Is Teach Work?</label>
+          </div>
           <div class="form-group">
             <label>Image *</label>
             <input type="file" @change="onGalleryImageChange" accept="image/*" :required="!editingGalleryWork" />
@@ -356,7 +360,8 @@ const galleryForm = ref({
   image: '',
   description: '',
   duration: '',
-  stylist: ''
+  stylist: '',
+  isTeachWork: false
 });
 const galleryImageFile = ref<File | null>(null);
 const galleryImagePreview = ref<string>('');
@@ -633,7 +638,8 @@ const openGalleryForm = (work?: GalleryWork) => {
       image: work.image,
       description: work.description,
       duration: work.duration,
-      stylist: work.stylist
+      stylist: work.stylist,
+      isTeachWork: work.isTeachWork || false
     };
     galleryImagePreview.value = work.image;
   } else {
@@ -644,7 +650,8 @@ const openGalleryForm = (work?: GalleryWork) => {
       image: '',
       description: '',
       duration: '',
-      stylist: ''
+      stylist: '',
+      isTeachWork: false
     };
     galleryImagePreview.value = '';
   }
@@ -680,6 +687,7 @@ const saveGalleryWork = async () => {
     formData.append('description', galleryForm.value.description);
     formData.append('duration', galleryForm.value.duration);
     formData.append('stylist', galleryForm.value.stylist);
+    formData.append('isTeachWork', galleryForm.value.isTeachWork.toString());
 
     if (galleryImageFile.value) {
       formData.append('image', galleryImageFile.value);

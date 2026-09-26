@@ -10,10 +10,11 @@ const sendEmail = async (options) => {
   });
 
   const mailOptions = {
-    from: `"Oasis" <${process.env.EMAIL_USER}>`,
+    from: `"Oasis Beauty" <${process.env.EMAIL_USER}>`,
     to: options.email,
     subject: options.subject,
     text: options.message,
+    html: options.html || options.message,
   };
 
   await transporter.sendMail(mailOptions);

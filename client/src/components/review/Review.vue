@@ -385,8 +385,8 @@
           class="cta-btns"
           v-motion :initial="{ opacity:0, y:20 }" :visibleOnce="{ opacity:1, y:0 }" :duration="800" :delay="450"
         >
-          <button class="btn-gold">Book Appointment</button>
-          <a href="https://wa.me/9932269688" class="btn-whatsapp" target="_blank" rel="noopener">
+          <button class="btn-gold" @click="globalBookNow">Book Appointment</button>
+          <a href="https://wa.me/919531500843" class="btn-whatsapp" target="_blank" rel="noopener">
             <v-icon icon="mdi-whatsapp" size="20" color="white"></v-icon> WhatsApp Us
           </a>
         </div>
@@ -667,6 +667,12 @@ export default defineComponent({
       }
     };
 
+
+    const  globalBookNow= (item?: any) => {
+      const text = 'Can you help me book an appointment?'
+      window.open(`https://wa.me/919531500843?text=${text}`, '_blank');
+    };
+
     const fetchServiceData = async () => {
       try {
         const [categories, servicesList] = await Promise.all([
@@ -701,7 +707,7 @@ export default defineComponent({
       hoverRating, form, ratingLabel, submitted, submitting,
       imagePreviews, handleImageUpload, removeImage,
       sliderStyle, setFilterRef, setFilter, resetFilters,
-      submitReview, formatDate, cardClass,
+      submitReview, formatDate, cardClass,globalBookNow,
       loadingReviews, fetchError, fetchReviews
     };
   },

@@ -490,6 +490,20 @@ class ApiStore {
         }
     }
 
+    /**
+     * Delete blog
+     * DELETE /api/blogs/:id
+     */
+    deleteBlog = async (id: string) => {
+        try {
+            const response = await axiosInstance.delete(`/blogs/${id}`);
+            return response.data;
+        } catch (error) {
+            console.error("Error deleting blog:", error);
+            throw error;
+        }
+    }
+
     // ============================================
     // REVIEW APIs
     // ============================================

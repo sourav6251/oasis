@@ -11,7 +11,7 @@
           </div>
         </div>
         <h2 class="text-4xl font-extrabold text-[#1e1916]">Verify Your Email</h2>
-        <p class="mt-2 text-sm text-[#545454]">We sent a code to <span class="font-semibold text-[#eaa636]">{{ email }}</span></p>
+        <p class="mt-2 text-sm text-[#545454]">We sent a code to <a class="font-semibold text-[#eaa636]" :href="`mailto:${email}`">{{ email }}</a></p>
       </div>
 
       <!-- OTP Form -->

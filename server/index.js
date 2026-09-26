@@ -9,6 +9,8 @@ import galleryRoutes from './src/routes/galleryRoutes.js';
 import galleryCategoryRoutes from './src/routes/galleryCategoryRoutes.js';
 import reviewRoutes from './src/routes/reviewRoutes.js';
 import blogRoutes from './src/routes/blogRoutes.js';
+import contactRoutes from './src/routes/contactRoutes.js';
+import subscriberRoutes from './src/routes/subscriberRoutes.js';
 import cookieParser from 'cookie-parser';
 
 const app = express();
@@ -22,7 +24,7 @@ app.use(cookieParser());
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:5001',
   credentials: true,
-  // methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   // allowedHeaders: ['Content-Type', 'Authorization'],
   // exposeHeaders: ['Set-Cookie'],
 }));
@@ -35,6 +37,8 @@ app.use('/api/gallery', galleryRoutes);
 app.use('/api/gallery-categories', galleryCategoryRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/blogs', blogRoutes);
+app.use('/api/contact', contactRoutes);
+app.use('/api/subscribers', subscriberRoutes);
 
 // Health check
 app.get('/', (req, res) => {

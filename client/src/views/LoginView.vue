@@ -49,16 +49,16 @@
         </div>
 
         <!-- Error Message -->
-        <div v-if="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+        <div v-if="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mt-1">
           {{ error }}
         </div>
 
         <!-- Login Button -->
-        <div>
+        <div class="mt-2">
           <button
             type="submit"
             :disabled="loading"
-            class="group relative w-full flex items-center justify-center gap-3 py-4 px-6 text-base font-bold rounded-xl text-white bg-gradient-to-r from-[#eaa636] via-[#d4952b] to-[#c48726] hover:from-[#d4952b] hover:via-[#c48726] hover:to-[#b37b1f] focus:outline-none focus:ring-4 focus:ring-[#eaa636]/30 transition-all duration-300 shadow-lg shadow-[#eaa636]/40 hover:shadow-xl hover:shadow-[#eaa636]/50 transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-md"
+            class="group relative w-full flex items-center justify-center gap-3 py-2 px-1 text-base font-bold rounded-xl text-white bg-gradient-to-r from-[#eaa636] via-[#d4952b] to-[#c48726] hover:from-[#d4952b] hover:via-[#c48726] hover:to-[#b37b1f] focus:outline-none focus:ring-4 focus:ring-[#eaa636]/30 transition-all duration-300 shadow-lg shadow-[#eaa636]/40 hover:shadow-xl hover:shadow-[#eaa636]/50 transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-md"
           >
             <!-- Loading Spinner -->
             <svg
@@ -84,17 +84,7 @@
             </svg>
             
             <span class="font-extrabold tracking-wide">{{ loading ? 'Signing In...' : 'Sign In' }}</span>
-            
-            <!-- Arrow Icon -->
-            <svg
-              v-if="!loading"
-              class="w-5 h-5 transition-transform group-hover:translate-x-1"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
+          
           </button>
         </div>
 

@@ -11,16 +11,16 @@
         <span
           class="eyebrow"
           v-motion :initial="{ opacity: 0, y: 20 }" :enter="{ opacity: 1, y: 0 }" :duration="800"
-        >Our Gallery</span>
+        >{{ teachOnly ? 'Teach Works' : 'Our Gallery' }}</span>
         <h1
           v-motion :initial="{ opacity: 0, y: 40 }" :enter="{ opacity: 1, y: 0 }" :duration="1000" :delay="150"
         >
-          Artistry in <span class="gold">Every Frame</span>
+          {{ teachOnly ? 'Educational' : 'Artistry in' }} <span class="gold">{{ teachOnly ? 'Excellence' : 'Every Frame' }}</span>
         </h1>
         <p
           v-motion :initial="{ opacity: 0, y: 30 }" :enter="{ opacity: 1, y: 0 }" :duration="900" :delay="300"
         >
-          Discover the transformations, artistry and luminous results our clients experience at Oasis.
+          {{ teachOnly ? 'Explore our educational works and tutorials at Oasis.' : 'Discover the transformations, artistry and luminous results our clients experience at Oasis.' }}
         </p>
         <div class="hero-divider"
           v-motion :initial="{ opacity: 0 }" :enter="{ opacity: 1 }" :duration="800" :delay="500"
@@ -94,8 +94,8 @@
           <div 
             v-if="isAdmin"
             class="mosaic-item mosaic-item--add"
+            style="--anim-delay: 0ms;"
             @click="openAddModal"
-            v-motion :initial="{ opacity: 0, scale: 0.92 }" :visibleOnce="{ opacity: 1, scale: 1 }" :duration="800"
           >
             <div class="add-content">
               <div class="add-icon">
@@ -111,11 +111,11 @@
             :key="work._id"
             class="mosaic-item"
             :class="getMosaicClass(isAdmin ? index + 1 : index)"
+            :style="{ '--anim-delay': `${Math.min((isAdmin ? index + 1 : index) * 55, 600)}ms` }"
             @click="openLightbox(work, index)"
-            v-motion :initial="{ opacity: 0, scale: 0.92 }" :visibleOnce="{ opacity: 1, scale: 1 }" :delay="(isAdmin ? index + 1 : index) * 80" :duration="800"
           >
             <!-- Image -->
-            <img :src="work.image" :alt="work.title" loading="lazy" />
+            <img :src="work.image" :alt="work.title" />
 
             <!-- Decorative inner border -->
             <div class="mosaic-border" aria-hidden="true"></div>
@@ -265,6 +265,11 @@
                   <label>Stylist</label>
                   <input v-model="newWorkForm.stylist" type="text" placeholder="e.g. Priya Sharma" />
                 </div>
+                
+                <div class="form-group" style="display: flex; align-items: center; gap: 8px; flex-direction: row; grid-column: 1 / -1;">
+                  <input v-model="newWorkForm.isTeachWork" type="checkbox" id="isTeachWorkModal" style="width: auto; margin: 0;" />
+                  <label for="isTeachWorkModal" style="margin: 0; font-weight: normal;">Is Teach Work?</label>
+                </div>
               </div>
 
               <div class="form-group">
@@ -370,8 +375,8 @@
           class="cta-btns"
           v-motion :initial="{ opacity: 0, y: 20 }" :visibleOnce="{ opacity: 1, y: 0 }" :duration="800" :delay="450"
         >
-          <button class="btn-gold" @click="bookNow">Book Appointment</button>
-          <a href="https://wa.me/9932269688" class="btn-whatsapp" target="_blank" rel="noopener">
+          <button class="btn-gold" @click="globalBookNow">Book Appointment</button>
+          <a href="https://wa.me/9531500843" class="btn-whatsapp" target="_blank" rel="noopener">
             <v-icon icon="mdi-whatsapp" size="20" color="white"></v-icon> WhatsApp Us
           </a>
         </div>
@@ -399,7 +404,13 @@ import { defineComponent, ref, computed, onMounted, nextTick, watch, type Compon
 
 export default defineComponent({
   name: 'Gallery',
-  setup() {
+  props: {
+    teachOnly: {
+      type: Boolean,
+      default: false
+    }
+  },
+  setup(props) {
     const authStore        = useAuthStore();
     const activeFilter     = ref<string>('all');
     const showLightbox     = ref<boolean>(false);
@@ -444,7 +455,8 @@ export default defineComponent({
       category: '',
       description: '',
       duration: '',
-      stylist: ''
+      stylist: '',
+      isTeachWork: false
     });
 
     /* ── COMPUTED ─────────────────────────────────────── */
@@ -523,12 +535,12 @@ export default defineComponent({
     const openLightbox = (_work: GalleryWork, index: number) => {
       currentWorkIndex.value = index;
       showLightbox.value     = true;
-      document.body.style.overflow = 'hidden';
+      // document.body.style.overflow = 'hidden';
     };
 
     const closeLightbox = () => {
       showLightbox.value = false;
-      document.body.style.overflow = '';
+      // document.body.style.overflow = '';
     };
 
     const nextImage = () => {
@@ -560,7 +572,18 @@ export default defineComponent({
       if (sentinelRef.value) observer.observe(sentinelRef.value);
     };
 
-    const bookNow = () => alert('Redirecting to booking…');
+    const  globalBookNow= (item?: any) => {
+      const text = 'Can you help me book an appointment?'
+      window.open(`https://wa.me/919531500843?text=${text}`, '_blank');
+    };
+
+    const bookNow = (item?: any) => {
+      const name = (typeof item === 'object' && item?.title) || (typeof item === 'string' && item) || currentWork.value?.title;
+      const text = name
+        ? encodeURIComponent(`Hello, I would like to book: ${name}`)
+        : encodeURIComponent('Hello, I would like to book an appointment');
+      window.open(`https://wa.me/919531500843?text=${text}`, '_blank');
+    };
 
     /* ── ADMIN ACTIONS ────────────────────────────────── */
     const openAddModal = () => {
@@ -571,12 +594,13 @@ export default defineComponent({
         category: '',
         description: '',
         duration: '',
-        stylist: ''
+        stylist: '',
+        isTeachWork: false
       };
       newWorkImageFile.value = null;
       newWorkImagePreview.value = '';
       showAddModal.value = true;
-      document.body.style.overflow = 'hidden';
+      // document.body.style.overflow = 'hidden';
     };
 
     const openEditModal = (work: GalleryWork) => {
@@ -587,17 +611,18 @@ export default defineComponent({
         category: work.category,
         description: work.description,
         duration: work.duration,
-        stylist: work.stylist
+        stylist: work.stylist,
+        isTeachWork: work.isTeachWork || false
       };
       newWorkImageFile.value = null;
       newWorkImagePreview.value = work.image;
       showAddModal.value = true;
-      document.body.style.overflow = 'hidden';
+      // document.body.style.overflow = 'hidden';
     };
 
     const closeAddModal = () => {
       showAddModal.value = false;
-      document.body.style.overflow = '';
+      // document.body.style.overflow = '';
     };
 
     const openCategoryModal = () => {
@@ -606,12 +631,12 @@ export default defineComponent({
         icon: 'mdi-star'
       };
       showCategoryModal.value = true;
-      document.body.style.overflow = 'hidden';
+      // document.body.style.overflow = 'hidden';
     };
 
     const closeCategoryModal = () => {
       showCategoryModal.value = false;
-      document.body.style.overflow = '';
+      // document.body.style.overflow = '';
     };
 
     const triggerFileInput = () => {
@@ -660,6 +685,7 @@ export default defineComponent({
         formData.append('description', newWorkForm.value.description);
         formData.append('duration', newWorkForm.value.duration);
         formData.append('stylist', newWorkForm.value.stylist);
+        formData.append('isTeachWork', newWorkForm.value.isTeachWork.toString());
         
         if (newWorkImageFile.value) {
           formData.append('image', newWorkImageFile.value);
@@ -725,7 +751,10 @@ export default defineComponent({
     const loadGalleryWorks = async () => {
       try {
         loading.value = true;
-        galleryWorks.value = await apiStore.getAllGalleries();
+        const allWorks = await apiStore.getAllGalleries();
+        galleryWorks.value = props.teachOnly 
+          ? allWorks.filter(w => w.isTeachWork) 
+          : allWorks.filter(w => !w.isTeachWork);
       } catch {
         // galleryWorks.value = [
         //   // ── BRIDAL ─────────────────────────────────────
@@ -844,7 +873,7 @@ export default defineComponent({
       setFilterButtonRef, setActiveFilter,
       getMosaicClass,
       openLightbox, closeLightbox, nextImage, prevImage,
-      loadMore, bookNow,
+      loadMore, bookNow,globalBookNow,
       // Admin
       isAdmin, showAddModal, saving, newWorkForm, newWorkImagePreview, 
       isEditing, availableCategories, openAddModal, openEditModal, closeAddModal, onImageChange, saveNewWork,
@@ -1178,19 +1207,33 @@ h1, h2, h3 {
 .mosaic-item--large { grid-column: span 2; grid-row: span 2; }
 .mosaic-item--tall  { grid-row: span 2; }
 
+@keyframes mosaicSmoothLoad {
+  0% {
+    opacity: 0;
+    transform: translateY(28px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .mosaic-item {
   position: relative;
   overflow: hidden;
   border-radius: 16px;
-  background: #1e1916;
+  background: linear-gradient(135deg, #1e1916 0%, #28201a 50%, #1e1916 100%);
   cursor: pointer;
+  animation: mosaicSmoothLoad 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--anim-delay, 0ms);
+  will-change: transform, opacity;
 }
 .mosaic-item img {
   width: 100%; height: 100%; object-fit: cover;
-  transition: transform 0.7s ease, opacity 0.5s ease;
-  opacity: 0.82;
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+  opacity: 0.85;
 }
-.mosaic-item:hover img { transform: scale(1.1); opacity: 0.62; }
+.mosaic-item:hover img { transform: scale(1.08); opacity: 0.65; }
 
 /* Decorative border */
 .mosaic-border {
@@ -1298,8 +1341,9 @@ h1, h2, h3 {
 /* ── LIGHTBOX ────────────────────────────────────────── */
 .lightbox {
   position: fixed; inset: 0; z-index: 9000;
-  background: rgba(20,15,10,0.92);
-  backdrop-filter: blur(6px);
+  background: rgba(20, 15, 10, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   display: flex; align-items: center; justify-content: center;
   padding: 1.5rem;
 }
@@ -1397,8 +1441,9 @@ h1, h2, h3 {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(30, 25, 22, 0.85);
-  backdrop-filter: blur(8px);
+  background: rgba(30, 25, 22, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   display: flex;
   align-items: center;
   justify-content: center;

@@ -18,7 +18,7 @@ export const getGalleryItems = async (req, res) => {
 // @access  Private/Admin
 export const createGalleryItem = async (req, res) => {
   try {
-    const { title, category, description, duration, stylist } = req.body;
+    const { title, category, description, duration, stylist, isTeachWork } = req.body;
     
     let imageUrl = '';
     let imageFileId = '';
@@ -38,7 +38,8 @@ export const createGalleryItem = async (req, res) => {
       imgFileId: imageFileId,
       description,
       duration,
-      stylist
+      stylist,
+      isTeachWork: isTeachWork === 'true' || isTeachWork === true
     });
 
     const createdItem = await item.save();
@@ -54,7 +55,7 @@ export const createGalleryItem = async (req, res) => {
 // @access  Private/Admin
 export const updateGalleryItem = async (req, res) => {
   try {
-    const { title, category, description, duration, stylist } = req.body;
+    const { title, category, description, duration, stylist, isTeachWork } = req.body;
 
     const item = await Gallery.findById(req.params.id);
 
@@ -73,6 +74,9 @@ export const updateGalleryItem = async (req, res) => {
       item.description = description || item.description;
       item.duration = duration || item.duration;
       item.stylist = stylist || item.stylist;
+      if (isTeachWork !== undefined) {
+        item.isTeachWork = isTeachWork === 'true' || isTeachWork === true;
+      }
 
       const updatedItem = await item.save();
       res.json(updatedItem);

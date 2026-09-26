@@ -167,7 +167,7 @@
       <div class="bg-white rounded-2xl shadow-lg px-6 py-6">
         <h2 class="text-xl font-bold text-[#1e1916] mb-4">Quick Actions</h2>
         <div class="grid md:grid-cols-3 gap-4">
-          <router-link
+          <!-- <router-link
             to="/booking"
             class="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-lg hover:border-[#eaa636] hover:bg-[#fdf5eb] transition-colors"
           >
@@ -178,7 +178,7 @@
               <div class="font-medium text-[#1e1916]">My Bookings</div>
               <div class="text-xs text-[#545454]">View appointments</div>
             </div>
-          </router-link>
+          </router-link> -->
           
           <button
             @click="handleLogout"
