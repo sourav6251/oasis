@@ -15,8 +15,12 @@ const imagekit = new ImageKit({
  */
 const uploadImage = async (fileBuffer, fileName) => {
   try {
+    const filePayload = Buffer.isBuffer(fileBuffer)
+      ? fileBuffer.toString('base64')
+      : fileBuffer;
+
     const response = await imagekit.files.upload({
-      file: fileBuffer,
+      file: filePayload,
       fileName: String(fileName).replace(/[^a-zA-Z0-9._-]/g, '_'),
       folder: "/profile_photos",
       useUniqueFileName: true,
